@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://cgcwh6opvr4g3"]
+
+[ext_resource type="PackedScene" uid="uid://t6xfng3v1qsi" path="res://scenes/block.tscn" id="1_7ip33"]
+
+[node name="BlockPlatform" type="Node2D"]
+
+[node name="Block" parent="." instance=ExtResource("1_7ip33")]
+position = Vector2(4.76837e-07, -1.90735e-06)
+
+[node name="Block2" parent="." instance=ExtResource("1_7ip33")]
+position = Vector2(-60, -1.90735e-06)
+
+[node name="Block3" parent="." instance=ExtResource("1_7ip33")]
+position = Vector2(60, -1.90735e-06)

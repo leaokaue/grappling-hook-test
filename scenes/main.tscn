@@ -1,0 +1,1079 @@
+[gd_scene load_steps=19 format=3 uid="uid://btnsveko6fru8"]
+
+[ext_resource type="AudioStream" uid="uid://bvucbfr6ngdu2" path="res://sounds/Flying Beagle [ ezmp3.cc ].mp3" id="1_f5gul"]
+[ext_resource type="Texture2D" uid="uid://dghutenmpp3mc" path="res://sprites/bg.jpg" id="1_kku2a"]
+[ext_resource type="Environment" uid="uid://bt7bpmjauab1w" path="res://enviroment.tres" id="1_u1vng"]
+[ext_resource type="PackedScene" uid="uid://cgcwh6opvr4g3" path="res://scenes/3block_platform.tscn" id="2_b1wav"]
+[ext_resource type="PackedScene" uid="uid://bacl7irhgnrr7" path="res://scenes/worm.tscn" id="3_pgxup"]
+[ext_resource type="PackedScene" uid="uid://t6xfng3v1qsi" path="res://scenes/block.tscn" id="3_yxvgf"]
+[ext_resource type="PackedScene" uid="uid://bcfrt4en1wy5u" path="res://scenes/peculiar_coin.tscn" id="5_fshr7"]
+[ext_resource type="Shader" path="res://shaders/godrays.gdshader" id="5_kcop4"]
+[ext_resource type="PackedScene" uid="uid://cl3w51rbu1387" path="res://scenes/5block_cube.tscn" id="6_511r3"]
+[ext_resource type="PackedScene" uid="uid://cikghuby8xqm3" path="res://scenes/3block_cube.tscn" id="9_rj6ar"]
+[ext_resource type="PackedScene" uid="uid://brohanrknfti0" path="res://scenes/5block_platform.tscn" id="10_la04c"]
+[ext_resource type="PackedScene" uid="uid://cdolrgja05pt" path="res://scenes/5block_pillar.tscn" id="11_eifvt"]
+[ext_resource type="PackedScene" uid="uid://bsqbhvit4cchg" path="res://scenes/3block_plillar.tscn" id="12_p2c3j"]
+[ext_resource type="PackedScene" uid="uid://c0ftviyipmvn" path="res://scenes/checkpoint.tscn" id="14_7lk0c"]
+[ext_resource type="Script" path="res://scenes/death_barrier.gd" id="15_npp85"]
+[ext_resource type="PackedScene" uid="uid://c86ebt78ug24x" path="res://scenes/hook_block.tscn" id="16_y311e"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_618pg"]
+shader = ExtResource("5_kcop4")
+shader_parameter/lightScreenPosition = Vector2(0.11, 0.187)
+shader_parameter/halfPixel = Vector2(0, 0)
+shader_parameter/Density = 0.17
+shader_parameter/Decay = 0.855
+shader_parameter/Weight = 0.105
+shader_parameter/Exposure = 0.575
+shader_parameter/use_screen = true
+shader_parameter/mask = ExtResource("1_kku2a")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_km4ar"]
+size = Vector2(73800, 896)
+
+[node name="main" type="Node2D"]
+
+[node name="CanvasLayers" type="Node" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="CanvasLayers"]
+environment = ExtResource("1_u1vng")
+
+[node name="BG" type="CanvasLayer" parent="CanvasLayers"]
+layer = -1
+follow_viewport_enabled = true
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="CanvasLayers/BG"]
+scroll_ignore_camera_zoom = true
+
+[node name="Sprite2D" type="Sprite2D" parent="CanvasLayers/BG/ParallaxBackground"]
+position = Vector2(0, -8)
+scale = Vector2(0.281731, 0.259354)
+texture = ExtResource("1_kku2a")
+centered = false
+
+[node name="GodRays" type="CanvasLayer" parent="CanvasLayers"]
+layer = 2
+visible = false
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayers/GodRays"]
+material = SubResource("ShaderMaterial_618pg")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0)
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_f5gul")
+volume_db = -20.0
+autoplay = true
+
+[node name="Worm" parent="." instance=ExtResource("3_pgxup")]
+position = Vector2(-1740, -1008)
+
+[node name="Camera2D" type="Camera2D" parent="Worm"]
+zoom = Vector2(0.7, 0.7)
+position_smoothing_enabled = true
+position_smoothing_speed = 6.0
+
+[node name="SpawnIsland" type="Node2D" parent="."]
+
+[node name="Terrain" type="Node2D" parent="SpawnIsland"]
+
+[node name="Section1" type="Node2D" parent="SpawnIsland/Terrain"]
+
+[node name="BlockPlatform" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("6_511r3")]
+position = Vector2(-120, 616)
+
+[node name="BlockPlatform5" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("6_511r3")]
+position = Vector2(1080, 616)
+
+[node name="BlockPlatform6" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("6_511r3")]
+position = Vector2(-720, 616)
+
+[node name="BlockPlatform7" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(-660, 784)
+
+[node name="Block" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-420, 224)
+
+[node name="BlockPlatform8" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("9_rj6ar")]
+position = Vector2(-960, 560)
+
+[node name="Block2" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-1080, 504)
+
+[node name="BlockPlatform9" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("6_511r3")]
+position = Vector2(-120, 896)
+
+[node name="BlockPlatform10" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("10_la04c")]
+position = Vector2(-120, 1064)
+
+[node name="BlockPlatform11" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("10_la04c")]
+position = Vector2(-120, 1120)
+
+[node name="BlockPlatform12" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("6_511r3")]
+position = Vector2(180, 952)
+
+[node name="BlockPlatform13" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("6_511r3")]
+position = Vector2(480, 952)
+
+[node name="BlockPlatform15" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("6_511r3")]
+position = Vector2(1080, 896)
+
+[node name="BlockPlatform16" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(-180, 1176)
+
+[node name="BlockPlatform17" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("9_rj6ar")]
+position = Vector2(-960, 1400)
+
+[node name="Block3" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-720, 1064)
+
+[node name="Block4" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-1080, 1344)
+
+[node name="Block5" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-1080, 1400)
+
+[node name="Block6" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-1140, 1344)
+
+[node name="Block7" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-1380, 1064)
+
+[node name="Block8" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-1800, 1064)
+
+[node name="Block42" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-3120, 1064)
+
+[node name="Block43" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-3480, 840)
+
+[node name="Block44" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-3780, 616)
+
+[node name="Block53" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-3900, 224)
+
+[node name="BlockPlatform18" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("10_la04c")]
+position = Vector2(-2220, 1344)
+
+[node name="BlockPlatform19" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(-2220, 1400)
+
+[node name="BlockPlatform20" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("9_rj6ar")]
+position = Vector2(-2520, 1400)
+
+[node name="Block9" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-2400, 1344)
+
+[node name="Block10" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-2640, 1344)
+
+[node name="Block51" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-2520, 896)
+
+[node name="BlockPlatform21" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("10_la04c")]
+position = Vector2(-2820, 1344)
+
+[node name="BlockPlatform22" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(-2820, 1400)
+
+[node name="BlockPlatform47" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(-2820, 1288)
+
+[node name="BlockPlatform63" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(-2220, 1288)
+
+[node name="BlockPlatform23" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("10_la04c")]
+position = Vector2(-2400, 336)
+
+[node name="BlockPlatform24" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("10_la04c")]
+position = Vector2(-2700, 336)
+
+[node name="BlockPlatform25" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("6_511r3")]
+position = Vector2(-2700, 504)
+
+[node name="BlockPlatform26" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("9_rj6ar")]
+position = Vector2(-2460, 448)
+
+[node name="Block11" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-2340, 392)
+
+[node name="Block12" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-2340, 448)
+
+[node name="Block13" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-2520, 560)
+
+[node name="Block14" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-2880, 336)
+
+[node name="Block15" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-2880, 392)
+
+[node name="Block16" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-2880, 448)
+
+[node name="Block17" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-2880, 504)
+
+[node name="BlockPlatform27" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(-3000, 336)
+
+[node name="BlockPlatform28" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(-3180, 336)
+
+[node name="BlockPlatform29" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("9_rj6ar")]
+position = Vector2(-3000, 448)
+
+[node name="BlockPlatform30" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("9_rj6ar")]
+position = Vector2(-3180, 448)
+
+[node name="BlockPlatform31" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("9_rj6ar")]
+position = Vector2(-2940, 616)
+
+[node name="BlockPlatform52" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(420, 1512)
+
+[node name="BlockPlatform53" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(660, 1232)
+
+[node name="BlockPlatform54" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(1020, 1568)
+
+[node name="Block47" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(180, 1176)
+
+[node name="Block48" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(1080, 1288)
+
+[node name="Block18" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-3060, 560)
+
+[node name="BlockPlatform32" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("10_la04c")]
+position = Vector2(-3420, 336)
+
+[node name="BlockPlatform65" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("10_la04c")]
+position = Vector2(-4320, 336)
+
+[node name="BlockPlatform33" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("10_la04c")]
+position = Vector2(-3420, 392)
+
+[node name="BlockPlatform34" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(-3360, 448)
+
+[node name="Block19" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-540, 504)
+
+[node name="Block20" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-540, 560)
+
+[node name="Block21" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-540, 616)
+
+[node name="Block22" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-300, 840)
+
+[node name="Block23" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-300, 896)
+
+[node name="Block24" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-300, 952)
+
+[node name="Block25" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-300, 1008)
+
+[node name="BlockPlatform35" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("6_511r3")]
+position = Vector2(1380, 616)
+
+[node name="BlockPlatform36" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("6_511r3")]
+position = Vector2(1740, 392)
+
+[node name="Block26" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(1260, 112)
+
+[node name="BlockPlatform37" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(1260, 56)
+
+[node name="BlockPlatform38" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(1260, 0)
+
+[node name="Block27" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(1200, -56)
+
+[node name="Block28" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(1260, -56)
+
+[node name="BlockPlatform39" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("6_511r3")]
+position = Vector2(1680, 672)
+
+[node name="Block29" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(1500, 448)
+
+[node name="Block30" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(1560, 280)
+
+[node name="Block31" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(1560, 336)
+
+[node name="Block32" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(1560, 392)
+
+[node name="Block33" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(1560, 448)
+
+[node name="Block34" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(1560, 504)
+
+[node name="BlockPlatform3" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("6_511r3")]
+position = Vector2(2400, 896)
+
+[node name="BlockPlatform4" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("6_511r3")]
+position = Vector2(2400, -168)
+
+[node name="Block35" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(1620, -56)
+
+[node name="Block36" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(2040, 56)
+
+[node name="Block37" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(1920, -280)
+
+[node name="Block38" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(2100, 616)
+
+[node name="Block55" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-60, -504)
+
+[node name="Block56" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-1.52588e-05, -504)
+
+[node name="Block57" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(900, 168)
+
+[node name="Block58" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-120, -504)
+
+[node name="BlockPlatform14" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(2640, -280)
+
+[node name="BlockPlatform40" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(2820, -280)
+
+[node name="BlockPlatform41" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("9_rj6ar")]
+position = Vector2(2640, -168)
+
+[node name="BlockPlatform42" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(2820, -224)
+
+[node name="Block39" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(2220, -280)
+
+[node name="Block40" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(2220, -224)
+
+[node name="BlockPlatform43" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("10_la04c")]
+position = Vector2(780, 504)
+
+[node name="BlockPlatform44" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("10_la04c")]
+position = Vector2(480, 504)
+
+[node name="BlockPlatform45" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("10_la04c")]
+position = Vector2(480, 560)
+
+[node name="BlockPlatform46" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("10_la04c")]
+position = Vector2(780, 560)
+
+[node name="BlockPlatform48" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("10_la04c")]
+position = Vector2(-60, 1568)
+
+[node name="Block41" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-540, 1568)
+
+[node name="BlockPlatform49" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(-60, 1624)
+
+[node name="BlockPlatform2" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("10_la04c")]
+position = Vector2(180, 448)
+
+[node name="BlockPlatform50" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("10_la04c")]
+position = Vector2(180, 504)
+
+[node name="BlockPlatform51" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("10_la04c")]
+position = Vector2(180, 560)
+
+[node name="BlockPlatform56" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("10_la04c")]
+position = Vector2(540, 616)
+
+[node name="Block45" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(780, 840)
+
+[node name="Block46" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(60.0001, 784)
+
+[node name="BlockPillar2" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("12_p2c3j")]
+position = Vector2(1260, 840)
+
+[node name="BlockPillar3" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("12_p2c3j")]
+position = Vector2(1320, 840)
+
+[node name="Block49" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(1380, 784)
+
+[node name="Block50" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(1380, 840)
+
+[node name="BlockPillar4" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("12_p2c3j")]
+position = Vector2(1920, 336)
+
+[node name="BlockPillar5" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("12_p2c3j")]
+position = Vector2(1860, 728)
+
+[node name="BlockPlatform55" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(1800, 840)
+
+[node name="BlockPillar6" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("12_p2c3j")]
+position = Vector2(2220, 840)
+
+[node name="BlockPlatform57" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("6_511r3")]
+position = Vector2(2700, 952)
+
+[node name="BlockPlatform58" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("10_la04c")]
+position = Vector2(2520, 1120)
+
+[node name="BlockPlatform59" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("9_rj6ar")]
+position = Vector2(2940, 840)
+
+[node name="BlockPillar7" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("12_p2c3j")]
+position = Vector2(3060, 840)
+
+[node name="BlockPlatform60" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("10_la04c")]
+position = Vector2(2400, 1064)
+
+[node name="Block59" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(2220, 952)
+
+[node name="BlockPlatform61" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("10_la04c")]
+position = Vector2(1260, 1288)
+
+[node name="BlockPlatform62" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("11_eifvt")]
+position = Vector2(1020, 1176)
+
+[node name="BlockPillar8" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("12_p2c3j")]
+position = Vector2(960, 1120)
+
+[node name="Block54" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(1080, 1232)
+
+[node name="Block60" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(60, 616)
+
+[node name="BlockPlatform64" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(2940, 1120)
+
+[node name="Block52" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(2820, 1120)
+
+[node name="Block61" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(2880, 952)
+
+[node name="BlockPlatform66" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(-4320, 392)
+
+[node name="BlockPlatform67" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(-4560, 336)
+
+[node name="BlockPlatform68" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(-4500, 392)
+
+[node name="BlockPlatform69" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("2_b1wav")]
+position = Vector2(-4380, 448)
+
+[node name="Block62" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-4140, 336)
+
+[node name="Block63" parent="SpawnIsland/Terrain/Section1" instance=ExtResource("3_yxvgf")]
+position = Vector2(-4200, 392)
+
+[node name="Section2" type="Node2D" parent="SpawnIsland/Terrain"]
+
+[node name="BlockPlatform" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("11_eifvt")]
+position = Vector2(-2400, 168)
+
+[node name="BlockPlatform26" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("11_eifvt")]
+position = Vector2(-3540, -392)
+
+[node name="BlockPillar" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("12_p2c3j")]
+position = Vector2(-2580, 0)
+
+[node name="BlockPlatform2" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("10_la04c")]
+position = Vector2(-2760, -56)
+
+[node name="Block" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(-2460, -168)
+
+[node name="BlockPlatform3" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("2_b1wav")]
+position = Vector2(-2520, 280)
+
+[node name="BlockPlatform4" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("2_b1wav")]
+position = Vector2(-2700, 0)
+
+[node name="BlockPlatform5" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("2_b1wav")]
+position = Vector2(-3180, -112)
+
+[node name="Block2" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(-2940, -280)
+
+[node name="Block3" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(2220, -168)
+
+[node name="BlockPlatform6" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("6_511r3")]
+position = Vector2(1560, -840)
+
+[node name="BlockPlatform7" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("11_eifvt")]
+position = Vector2(1740, -840)
+
+[node name="BlockPlatform8" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(1860, -784)
+
+[node name="BlockPlatform9" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("10_la04c")]
+position = Vector2(1740, -672)
+
+[node name="BlockPillar2" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("12_p2c3j")]
+position = Vector2(1380, -896)
+
+[node name="BlockPlatform10" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(1020, -896)
+
+[node name="Block4" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(540, -952)
+
+[node name="BlockPlatform11" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("2_b1wav")]
+position = Vector2(-60, -952)
+
+[node name="Block5" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(240, -1288)
+
+[node name="BlockPlatform12" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("11_eifvt")]
+position = Vector2(60, -840)
+
+[node name="BlockPillar3" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("12_p2c3j")]
+position = Vector2(60, -616)
+
+[node name="Block6" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(60, -504)
+
+[node name="BlockPlatform13" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("11_eifvt")]
+position = Vector2(120, -616)
+
+[node name="BlockPillar4" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("12_p2c3j")]
+position = Vector2(120, -840)
+
+[node name="BlockPlatform14" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("2_b1wav")]
+position = Vector2(0, -448)
+
+[node name="Block7" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(0, -896)
+
+[node name="BlockPillar5" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("12_p2c3j")]
+position = Vector2(3060, 560)
+
+[node name="BlockPlatform15" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("10_la04c")]
+position = Vector2(3060, 448)
+
+[node name="BlockPlatform16" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("10_la04c")]
+position = Vector2(3060, -280)
+
+[node name="BlockPlatform17" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("10_la04c")]
+position = Vector2(3360, -280)
+
+[node name="BlockPlatform18" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("2_b1wav")]
+position = Vector2(3000, -224)
+
+[node name="BlockPillar6" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("12_p2c3j")]
+position = Vector2(1800, 952)
+
+[node name="BlockPlatform20" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(1800, 1120)
+
+[node name="Block8" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1800, 1232)
+
+[node name="Block9" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1800, 1288)
+
+[node name="Block10" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1740, 1288)
+
+[node name="Block11" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1680, 1288)
+
+[node name="Block12" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1440, 1288)
+
+[node name="Block13" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1500, 1288)
+
+[node name="Block14" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1560, 1288)
+
+[node name="BlockPlatform19" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("10_la04c")]
+position = Vector2(1320, 1344)
+
+[node name="BlockPlatform45" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("10_la04c")]
+position = Vector2(1320, 1400)
+
+[node name="BlockPlatform46" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("10_la04c")]
+position = Vector2(1320, 1456)
+
+[node name="Block15" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1740, 1344)
+
+[node name="Block27" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1680, 1344)
+
+[node name="Block28" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1560, 1344)
+
+[node name="Block29" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1500, 1344)
+
+[node name="Block30" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1500, 1400)
+
+[node name="Block31" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1740, 1400)
+
+[node name="Block32" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1800, 1456)
+
+[node name="Block33" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1800, 1400)
+
+[node name="Block34" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1800, 1344)
+
+[node name="Block35" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1500, 1456)
+
+[node name="Block36" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1560, 1400)
+
+[node name="Block37" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1440, 1512)
+
+[node name="Block38" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1380, 1512)
+
+[node name="Block39" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1320, 1512)
+
+[node name="Block40" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1260, 1512)
+
+[node name="Block41" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1320, 1568)
+
+[node name="Block42" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1380, 1568)
+
+[node name="Block43" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1440, 1568)
+
+[node name="Block44" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1860, 1400)
+
+[node name="Block45" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1860, 1344)
+
+[node name="Block46" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1860, 1456)
+
+[node name="Block47" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1920, 1400)
+
+[node name="Block48" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1920, 1456)
+
+[node name="Block49" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1800, 1512)
+
+[node name="Block50" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1860, 1512)
+
+[node name="Block51" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1740, 1456)
+
+[node name="Block52" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1860, 1288)
+
+[node name="Block53" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1860, 1232)
+
+[node name="Block54" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1920, 1344)
+
+[node name="BlockPillar7" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("12_p2c3j")]
+position = Vector2(2520, -616)
+
+[node name="BlockPlatform21" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("2_b1wav")]
+position = Vector2(2580, -728)
+
+[node name="BlockPlatform22" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("10_la04c")]
+position = Vector2(2640, -336)
+
+[node name="BlockPlatform23" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(2340, -1064)
+
+[node name="BlockPlatform24" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("10_la04c")]
+position = Vector2(2340, -728)
+
+[node name="BlockPlatform25" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("2_b1wav")]
+position = Vector2(2100, -728)
+
+[node name="BlockPlatform27" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("2_b1wav")]
+position = Vector2(-3480, -560)
+
+[node name="BlockPlatform28" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-3060, -784)
+
+[node name="Block16" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(-2940, -840)
+
+[node name="Block17" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(-2940, -784)
+
+[node name="Block18" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(-3180, -840)
+
+[node name="Block19" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(-3000, -1120)
+
+[node name="BlockPlatform29" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("2_b1wav")]
+position = Vector2(-2700, -1120)
+
+[node name="BlockPlatform30" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-2160, -1344)
+
+[node name="BlockPlatform47" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-2280, -1512)
+
+[node name="BlockPlatform48" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-2460, -1512)
+
+[node name="BlockPlatform49" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-2520, -1680)
+
+[node name="BlockPlatform50" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-2700, -1680)
+
+[node name="BlockPlatform51" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-2880, -1680)
+
+[node name="BlockPlatform52" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-3060, -1680)
+
+[node name="BlockPlatform53" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-3240, -1680)
+
+[node name="BlockPlatform54" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-3420, -1680)
+
+[node name="BlockPlatform55" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-3600, -1680)
+
+[node name="BlockPlatform56" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-3780, -1680)
+
+[node name="BlockPlatform57" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-3960, -1680)
+
+[node name="BlockPlatform58" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-4140, -1680)
+
+[node name="BlockPlatform59" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-4320, -1736)
+
+[node name="BlockPlatform60" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-4500, -1792)
+
+[node name="BlockPlatform61" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-4680, -1736)
+
+[node name="BlockPlatform62" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-4860, -1792)
+
+[node name="BlockPlatform63" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-5040, -1736)
+
+[node name="BlockPlatform64" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-5220, -1736)
+
+[node name="BlockPlatform65" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-1020, -1624)
+
+[node name="BlockPlatform66" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-840, -1624)
+
+[node name="BlockPlatform67" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-660, -1680)
+
+[node name="BlockPlatform68" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-480, -1736)
+
+[node name="BlockPlatform69" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-300, -1792)
+
+[node name="BlockPlatform70" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-120, -1792)
+
+[node name="BlockPlatform71" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(60, -1792)
+
+[node name="BlockPlatform72" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(240, -1848)
+
+[node name="BlockPlatform73" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(420, -1904)
+
+[node name="BlockPlatform31" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-1980, -1344)
+
+[node name="BlockPlatform32" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-2160, -1064)
+
+[node name="BlockPlatform33" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-1980, -1008)
+
+[node name="BlockPlatform34" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-1980, -1512)
+
+[node name="BlockPlatform35" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-1800, -1512)
+
+[node name="BlockPlatform36" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-1800, -896)
+
+[node name="BlockPlatform37" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-1620, -896)
+
+[node name="BlockPlatform38" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-1380, -896)
+
+[node name="BlockPlatform39" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-1200, -1008)
+
+[node name="BlockPlatform40" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-1020, -1120)
+
+[node name="BlockPlatform41" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-1020, -1288)
+
+[node name="BlockPlatform42" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-1020, -1456)
+
+[node name="BlockPlatform43" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-1200, -1512)
+
+[node name="BlockPlatform44" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("9_rj6ar")]
+position = Vector2(-1320, -1512)
+
+[node name="BlockPillar8" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("12_p2c3j")]
+position = Vector2(-1260, -1344)
+
+[node name="Block20" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(-1320, -1400)
+
+[node name="Block21" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(-1260, -896)
+
+[node name="Block22" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(-1080, -1008)
+
+[node name="Block23" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(-1860, -1008)
+
+[node name="Block24" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(-1920, -896)
+
+[node name="Block25" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(-2100, -1456)
+
+[node name="Block55" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1980, -784)
+
+[node name="Block56" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(1980, -728)
+
+[node name="Block57" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(2460, -672)
+
+[node name="BlockPillar9" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("12_p2c3j")]
+position = Vector2(2220, -1120)
+
+[node name="BlockPillar10" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("12_p2c3j")]
+position = Vector2(2460, -1120)
+
+[node name="Block58" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(480, 672)
+
+[node name="Block59" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(480, 784)
+
+[node name="Block60" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(540, 784)
+
+[node name="Block61" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(720, 616)
+
+[node name="BlockPillar11" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("12_p2c3j")]
+position = Vector2(900, 672)
+
+[node name="Block26" parent="SpawnIsland/Terrain/Section2" instance=ExtResource("3_yxvgf")]
+position = Vector2(-1860, -1400)
+
+[node name="Coins" type="Node2D" parent="SpawnIsland"]
+
+[node name="PeculiarCoin" parent="SpawnIsland/Coins" instance=ExtResource("5_fshr7")]
+position = Vector2(180, 392)
+
+[node name="PeculiarCoin2" parent="SpawnIsland/Coins" instance=ExtResource("5_fshr7")]
+position = Vector2(900, 112)
+
+[node name="PeculiarCoin3" parent="SpawnIsland/Coins" instance=ExtResource("5_fshr7")]
+position = Vector2(3060, 392)
+
+[node name="PeculiarCoin4" parent="SpawnIsland/Coins" instance=ExtResource("5_fshr7")]
+position = Vector2(1200, 1232)
+
+[node name="PeculiarCoin5" parent="SpawnIsland/Coins" instance=ExtResource("5_fshr7")]
+position = Vector2(1320, 1232)
+
+[node name="PeculiarCoin14" parent="SpawnIsland/Coins" instance=ExtResource("5_fshr7")]
+position = Vector2(780, 784)
+
+[node name="PeculiarCoin15" parent="SpawnIsland/Coins" instance=ExtResource("5_fshr7")]
+position = Vector2(1020, 1792)
+
+[node name="PeculiarCoin16" parent="SpawnIsland/Coins" instance=ExtResource("5_fshr7")]
+position = Vector2(-1560, 1232)
+
+[node name="PeculiarCoin6" parent="SpawnIsland/Coins" instance=ExtResource("5_fshr7")]
+position = Vector2(1440, 1232)
+
+[node name="PeculiarCoin7" parent="SpawnIsland/Coins" instance=ExtResource("5_fshr7")]
+position = Vector2(420, 1792)
+
+[node name="PeculiarCoin8" parent="SpawnIsland/Coins" instance=ExtResource("5_fshr7")]
+position = Vector2(-3480, 784)
+
+[node name="PeculiarCoin9" parent="SpawnIsland/Coins" instance=ExtResource("5_fshr7")]
+position = Vector2(-3180, -224)
+
+[node name="PeculiarCoin19" parent="SpawnIsland/Coins" instance=ExtResource("5_fshr7")]
+position = Vector2(-1560, -1624)
+
+[node name="PeculiarCoin20" parent="SpawnIsland/Coins" instance=ExtResource("5_fshr7")]
+position = Vector2(1020, -728)
+
+[node name="PeculiarCoin10" parent="SpawnIsland/Coins" instance=ExtResource("5_fshr7")]
+position = Vector2(-120, -560)
+
+[node name="PeculiarCoin12" parent="SpawnIsland/Coins" instance=ExtResource("5_fshr7")]
+position = Vector2(-1140, -1344)
+
+[node name="PeculiarCoin13" parent="SpawnIsland/Coins" instance=ExtResource("5_fshr7")]
+position = Vector2(-1500, -448)
+
+[node name="PeculiarCoin11" parent="SpawnIsland/Coins" instance=ExtResource("5_fshr7")]
+position = Vector2(-3.8147e-06, -560)
+
+[node name="PeculiarCoin17" parent="SpawnIsland/Coins" instance=ExtResource("5_fshr7")]
+position = Vector2(2940, 1064)
+
+[node name="PeculiarCoin18" parent="SpawnIsland/Coins" instance=ExtResource("5_fshr7")]
+position = Vector2(2580, 1288)
+
+[node name="Props" type="Node2D" parent="SpawnIsland"]
+
+[node name="FallZones" type="Node2D" parent="SpawnIsland"]
+
+[node name="Checkpoint" parent="SpawnIsland/FallZones" instance=ExtResource("14_7lk0c")]
+position = Vector2(-780, 448)
+
+[node name="DeathBarrier" type="Area2D" parent="SpawnIsland/FallZones"]
+position = Vector2(0, 3584)
+collision_mask = 2
+script = ExtResource("15_npp85")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SpawnIsland/FallZones/DeathBarrier"]
+shape = SubResource("RectangleShape2D_km4ar")
+debug_color = Color(0.94052, 0, 0.00465848, 0.42)
+
+[node name="WeepingBogs" type="Node2D" parent="."]
+
+[node name="Terrain" type="Node2D" parent="WeepingBogs"]
+
+[node name="Section1" type="Node2D" parent="WeepingBogs/Terrain"]
+
+[node name="HookBlock" parent="WeepingBogs/Terrain" instance=ExtResource("16_y311e")]
+position = Vector2(-1680, -1512)
+
+[node name="HookBlock2" parent="WeepingBogs/Terrain" instance=ExtResource("16_y311e")]
+position = Vector2(-1620, -1512)
+
+[node name="HookBlock3" parent="WeepingBogs/Terrain" instance=ExtResource("16_y311e")]
+position = Vector2(-1560, -1512)
+
+[node name="HookBlock4" parent="WeepingBogs/Terrain" instance=ExtResource("16_y311e")]
+position = Vector2(-1500, -1512)
+
+[node name="HookBlock5" parent="WeepingBogs/Terrain" instance=ExtResource("16_y311e")]
+position = Vector2(-1440, -1512)
+
+[node name="Coins" type="Node2D" parent="WeepingBogs"]
+
+[node name="Props" type="Node2D" parent="WeepingBogs"]
+
+[node name="FallZones" type="Node2D" parent="WeepingBogs"]
+
+[node name="Windmillian Recluse" type="Node2D" parent="."]
+
+[node name="Terrain" type="Node2D" parent="Windmillian Recluse"]
+
+[node name="Section1" type="Node2D" parent="Windmillian Recluse/Terrain"]
+
+[node name="Coins" type="Node2D" parent="Windmillian Recluse"]
+
+[node name="Props" type="Node2D" parent="Windmillian Recluse"]
+
+[node name="FallZones" type="Node2D" parent="Windmillian Recluse"]
+
+[node name="BlackHoleDistrict" type="Node2D" parent="."]
+
+[node name="Terrain" type="Node2D" parent="BlackHoleDistrict"]
+
+[node name="Section1" type="Node2D" parent="BlackHoleDistrict/Terrain"]
+
+[node name="Coins" type="Node2D" parent="BlackHoleDistrict"]
+
+[node name="Props" type="Node2D" parent="BlackHoleDistrict"]
+
+[node name="FallZones" type="Node2D" parent="BlackHoleDistrict"]
+
+[node name="DangerousSpikeZone" type="Node2D" parent="."]
+
+[node name="Terrain" type="Node2D" parent="DangerousSpikeZone"]
+
+[node name="Section1" type="Node2D" parent="DangerousSpikeZone/Terrain"]
+
+[node name="Coins" type="Node2D" parent="DangerousSpikeZone"]
+
+[node name="Props" type="Node2D" parent="DangerousSpikeZone"]
+
+[node name="FallZones" type="Node2D" parent="DangerousSpikeZone"]

@@ -1,0 +1,63 @@
+[gd_scene load_steps=7 format=3 uid="uid://bacl7irhgnrr7"]
+
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_d3wq5"]
+[ext_resource type="Texture2D" uid="uid://bdw2ln7jh2dda" path="res://sprites/Wormchelt.png" id="2_4q2ix"]
+[ext_resource type="AudioStream" uid="uid://84ge45s7w0d6" path="res://sounds/scream.mp3" id="3_p5reh"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_asclu"]
+friction = 0.1
+rough = true
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vwyij"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_iawq7"]
+size = Vector2(14, 30)
+
+[node name="Worm" type="RigidBody2D"]
+collision_layer = 2
+physics_material_override = SubResource("PhysicsMaterial_asclu")
+gravity_scale = 0.8
+continuous_cd = 1
+contact_monitor = true
+max_contacts_reported = 1
+script = ExtResource("1_d3wq5")
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+target_position = Vector2(0, 23)
+
+[node name="RagddollCast" type="ShapeCast2D" parent="."]
+position = Vector2(0, -2)
+shape = SubResource("RectangleShape2D_vwyij")
+target_position = Vector2(0, 15)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+z_index = 1
+position = Vector2(0, 5)
+shape = SubResource("RectangleShape2D_iawq7")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+clip_children = 1
+polygon = PackedVector2Array(-5, 17, -7, 9, -7, 3, -8, -2, -6, -4, -5, -10, 1, -10, 2, -9, 4, -10, 6, -6, 6, -4, 7, -2, 8, 3, 7, 8, 9, 18, -5, 18)
+
+[node name="Sprite2D" type="Sprite2D" parent="Polygon2D"]
+unique_name_in_owner = true
+scale = Vector2(0.0284502, 0.0284502)
+texture = ExtResource("2_4q2ix")
+
+[node name="Polygon2D2" type="Polygon2D" parent="."]
+position = Vector2(-1, -2)
+color = Color(0.22, 0.17534, 0.0924, 1)
+polygon = PackedVector2Array(-7, 17, -11, 19, -9, 22, 12, 22, 14, 19, 7, 15, 4, 17, -1, 18, -3, 16)
+
+[node name="Line2D" type="Line2D" parent="."]
+top_level = true
+z_index = 1
+points = PackedVector2Array(0, 0, 0, 0)
+width = 3.0
+default_color = Color(0.408329, 0.408329, 0.408329, 1)
+
+[node name="scream" type="AudioStreamPlayer2D" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("3_p5reh")
+volume_db = -10.0
+pitch_scale = 1.2

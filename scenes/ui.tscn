@@ -1,0 +1,161 @@
+[gd_scene load_steps=13 format=3 uid="uid://bnvneh2xfqhpp"]
+
+[ext_resource type="Script" path="res://scenes/coin_counter.gd" id="1_le5ak"]
+[ext_resource type="Texture2D" uid="uid://b2xs1j1q1scfq" path="res://sprites/nolan.jpg" id="2_4iwo5"]
+[ext_resource type="Shader" path="res://shaders/shine.gdshader" id="3_hew1h"]
+[ext_resource type="Texture2D" uid="uid://dy1vyv8rptpvm" path="res://sprites/uibg1.png" id="4_m8224"]
+[ext_resource type="Texture2D" uid="uid://botg44dsl6ad1" path="res://sprites/grapplebarbg.png" id="4_nbvbl"]
+[ext_resource type="Texture2D" uid="uid://b1nfnd1n3qxwb" path="res://sprites/grapplebar.png" id="5_6kawo"]
+[ext_resource type="Script" path="res://scenes/texture_progress_bar.gd" id="6_eqff7"]
+[ext_resource type="Texture2D" uid="uid://dvpi7nso38kqm" path="res://sprites/grapple.png" id="6_wlgv8"]
+[ext_resource type="Texture2D" uid="uid://dvd0js1533ixy" path="res://sprites/uibg2.png" id="9_sky3p"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mapsa"]
+shader = ExtResource("3_hew1h")
+shader_parameter/Line_Smoothness = 0.045
+shader_parameter/Line_Width = 0.09
+shader_parameter/Brightness = 3.0
+shader_parameter/Rotation_deg = 30.0
+shader_parameter/Distortion = 1.8
+shader_parameter/Speed = 0.7
+shader_parameter/Position = 0.0
+shader_parameter/Position_Min = 0.25
+shader_parameter/Position_Max = 0.5
+shader_parameter/Alpha = 1.0
+
+[sub_resource type="Gradient" id="Gradient_dxa4k"]
+offsets = PackedFloat32Array(1)
+colors = PackedColorArray(1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_btolr"]
+gradient = SubResource("Gradient_dxa4k")
+
+[node name="UI" type="CanvasLayer"]
+layer = 15
+
+[node name="BlackScreen" type="ColorRect" parent="." groups=["BlackScreen"]]
+modulate = Color(1, 1, 1, 0)
+z_index = 100
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Node2DUI" type="Node2D" parent="."]
+scale = Vector2(0.681819, 0.681819)
+
+[node name="CoinCounter" type="Node2D" parent="Node2DUI"]
+position = Vector2(-26, -18)
+script = ExtResource("1_le5ak")
+
+[node name="Polygon2D" type="Node2D" parent="Node2DUI/CoinCounter"]
+position = Vector2(76, 86)
+rotation = 0.0607283
+scale = Vector2(0.520427, 0.520427)
+
+[node name="po" type="Polygon2D" parent="Node2DUI/CoinCounter/Polygon2D"]
+clip_children = 1
+polygon = PackedVector2Array(-6, 76, 17, 73, 29, 64, 31, 54, 35, 42, 38, 28, 41, 13, 40, -5, 39, -22, 39, -34, 35, -51, 26, -68, 9, -73, -6, -74, -22, -71, -31, -61, -36, -52, -41, -34, -42, -14, -43, 16, -41, 36, -37, 53, -31, 64, -18, 73)
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2DUI/CoinCounter/Polygon2D/po"]
+modulate = Color(1, 0.766667, 0, 1)
+position = Vector2(-1, -1)
+scale = Vector2(0.125045, 0.125045)
+texture = ExtResource("2_4iwo5")
+
+[node name="TextureRect" type="TextureRect" parent="Node2DUI/CoinCounter/Polygon2D/po"]
+material = SubResource("ShaderMaterial_mapsa")
+offset_left = -44.0
+offset_top = 77.0
+offset_right = 110.0
+offset_bottom = 162.0
+rotation = -1.5708
+texture = SubResource("GradientTexture1D_btolr")
+expand_mode = 1
+
+[node name="Line2D" type="Line2D" parent="Node2DUI/CoinCounter/Polygon2D"]
+points = PackedVector2Array(2, -73, 19, -69, 25, -67, 32, -57, 36, -43, 38, -24, 39, -6, 43, 14, 40, 26, 36, 38, 35, 49, 29, 60, 26, 67, 19, 72, 6, 74, -9, 75, -22, 73, -29, 68, -34, 59, -36, 52, -40, 43, -41, 36, -44, 27, -44, 17, -44, 9, -44, 1, -44, -9, -44, -16, -44, -24, -42, -36, -39, -48, -38, -54, -34, -61, -28, -68, -24, -71, -18, -74, -11, -75, -3, -75, 4, -72)
+default_color = Color(1, 0.75, 0, 1)
+
+[node name="Coins" type="Label" parent="Node2DUI/CoinCounter"]
+modulate = Color(0, 0, 0, 1)
+offset_left = 116.933
+offset_top = 63.4666
+offset_right = 276.933
+offset_bottom = 132.467
+rotation = 0.159109
+scale = Vector2(0.798127, 0.798127)
+theme_override_font_sizes/font_size = 50
+text = "0 / 100"
+metadata/_edit_use_anchors_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2DUI/CoinCounter"]
+modulate = Color(1, 1, 1, 0.415686)
+z_index = -1
+position = Vector2(86, 97)
+rotation = 1.0472
+scale = Vector2(0.410174, 0.410174)
+texture = ExtResource("4_m8224")
+
+[node name="Sprite2D2" type="Sprite2D" parent="Node2DUI/CoinCounter"]
+modulate = Color(1, 1, 1, 0.415686)
+z_index = -1
+position = Vector2(174, 82)
+rotation = 1.0472
+scale = Vector2(0.410174, 0.410174)
+texture = ExtResource("4_m8224")
+
+[node name="Sprite2D5" type="Sprite2D" parent="Node2DUI/CoinCounter"]
+modulate = Color(1, 1, 1, 0.415686)
+z_index = -1
+position = Vector2(43.6, 20.9333)
+rotation = 1.0472
+scale = Vector2(0.410174, 0.410174)
+texture = ExtResource("4_m8224")
+
+[node name="Sprite2D3" type="Sprite2D" parent="Node2DUI/CoinCounter"]
+modulate = Color(1, 1, 1, 0.415686)
+z_index = -1
+position = Vector2(149, 138)
+rotation = 1.0472
+scale = Vector2(0.410174, 0.410174)
+texture = ExtResource("4_m8224")
+
+[node name="Sprite2D4" type="Sprite2D" parent="Node2DUI/CoinCounter"]
+modulate = Color(1, 1, 1, 0.415686)
+z_index = -1
+position = Vector2(43, 258)
+rotation = 0.856155
+scale = Vector2(0.410174, 0.410174)
+texture = ExtResource("4_m8224")
+
+[node name="GrappleCooldown" type="Node2D" parent="Node2DUI"]
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="Node2DUI/GrappleCooldown"]
+offset_left = 13.0
+offset_top = 126.0
+offset_right = 525.0
+offset_bottom = 638.0
+scale = Vector2(0.13678, 0.13678)
+step = 0.0
+value = 50.0
+fill_mode = 5
+radial_initial_angle = 40.0
+texture_under = ExtResource("4_nbvbl")
+texture_progress = ExtResource("5_6kawo")
+script = ExtResource("6_eqff7")
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2DUI/GrappleCooldown"]
+position = Vector2(44, 166)
+rotation = -0.785398
+scale = Vector2(0.186508, 0.186508)
+texture = ExtResource("6_wlgv8")
+
+[node name="Uibg2" type="Sprite2D" parent="Node2DUI/GrappleCooldown"]
+modulate = Color(1, 1, 1, 0.517647)
+z_index = -1
+position = Vector2(38, 165)
+scale = Vector2(0.337663, 0.337663)
+texture = ExtResource("9_sky3p")

@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://bsqbhvit4cchg"]
+
+[ext_resource type="PackedScene" uid="uid://t6xfng3v1qsi" path="res://scenes/block.tscn" id="1_a5vyl"]
+
+[node name="BlockPillar" type="Node2D"]
+
+[node name="Block" parent="." instance=ExtResource("1_a5vyl")]
+position = Vector2(4.76837e-07, -1.90735e-06)
+
+[node name="Block2" parent="." instance=ExtResource("1_a5vyl")]
+position = Vector2(-7.62939e-06, -56)
+
+[node name="Block5" parent="." instance=ExtResource("1_a5vyl")]
+position = Vector2(-1.52588e-05, 56)

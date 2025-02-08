@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bvucbfr6ngdu2"
+path="res://.godot/imported/Flying Beagle [ ezmp3.cc ].mp3-b12dcb1514a4f94cb2e270aaccaf5611.mp3str"
+
+[deps]
+
+source_file="res://sounds/Flying Beagle [ ezmp3.cc ].mp3"
+dest_files=["res://.godot/imported/Flying Beagle [ ezmp3.cc ].mp3-b12dcb1514a4f94cb2e270aaccaf5611.mp3str"]
+
+[params]
+
+loop=true
+loop_offset=0.0
+bpm=0.0
+beat_count=0
+bar_beats=4

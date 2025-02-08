@@ -1,0 +1,128 @@
+[gd_scene load_steps=13 format=3 uid="uid://c0ftviyipmvn"]
+
+[ext_resource type="Script" path="res://scripts/checkpoint.gd" id="1_odvvk"]
+[ext_resource type="Texture2D" uid="uid://b2hpi4gi8412a" path="res://sprites/ball.png" id="2_440ko"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ujt3p"]
+size = Vector2(120, 112)
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_adpof"]
+light_mode = 1
+
+[sub_resource type="Curve" id="Curve_ptdjk"]
+_data = [Vector2(0.0967742, 0.054945), 0.0, 0.0, 0, 0, Vector2(0.129032, 1), 0.0, 0.0, 0, 0, Vector2(0.225806, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_5a3bk"]
+curve = SubResource("Curve_ptdjk")
+
+[sub_resource type="Curve" id="Curve_b7c4s"]
+_data = [Vector2(0.569892, 1), 0.0, 0.0, 0, 0]
+point_count = 1
+
+[sub_resource type="CurveTexture" id="CurveTexture_xduey"]
+curve = SubResource("Curve_b7c4s")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_818x5"]
+particle_flag_disable_z = true
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 1.0
+emission_ring_radius = 200.0
+emission_ring_inner_radius = 190.0
+orbit_velocity_min = 0.126
+orbit_velocity_max = 0.288
+radial_velocity_min = -198.2
+radial_velocity_max = -171.17
+gravity = Vector3(0, 0, 0)
+scale_min = 0.05
+scale_max = 0.08
+color = Color(0.288, 0.54, 0, 1)
+alpha_curve = SubResource("CurveTexture_5a3bk")
+emission_curve = SubResource("CurveTexture_xduey")
+
+[sub_resource type="Curve" id="Curve_dgnlm"]
+_data = [Vector2(0.0967742, 0.054945), 0.0, 0.0, 0, 0, Vector2(0.129032, 1), 0.0, 0.0, 0, 0, Vector2(0.225806, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_uy8u4"]
+curve = SubResource("Curve_dgnlm")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_hgbiq"]
+particle_flag_disable_z = true
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 1.0
+emission_ring_radius = 200.0
+emission_ring_inner_radius = 190.0
+orbit_velocity_min = 0.126
+orbit_velocity_max = 0.288
+radial_velocity_min = -2.23517e-05
+radial_velocity_max = -2.23517e-05
+gravity = Vector3(0, 0, 0)
+scale_min = 0.08
+scale_max = 0.12
+color = Color(0.48, 0.9, 0, 1)
+alpha_curve = SubResource("CurveTexture_uy8u4")
+
+[node name="Checkpoint" type="Area2D" groups=["Checkpoints"]]
+collision_mask = 2
+script = ExtResource("1_odvvk")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_ujt3p")
+
+[node name="Obelisk" type="Node2D" parent="."]
+unique_name_in_owner = true
+z_index = -2
+
+[node name="ColorRect" type="ColorRect" parent="Obelisk"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -21.0
+offset_right = 21.0
+offset_bottom = 141.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.435192, 0.435192, 0.435192, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="Obelisk"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -13.0
+offset_right = -7.0
+offset_bottom = 141.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.596584, 1, 0.667008, 1)
+
+[node name="In" type="GPUParticles2D" parent="Obelisk"]
+unique_name_in_owner = true
+material = SubResource("CanvasItemMaterial_adpof")
+scale = Vector2(0.711588, 0.711588)
+emitting = false
+amount = 16
+process_material = SubResource("ParticleProcessMaterial_818x5")
+texture = ExtResource("2_440ko")
+visibility_rect = Rect2(-200, -200, 400, 400)
+local_coords = true
+trail_enabled = true
+trail_lifetime = 0.39
+
+[node name="Ring" type="GPUParticles2D" parent="Obelisk/In"]
+unique_name_in_owner = true
+material = SubResource("CanvasItemMaterial_adpof")
+emitting = false
+amount = 128
+process_material = SubResource("ParticleProcessMaterial_hgbiq")
+texture = ExtResource("2_440ko")
+visibility_rect = Rect2(-200, -200, 400, 400)
+local_coords = true
+trail_enabled = true
+trail_lifetime = 0.39
