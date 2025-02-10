@@ -5,12 +5,19 @@ var last_checkpoint : Vector2
 
 @onready var animated_sprite_2d = %Sprite2D
 @onready var ray_cast_2d = $RayCast2D
+@onready var liquid_cast_2d = $LiquidCast
 
 const MOVE_SPEED = 50
 const MAX_SPEED = 100
 const JUMP_FORCE = -450
 
+var drown_buildup : float = 0.0 
+
+var max_drown_buildup : float = 2.5
+
 var can_control : bool = true
+
+var in_liquid : bool = false
 
 #var can_jump : bool = true
 
@@ -56,7 +63,7 @@ func _physics_process(delta):
 	
 	handle_non_control(delta)
 	
-	if (direction != 0) and (not is_grappling):
+	if (direction != 0) and (not is_grappling) and (not in_liquid):
 		is_freefalling = false
 	
 	if not can_control:
@@ -74,7 +81,7 @@ func _physics_process(delta):
 				retract(delta)
 	
 	if direction != 0:
-		if not is_freefalling:
+		if (not is_freefalling) or (in_liquid):
 			force.x = MOVE_SPEED * direction
 			physics_material_override.friction = 0.1
 			if abs(linear_velocity.x) > MAX_SPEED:
@@ -83,6 +90,13 @@ func _physics_process(delta):
 				#print(linear_velocity.x)
 	else:
 		physics_material_override.friction = 1.0
+	
+	if in_liquid:
+		var water_speed : float = 0.5
+		var v_direction := Input.get_axis("up", "stop")
+		force.y = (MAX_SPEED * water_speed) * v_direction
+		if abs(linear_velocity.y) > (MAX_SPEED * water_speed):
+			linear_velocity.y = (MAX_SPEED * water_speed) * v_direction
 	
 	if Input.is_action_just_pressed("jump"):
 		if is_grappling:
@@ -104,6 +118,8 @@ func _physics_process(delta):
 func handle_non_control(delta : float):
 	check_length()
 	
+	handle_liquids(delta)
+	
 	if is_grappling:
 		rotate_joint()
 		
@@ -122,12 +138,12 @@ func handle_non_control(delta : float):
 	
 	check_length()
 	
-	if (not is_grappling) and (not _on_floor()):
+	if (not is_grappling) and (not _on_floor()) and (not in_liquid):
 		var t : float = 1
 		if is_freefalling:
 			t = 1.5
 		time_fallen += delta * t
-		if time_fallen > 5.0:
+		if time_fallen > 2.93:
 			scream()
 			time_fallen = 0.0
 			can_scream = false
@@ -141,7 +157,7 @@ func handle_non_control(delta : float):
 
 func _integrate_forces(state):
 	if not is_freefalling:
-		rotation_degrees = 0
+		rotation_degrees = lerp(rotation_degrees,0.0,0.3)
 
 func _set_animation(direction):
 	if direction > 0: animated_sprite_2d.flip_h = false
@@ -152,6 +168,10 @@ func _set_animation(direction):
 	#else: animated_sprite_2d.play("idle")
 
 func _on_floor():
+	
+	if in_liquid:
+		return false
+	
 	if is_freefalling:
 		if $RagddollCast.is_colliding():
 			return true
@@ -167,16 +187,23 @@ func grapple():
 	current_hook_cooldown = max_hook_cooldown
 	can_hook = false
 	
+	var speed : int = 2
+	
+	if Global.has_steroids_1:
+		speed = 3.5
+	
 	var g := gr.instantiate()
-	var dir := (get_global_mouse_position() - self.global_position).normalized() * 500 * 3
+	var dir := (get_global_mouse_position() - self.global_position).normalized() * 500 * speed
 	
 	is_grappling = true
 	is_freefalling = true
 	
+	g.player = self
 	g.hit.connect(impulse_to_grapple)
 	g.hit.connect(create_joint)
 	g.global_position = self.global_position
 	g.apply_central_impulse(dir)
+	g.rotation = dir.angle()
 	
 	hook = g
 	
@@ -245,7 +272,7 @@ func retract(delta):
 	if is_grappling:
 		if is_instance_valid(global_joint):
 			
-			print("is_retracting")
+			#print("is_retracting")
 			
 			global_joint.rest_length -= 50 * delta
 			global_joint.rest_length = clampf(global_joint.rest_length,30,1000)
@@ -256,13 +283,13 @@ func retract(delta):
 		if not is_instance_valid(hook):
 			return
 		
-		print("trying to retract")
+		#print("trying to retract")
 		
 		var dir := (hook.global_position - self.global_position)
 		var speed := 1000.0
 		var length := dir.length()
 		if length > 20:
-			print("applying speed")
+			#print("applying speed")
 			apply_central_force(dir.normalized() * speed)
 
 func check_length():
@@ -270,11 +297,13 @@ func check_length():
 		var dir := (hook.global_position - self.global_position)
 		var length := dir.length()
 		
-		var max_length := 500
+		var upgraded : float = 0.0
+		
+		var max_length := 500 + upgraded
 		
 		if is_instance_valid(hook):
 			if hook.grappled:
-				max_length = 650
+				max_length = 650 + (upgraded * 0.25)
 		
 		if length > max_length:
 			destroy_grapple()
@@ -288,6 +317,51 @@ func create_ui():
 	var u := ui.instantiate()
 	get_tree().current_scene.add_child.call_deferred(u)
 
+func handle_liquids(delta : float):
+	if drown_buildup >= max_drown_buildup:
+		return_to_checkpoint()
+		#drown_buildup = 0.0
+	
+	var p : TextureProgressBar = %poison
+	
+	p.max_value = max_drown_buildup
+	p.value = drown_buildup
+	p.show()
+	
+	var area2d : Area2D = $LiquidReg
+	var a := area2d.get_overlapping_areas()
+	
+	var in_water : bool = false
+	var in_poison : bool = false
+	
+	in_liquid = false
+	
+	for area in a:
+		if area is Water:
+			if area.poisonous:
+				in_poison = true
+			else:
+				in_water = true
+			
+			in_liquid = true
+	
+	if in_poison:
+		if not Global.has_poison_resist:
+			drown_buildup += delta
+		#apply_central_force(Vector2(0,-1) * 600)
+	elif in_water:
+		drown_buildup += delta * 0.3
+		#apply_central_force(Vector2(0,-1) * 1100)
+	else:
+		drown_buildup -= delta 
+	
+	if drown_buildup > 0:
+		p.modulate.a = move_toward(p.modulate.a,1.0,delta * 3.0)
+	else:
+		p.modulate.a = 0.0
+	
+	drown_buildup = clampf(drown_buildup,0,max_drown_buildup)
+
 func scream():
 	if not can_scream:
 		return
@@ -298,12 +372,21 @@ func scream():
 func return_to_checkpoint():
 	can_control = false
 	scream()
+	can_scream = false
+	drown_buildup = 0.0
 	Global.set_fade_screen(false)
 	await Global.fade_animation_finished
+	await  get_tree().create_timer(1.4,false).timeout
 	linear_velocity *= 0
 	self.global_position = last_checkpoint
 	self.rotation = 0
-	await  get_tree().create_timer(1.5,false).timeout
+	drown_buildup = 0.0
+	
+	for n in get_children():
+		if n is Camera2D:
+			n.reset_smoothing()
+	
+	await  get_tree().create_timer(0.5,false).timeout
 	Global.set_fade_screen(true)
 	await Global.fade_animation_finished
 	can_control = true

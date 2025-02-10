@@ -1,0 +1,23 @@
+[gd_resource type="TileSet" load_steps=9 format=3 uid="uid://w5rst4ax56w1"]
+
+[ext_resource type="PackedScene" uid="uid://t6xfng3v1qsi" path="res://scenes/block.tscn" id="1_wtj82"]
+[ext_resource type="PackedScene" uid="uid://c86ebt78ug24x" path="res://scenes/hook_block.tscn" id="2_pi43u"]
+[ext_resource type="PackedScene" uid="uid://bcfrt4en1wy5u" path="res://scenes/peculiar_coin.tscn" id="3_2hlfc"]
+[ext_resource type="PackedScene" uid="uid://c0ftviyipmvn" path="res://scenes/checkpoint.tscn" id="4_grroj"]
+[ext_resource type="PackedScene" uid="uid://ua8ycvs8vses" path="res://scenes/fungal_block.tscn" id="5_y37qp"]
+[ext_resource type="PackedScene" uid="uid://b4cfehc15q3l8" path="res://scenes/poison_block.tscn" id="6_ohsq3"]
+[ext_resource type="PackedScene" uid="uid://c2pejmkynibq" path="res://scenes/unhookable_block.tscn" id="7_vgvpp"]
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_3upqg"]
+resource_name = "Blocks"
+scenes/1/scene = ExtResource("1_wtj82")
+scenes/2/scene = ExtResource("2_pi43u")
+scenes/3/scene = ExtResource("3_2hlfc")
+scenes/4/scene = ExtResource("4_grroj")
+scenes/5/scene = ExtResource("5_y37qp")
+scenes/6/scene = ExtResource("6_ohsq3")
+scenes/8/scene = ExtResource("7_vgvpp")
+
+[resource]
+tile_size = Vector2i(60, 56)
+sources/0 = SubResource("TileSetScenesCollectionSource_3upqg")

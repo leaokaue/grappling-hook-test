@@ -3,6 +3,8 @@ class_name GrappleHook
 
 signal hit
 
+var player : Worm
+
 var grappled : bool = false
 
 var frozen : bool = false
@@ -17,6 +19,7 @@ var body_offset : Vector2
 
 func _ready() -> void:
 	$Send.play()
+	#look_at_dir()
 	self.body_entered.connect(_on_body_collision)
 
 func _physics_process(delta: float) -> void:
@@ -36,8 +39,18 @@ func _physics_process(delta: float) -> void:
 		##self.global_position = locked_position
 
 func _on_body_collision(body : Node2D):
-	print("BALLS")
+	#print("BALLS")
 	if not grappled:
+		
+		if body is CollisionObject2D:
+			
+			#print(body.get_collision_layer_value(4))
+			
+			if body.get_collision_layer_value(4):
+				#print("dying")
+				player.destroy_grapple()
+				return
+		
 		$Hit.play()
 		looks = false
 		#self.global_position = locked_position

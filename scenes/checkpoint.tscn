@@ -70,6 +70,7 @@ collision_mask = 2
 script = ExtResource("1_odvvk")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 shape = SubResource("RectangleShape2D_ujt3p")
 
 [node name="Obelisk" type="Node2D" parent="."]

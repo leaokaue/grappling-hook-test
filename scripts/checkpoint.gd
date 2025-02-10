@@ -20,8 +20,8 @@ func on_body_entered(body : Node2D):
 func set_checkpoint(player : Worm):
 	player.last_checkpoint = self.global_position
 
-func set_active(active : bool):
-	active = active
+func set_active(act : bool):
+	active = act
 	
 	var obelisk := %Obelisk
 	

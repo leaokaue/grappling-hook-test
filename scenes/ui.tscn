@@ -1,12 +1,12 @@
 [gd_scene load_steps=13 format=3 uid="uid://bnvneh2xfqhpp"]
 
-[ext_resource type="Script" path="res://scenes/coin_counter.gd" id="1_le5ak"]
+[ext_resource type="Script" path="res://scripts/coin_counter.gd" id="1_le5ak"]
 [ext_resource type="Texture2D" uid="uid://b2xs1j1q1scfq" path="res://sprites/nolan.jpg" id="2_4iwo5"]
 [ext_resource type="Shader" path="res://shaders/shine.gdshader" id="3_hew1h"]
 [ext_resource type="Texture2D" uid="uid://dy1vyv8rptpvm" path="res://sprites/uibg1.png" id="4_m8224"]
 [ext_resource type="Texture2D" uid="uid://botg44dsl6ad1" path="res://sprites/grapplebarbg.png" id="4_nbvbl"]
 [ext_resource type="Texture2D" uid="uid://b1nfnd1n3qxwb" path="res://sprites/grapplebar.png" id="5_6kawo"]
-[ext_resource type="Script" path="res://scenes/texture_progress_bar.gd" id="6_eqff7"]
+[ext_resource type="Script" path="res://scripts/texture_progress_bar.gd" id="6_eqff7"]
 [ext_resource type="Texture2D" uid="uid://dvpi7nso38kqm" path="res://sprites/grapple.png" id="6_wlgv8"]
 [ext_resource type="Texture2D" uid="uid://dvd0js1533ixy" path="res://sprites/uibg2.png" id="9_sky3p"]
 

@@ -1,0 +1,81 @@
+[gd_scene load_steps=11 format=3 uid="uid://c4rnq4dmyj4b6"]
+
+[ext_resource type="Script" path="res://scripts/item.gd" id="1_tusiq"]
+[ext_resource type="AudioStream" uid="uid://btqsxajb0xqbt" path="res://sounds/item_pickup.mp3" id="3_0l2o8"]
+[ext_resource type="Texture2D" uid="uid://bkjmyd763rtes" path="res://sprites/items/roids1.png" id="3_wbyoc"]
+[ext_resource type="Texture2D" uid="uid://b2hpi4gi8412a" path="res://sprites/ball.png" id="4_hwiit"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_y6qwe"]
+size = Vector2(76, 74)
+
+[sub_resource type="Curve" id="Curve_03b4m"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.231183, 1), 0.0, 0.0, 0, 0, Vector2(0.801075, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_efji5"]
+curve = SubResource("Curve_03b4m")
+
+[sub_resource type="Curve" id="Curve_o2p2a"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.629032, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_msdbv"]
+curve = SubResource("Curve_o2p2a")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_3gvof"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 35.1
+spread = 180.0
+initial_velocity_min = 148.65
+initial_velocity_max = 283.79
+gravity = Vector3(0, 98, 0)
+scale_min = 0.1
+scale_max = 0.1
+scale_curve = SubResource("CurveTexture_msdbv")
+color = Color(0.625501, 0.622979, 0.643724, 1)
+alpha_curve = SubResource("CurveTexture_efji5")
+
+[node name="Item" type="Node2D"]
+script = ExtResource("1_tusiq")
+
+[node name="Area2D" type="Area2D" parent="."]
+unique_name_in_owner = true
+scale = Vector2(1, 1)
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_y6qwe")
+
+[node name="Item" type="TextureRect" parent="."]
+unique_name_in_owner = true
+offset_left = -40.0
+offset_top = -40.0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("3_wbyoc")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="Light" type="Polygon2D" parent="Item"]
+unique_name_in_owner = true
+z_index = -1
+position = Vector2(40, 38)
+rotation = 0.441446
+scale = Vector2(1, 1)
+color = Color(1, 1, 1, 0.498039)
+offset = Vector2(-10.305, -5.42459)
+polygon = PackedVector2Array(-19.5989, -25.8905, -10.5079, -32.3985, 7.68471, -5.60239, 12.1557, -5.50311, 17.4707, -43.4076, 25.8862, -39.6422, 17.1037, -6.73521, 35.6331, -35.3998, 40.909, -31.2568, 19.2399, -2.21454, 43, -21, 47, -17, 20.8993, 3.63752, 53, -2, 54, 9, 23.4627, 9.06232, 50, 27, 42, 39, 20.7007, 12.5796, 31, 39, 24, 43, 17, 16, 11, 60, -4, 60, 10, 17, -21, 49, -31, 37, 4.14795, 12.6594, -36, 20, -35.9921, 7.29482, 2.91584, 7.71144, -32.1273, -5.59177, -24.7454, -15.7163, 3.54165, -0.326496)
+
+[node name="blamo" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_0l2o8")
+volume_db = -10.0
+
+[node name="collect" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 32
+process_material = SubResource("ParticleProcessMaterial_3gvof")
+texture = ExtResource("4_hwiit")
+lifetime = 0.4
+one_shot = true
+explosiveness = 0.9
