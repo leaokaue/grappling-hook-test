@@ -16,7 +16,6 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="TextureRect" type="TextureRect" parent="Control"]
-modulate = Color(1, 1, 1, 0.552941)
 layout_mode = 0
 offset_left = 307.0
 offset_top = 572.0
@@ -28,12 +27,14 @@ texture = ExtResource("2_pltur")
 [node name="Panel" type="Panel" parent="Control"]
 visible = false
 modulate = Color(1, 1, 1, 0.745098)
+layout_mode = 0
 offset_left = 356.0
 offset_top = 132.0
 offset_right = 796.0
 offset_bottom = 516.0
 
 [node name="Picked" type="Label" parent="Control"]
+layout_mode = 0
 offset_left = 531.0
 offset_top = 136.0
 offset_right = 612.0
@@ -41,6 +42,7 @@ offset_bottom = 159.0
 text = "Picked Up"
 
 [node name="Anybutton" type="Label" parent="Control"]
+layout_mode = 0
 offset_left = 482.0
 offset_top = 476.0
 offset_right = 677.0
@@ -49,6 +51,7 @@ text = "Press any button to close"
 
 [node name="ItemName" type="RichTextLabel" parent="Control"]
 unique_name_in_owner = true
+layout_mode = 0
 offset_left = 360.0
 offset_top = 159.0
 offset_right = 796.0
@@ -60,6 +63,7 @@ fit_content = true
 
 [node name="ItemDesc" type="RichTextLabel" parent="Control"]
 unique_name_in_owner = true
+layout_mode = 0
 offset_left = 364.0
 offset_top = 337.0
 offset_right = 785.0
@@ -71,6 +75,7 @@ fit_content = true
 
 [node name="Item" type="TextureRect" parent="Control"]
 unique_name_in_owner = true
+layout_mode = 0
 offset_left = 528.0
 offset_top = 213.0
 offset_right = 608.0
@@ -85,6 +90,5 @@ modulate = Color(1, 1, 1, 0.0862745)
 show_behind_parent = true
 position = Vector2(38, 33)
 rotation = 0.441446
-scale = Vector2(1, 1)
 offset = Vector2(-10.305, -5.42459)
 polygon = PackedVector2Array(-19.5989, -25.8905, -10.5079, -32.3985, 7.68471, -5.60239, 12.1557, -5.50311, 17.4707, -43.4076, 25.8862, -39.6422, 17.1037, -6.73521, 35.6331, -35.3998, 40.909, -31.2568, 19.2399, -2.21454, 43, -21, 47, -17, 20.8993, 3.63752, 53, -2, 54, 9, 23.4627, 9.06232, 50, 27, 42, 39, 20.7007, 12.5796, 31, 39, 24, 43, 17, 16, 11, 60, -4, 60, 10, 17, -21, 49, -31, 37, 4.14795, 12.6594, -36, 20, -35.9921, 7.29482, 2.91584, 7.71144, -32.1273, -5.59177, -24.7454, -15.7163, 3.54165, -0.326496)

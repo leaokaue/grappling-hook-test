@@ -1,12 +1,14 @@
-[gd_resource type="TileSet" load_steps=9 format=3 uid="uid://w5rst4ax56w1"]
+[gd_resource type="TileSet" load_steps=11 format=3 uid="uid://w5rst4ax56w1"]
 
 [ext_resource type="PackedScene" uid="uid://t6xfng3v1qsi" path="res://scenes/block.tscn" id="1_wtj82"]
+[ext_resource type="PackedScene" uid="uid://2up45yvg4gfs" path="res://scenes/water_block.tscn" id="2_0f1op"]
 [ext_resource type="PackedScene" uid="uid://c86ebt78ug24x" path="res://scenes/hook_block.tscn" id="2_pi43u"]
 [ext_resource type="PackedScene" uid="uid://bcfrt4en1wy5u" path="res://scenes/peculiar_coin.tscn" id="3_2hlfc"]
 [ext_resource type="PackedScene" uid="uid://c0ftviyipmvn" path="res://scenes/checkpoint.tscn" id="4_grroj"]
 [ext_resource type="PackedScene" uid="uid://ua8ycvs8vses" path="res://scenes/fungal_block.tscn" id="5_y37qp"]
 [ext_resource type="PackedScene" uid="uid://b4cfehc15q3l8" path="res://scenes/poison_block.tscn" id="6_ohsq3"]
 [ext_resource type="PackedScene" uid="uid://c2pejmkynibq" path="res://scenes/unhookable_block.tscn" id="7_vgvpp"]
+[ext_resource type="PackedScene" uid="uid://d381rn733wq1e" path="res://scenes/spike_block.tscn" id="8_pwwmp"]
 
 [sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_3upqg"]
 resource_name = "Blocks"
@@ -17,6 +19,8 @@ scenes/4/scene = ExtResource("4_grroj")
 scenes/5/scene = ExtResource("5_y37qp")
 scenes/6/scene = ExtResource("6_ohsq3")
 scenes/8/scene = ExtResource("7_vgvpp")
+scenes/9/scene = ExtResource("8_pwwmp")
+scenes/11/scene = ExtResource("2_0f1op")
 
 [resource]
 tile_size = Vector2i(60, 56)

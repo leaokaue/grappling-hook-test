@@ -1,10 +1,14 @@
-[gd_scene load_steps=10 format=3 uid="uid://bacl7irhgnrr7"]
+[gd_scene load_steps=14 format=3 uid="uid://bacl7irhgnrr7"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_d3wq5"]
 [ext_resource type="Texture2D" uid="uid://bdw2ln7jh2dda" path="res://sprites/Wormchelt.png" id="2_4q2ix"]
 [ext_resource type="AudioStream" uid="uid://84ge45s7w0d6" path="res://sounds/scream.mp3" id="3_p5reh"]
 [ext_resource type="Texture2D" uid="uid://drekgwtmn12em" path="res://sprites/poisonbarbg.png" id="4_lc4xj"]
+[ext_resource type="AudioStream" uid="uid://lqak5ne0y0ry" path="res://sounds/spike_death_horrible.mp3" id="4_qltkw"]
+[ext_resource type="AudioStream" uid="uid://2dj8lww8invu" path="res://sounds/drowning.mp3" id="5_lw7l2"]
 [ext_resource type="Texture2D" uid="uid://mcb1ibd4kpgc" path="res://sprites/poisonbarfill.png" id="5_qtas3"]
+[ext_resource type="AudioStream" uid="uid://c7cqe1v7tc6px" path="res://sounds/acid_death.mp3" id="6_oqllm"]
+[ext_resource type="AudioStream" uid="uid://c6lpykemf2ubq" path="res://sounds/sizzle.mp3" id="7_y18mt"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_asclu"]
 friction = 0.1
@@ -20,6 +24,7 @@ size = Vector2(18.09, 20)
 size = Vector2(14, 30)
 
 [node name="Worm" type="RigidBody2D"]
+texture_filter = 5
 collision_layer = 2
 physics_material_override = SubResource("PhysicsMaterial_asclu")
 continuous_cd = 1
@@ -84,6 +89,28 @@ unique_name_in_owner = true
 stream = ExtResource("3_p5reh")
 volume_db = -10.0
 pitch_scale = 1.2
+
+[node name="scream2" type="AudioStreamPlayer2D" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("4_qltkw")
+volume_db = -10.0
+
+[node name="scream3" type="AudioStreamPlayer2D" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("5_lw7l2")
+volume_db = 15.0
+pitch_scale = 1.2
+
+[node name="scream4" type="AudioStreamPlayer2D" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("6_oqllm")
+volume_db = -5.0
+
+[node name="sizzle" type="AudioStreamPlayer2D" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("7_y18mt")
+volume_db = 5.0
+pitch_scale = 1.1
 
 [node name="poison" type="TextureProgressBar" parent="."]
 unique_name_in_owner = true

@@ -155,6 +155,7 @@ func handle_non_control(delta : float):
 		can_scream = true
 	
 
+@warning_ignore("unused_parameter")
 func _integrate_forces(state):
 	if not is_freefalling:
 		rotation_degrees = lerp(rotation_degrees,0.0,0.3)
@@ -187,7 +188,7 @@ func grapple():
 	current_hook_cooldown = max_hook_cooldown
 	can_hook = false
 	
-	var speed : int = 2
+	var speed : float = 2
 	
 	if Global.has_steroids_1:
 		speed = 3.5
@@ -225,7 +226,6 @@ func rotate_joint():
 	
 	if is_instance_valid(j):
 		var dir := (hook.global_position - self.global_position)
-		var length := dir.length()
 		
 		var rot := dir.angle() + Vector2.DOWN.angle()
 		
@@ -318,9 +318,9 @@ func create_ui():
 	get_tree().current_scene.add_child.call_deferred(u)
 
 func handle_liquids(delta : float):
-	if drown_buildup >= max_drown_buildup:
-		return_to_checkpoint()
-		#drown_buildup = 0.0
+	if not can_control:
+		drown_buildup = 0.0
+		return
 	
 	var p : TextureProgressBar = %poison
 	
@@ -355,6 +355,25 @@ func handle_liquids(delta : float):
 	else:
 		drown_buildup -= delta 
 	
+	var death_sound : float = 2
+	var multiplier : float = 3.5
+	
+	var s : AudioStreamPlayer2D = %sizzle
+	
+	if in_poison:
+		death_sound = 3.0
+		multiplier = 1.0
+		
+		if not s.playing:
+			s.play()
+	else:
+		if s.playing:
+			s.stop()
+	
+	if drown_buildup >= max_drown_buildup:
+		@warning_ignore("narrowing_conversion")
+		return_to_checkpoint(death_sound,multiplier)
+	
 	if drown_buildup > 0:
 		p.modulate.a = move_toward(p.modulate.a,1.0,delta * 3.0)
 	else:
@@ -362,21 +381,29 @@ func handle_liquids(delta : float):
 	
 	drown_buildup = clampf(drown_buildup,0,max_drown_buildup)
 
-func scream():
+func scream(scream_type : int = 0):
 	if not can_scream:
 		return
 	
-	%scream.play()
+	match scream_type:
+		0:
+			%scream.play()
+		1:
+			%scream2.play()
+		2:
+			%scream3.play()
+		3:
+			%scream4.play()
 	
 
-func return_to_checkpoint():
+func return_to_checkpoint(scream_type : int = 0,duration_multiplier : float = 1.0):
 	can_control = false
-	scream()
+	scream(scream_type)
 	can_scream = false
 	drown_buildup = 0.0
 	Global.set_fade_screen(false)
 	await Global.fade_animation_finished
-	await  get_tree().create_timer(1.4,false).timeout
+	await  get_tree().create_timer(1.4 * duration_multiplier,false).timeout
 	linear_velocity *= 0
 	self.global_position = last_checkpoint
 	self.rotation = 0
