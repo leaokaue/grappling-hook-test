@@ -1,0 +1,52 @@
+[gd_scene load_steps=7 format=3 uid="uid://c7ntuxy8irejo"]
+
+[ext_resource type="Script" path="res://scripts/background_manager.gd" id="1_lsvcr"]
+[ext_resource type="Texture2D" uid="uid://dghutenmpp3mc" path="res://sprites/bg.jpg" id="2_he26e"]
+[ext_resource type="Texture2D" uid="uid://bv8y3ki3lfhl8" path="res://sprites/bgrain.png" id="3_wp452"]
+[ext_resource type="Texture2D" uid="uid://ynb42mg5keuu" path="res://sprites/skybg.jpg" id="4_m1en6"]
+[ext_resource type="Texture2D" uid="uid://dgt4aekeutbt5" path="res://sprites/bgnight.png" id="5_lk4m7"]
+[ext_resource type="Texture2D" uid="uid://bll8ga36hvk6k" path="res://sprites/bgspace.jpg" id="6_u6gfg"]
+
+[node name="ParallaxBackground" type="ParallaxBackground"]
+scroll_ignore_camera_zoom = true
+script = ExtResource("1_lsvcr")
+
+[node name="BgHappy" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+z_index = 1
+position = Vector2(0, -8)
+scale = Vector2(0.281731, 0.259354)
+texture = ExtResource("2_he26e")
+centered = false
+
+[node name="BgSad" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+modulate = Color(0.5, 0.5, 0.5, 0)
+position = Vector2(0, -8)
+scale = Vector2(0.301389, 0.331019)
+texture = ExtResource("3_wp452")
+centered = false
+
+[node name="BgWindy" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+modulate = Color(0.76, 0.76, 0.76, 0)
+position = Vector2(0, -8)
+scale = Vector2(0.148348, 0.136566)
+texture = ExtResource("4_m1en6")
+centered = false
+
+[node name="BgDark" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+modulate = Color(0.76, 0.76, 0.76, 0)
+position = Vector2(0, -8)
+scale = Vector2(0.301744, 0.327778)
+texture = ExtResource("5_lk4m7")
+centered = false
+
+[node name="BgVOID" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+modulate = Color(0.76, 0.76, 0.76, 0)
+position = Vector2(-61, -8)
+scale = Vector2(0.500141, 0.460417)
+texture = ExtResource("6_u6gfg")
+centered = false

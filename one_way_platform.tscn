@@ -1,0 +1,53 @@
+[gd_scene load_steps=4 format=3 uid="uid://dopq4tacnt2t0"]
+
+[ext_resource type="Texture2D" uid="uid://jkkue63tphao" path="res://sprites/cobblestone.jpg" id="1_in513"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ntdmt"]
+size = Vector2(62, 14)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_r7g4n"]
+size = Vector2(62, 28)
+
+[node name="Block" type="StaticBody2D"]
+z_index = 1
+
+[node name="TextureRect" type="TextureRect" parent="."]
+visible = false
+modulate = Color(0.459817, 0.30564, 0, 1)
+offset_left = -179.0
+offset_top = -169.0
+offset_right = 178.0
+offset_bottom = 170.0
+texture = ExtResource("1_in513")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -31.0
+offset_top = -29.0
+offset_right = 31.0
+offset_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0384, 0.244907, 0.32, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(1.52588e-05, -21)
+shape = SubResource("RectangleShape2D_ntdmt")
+one_way_collision = true
+one_way_collision_margin = 5.0
+debug_color = Color(0.13, 0.3765, 1, 0)
+
+[node name="HookLatch" type="StaticBody2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HookLatch"]
+position = Vector2(1.52588e-05, -14)
+shape = SubResource("RectangleShape2D_r7g4n")
+debug_color = Color(0.13, 0.3765, 1, 0)

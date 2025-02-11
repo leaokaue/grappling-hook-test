@@ -1,0 +1,346 @@
+[gd_scene load_steps=5 format=3 uid="uid://d2es5ksc3ksgp"]
+
+[ext_resource type="Texture2D" uid="uid://dvd0js1533ixy" path="res://sprites/uibg2.png" id="1_i8q1j"]
+[ext_resource type="Script" path="res://scripts/map.gd" id="1_ifiad"]
+[ext_resource type="Texture2D" uid="uid://dy1vyv8rptpvm" path="res://sprites/uibg1.png" id="2_qbysm"]
+[ext_resource type="Script" path="res://scenes/on_map_waypoint.gd" id="3_y1xv5"]
+
+[node name="Map" type="CanvasLayer"]
+layer = 25
+script = ExtResource("1_ifiad")
+
+[node name="Control" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.345098)
+
+[node name="MapSprite" type="Control" parent="Control"]
+modulate = Color(0.646029, 0.646029, 0.646029, 1)
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+metadata/_edit_lock_ = true
+metadata/_edit_group_ = true
+
+[node name="TextureRect" type="TextureRect" parent="Control/MapSprite"]
+clip_children = 2
+layout_mode = 0
+offset_left = 77.0
+offset_top = -9.0
+offset_right = 589.0
+offset_bottom = 503.0
+texture = ExtResource("1_i8q1j")
+
+[node name="ColorRect2" type="ColorRect" parent="Control/MapSprite/TextureRect"]
+layout_mode = 0
+offset_left = -77.0
+offset_top = 9.0
+offset_right = 1076.0
+offset_bottom = 659.0
+color = Color(0.419608, 0.32549, 0.0235294, 1)
+
+[node name="TextureRect2" type="TextureRect" parent="Control/MapSprite"]
+clip_children = 2
+layout_mode = 0
+offset_left = 275.0
+offset_top = 12.0
+offset_right = 787.0
+offset_bottom = 524.0
+texture = ExtResource("1_i8q1j")
+
+[node name="ColorRect2" type="ColorRect" parent="Control/MapSprite/TextureRect2"]
+offset_left = -77.0
+offset_top = 9.0
+offset_right = 1076.0
+offset_bottom = 659.0
+color = Color(0.419608, 0.32549, 0.0235294, 1)
+
+[node name="TextureRect3" type="TextureRect" parent="Control/MapSprite"]
+clip_children = 2
+layout_mode = 0
+offset_left = 1048.0
+offset_top = 480.0
+offset_right = 1560.0
+offset_bottom = 992.0
+rotation = -3.14159
+texture = ExtResource("1_i8q1j")
+
+[node name="ColorRect2" type="ColorRect" parent="Control/MapSprite/TextureRect3"]
+offset_left = -77.0
+offset_top = 9.0
+offset_right = 1076.0
+offset_bottom = 659.0
+color = Color(0.419608, 0.32549, 0.0235294, 1)
+
+[node name="TextureRect4" type="TextureRect" parent="Control/MapSprite"]
+clip_children = 2
+layout_mode = 0
+offset_left = 593.0
+offset_top = 660.0
+offset_right = 1105.0
+offset_bottom = 1172.0
+rotation = -3.14159
+texture = ExtResource("1_i8q1j")
+
+[node name="TextureRect5" type="TextureRect" parent="Control/MapSprite"]
+clip_children = 2
+layout_mode = 0
+offset_left = 454.0
+offset_top = 159.0
+offset_right = 966.0
+offset_bottom = 671.0
+texture = ExtResource("1_i8q1j")
+
+[node name="TextureRect6" type="TextureRect" parent="Control/MapSprite"]
+clip_children = 2
+layout_mode = 0
+offset_left = 827.0
+offset_top = 167.0
+offset_right = 1339.0
+offset_bottom = 679.0
+rotation = 0.785397
+texture = ExtResource("2_qbysm")
+
+[node name="TextureRect7" type="TextureRect" parent="Control/MapSprite"]
+clip_children = 2
+layout_mode = 0
+offset_left = 830.0
+offset_top = 53.0
+offset_right = 1342.0
+offset_bottom = 565.0
+rotation = 0.785397
+texture = ExtResource("2_qbysm")
+
+[node name="TextureRect8" type="TextureRect" parent="Control/MapSprite"]
+clip_children = 2
+layout_mode = 0
+offset_left = 813.0
+offset_top = 476.0
+offset_right = 1325.0
+offset_bottom = 988.0
+rotation = -2.35619
+texture = ExtResource("2_qbysm")
+
+[node name="TextureRect9" type="TextureRect" parent="Control/MapSprite"]
+clip_children = 2
+layout_mode = 0
+offset_left = 370.0
+offset_top = 469.0
+offset_right = 882.0
+offset_bottom = 981.0
+rotation = -2.35619
+texture = ExtResource("2_qbysm")
+
+[node name="TextureRect10" type="TextureRect" parent="Control/MapSprite"]
+clip_children = 2
+layout_mode = 0
+offset_left = 363.0
+offset_top = 764.0
+offset_right = 875.0
+offset_bottom = 1276.0
+rotation = -2.35619
+texture = ExtResource("2_qbysm")
+
+[node name="SpawnIsland" type="Control" parent="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 569.0
+offset_top = 516.0
+offset_right = 569.0
+offset_bottom = 516.0
+scale = Vector2(0.756491, 0.756491)
+script = ExtResource("3_y1xv5")
+
+[node name="ColorRect2" type="ColorRect" parent="Control/SpawnIsland"]
+layout_mode = 0
+offset_left = -44.0
+offset_top = -42.0
+offset_right = 50.0
+offset_bottom = 50.0
+color = Color(0.379095, 0.193826, 0, 1)
+
+[node name="Travel" type="Button" parent="Control/SpawnIsland"]
+layout_mode = 0
+offset_left = -23.794
+offset_top = 33.0473
+offset_right = 15.206
+offset_bottom = 55.0473
+scale = Vector2(1.32322, 1.32322)
+theme_override_font_sizes/font_size = 10
+text = "Travel"
+
+[node name="Label" type="Label" parent="Control/SpawnIsland"]
+layout_mode = 0
+offset_left = -203.0
+offset_top = -68.0
+offset_right = 209.0
+offset_bottom = -45.0
+text = "Spawn Island"
+horizontal_alignment = 1
+
+[node name="WeepingBogs" type="Control" parent="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 331.0
+offset_top = 380.0
+offset_right = 331.0
+offset_bottom = 380.0
+scale = Vector2(0.87386, 0.87386)
+script = ExtResource("3_y1xv5")
+waypoint = 1
+
+[node name="ColorRect2" type="ColorRect" parent="Control/WeepingBogs"]
+layout_mode = 0
+offset_left = -44.0
+offset_top = -42.0
+offset_right = 50.0
+offset_bottom = 50.0
+color = Color(0.379095, 0.193826, 0, 1)
+
+[node name="Travel" type="Button" parent="Control/WeepingBogs"]
+layout_mode = 0
+offset_left = -24.0314
+offset_top = 36.6192
+offset_right = 14.9686
+offset_bottom = 58.6192
+scale = Vector2(1.27023, 1.27023)
+theme_override_font_sizes/font_size = 10
+text = "Travel"
+
+[node name="Label" type="Label" parent="Control/WeepingBogs"]
+layout_mode = 0
+offset_left = -203.0
+offset_top = -68.0
+offset_right = 209.0
+offset_bottom = -45.0
+text = "Weeping Bogs"
+horizontal_alignment = 1
+
+[node name="WindmillianRecluse" type="Control" parent="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 842.0
+offset_top = 362.0
+offset_right = 842.0
+offset_bottom = 362.0
+scale = Vector2(0.897414, 0.897414)
+script = ExtResource("3_y1xv5")
+waypoint = 2
+
+[node name="ColorRect2" type="ColorRect" parent="Control/WindmillianRecluse"]
+layout_mode = 0
+offset_left = -44.0
+offset_top = -42.0
+offset_right = 50.0
+offset_bottom = 50.0
+color = Color(0.379095, 0.193826, 0, 1)
+
+[node name="Travel" type="Button" parent="Control/WindmillianRecluse"]
+layout_mode = 0
+offset_left = -20.0575
+offset_top = 36.7723
+offset_right = 18.9425
+offset_bottom = 58.7723
+scale = Vector2(1.19948, 1.19948)
+theme_override_font_sizes/font_size = 10
+text = "Travel"
+
+[node name="Label" type="Label" parent="Control/WindmillianRecluse"]
+layout_mode = 0
+offset_left = -203.0
+offset_top = -68.0
+offset_right = 209.0
+offset_bottom = -45.0
+text = "Windmillian Recluse"
+horizontal_alignment = 1
+
+[node name="SpikeZone" type="Control" parent="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 576.0
+offset_top = 236.0
+offset_right = 576.0
+offset_bottom = 236.0
+scale = Vector2(0.806775, 0.806775)
+script = ExtResource("3_y1xv5")
+waypoint = 3
+
+[node name="ColorRect2" type="ColorRect" parent="Control/SpikeZone"]
+layout_mode = 0
+offset_left = -44.0
+offset_top = -42.0
+offset_right = 50.0
+offset_bottom = 50.0
+color = Color(0.379095, 0.193826, 0, 1)
+
+[node name="Travel" type="Button" parent="Control/SpikeZone"]
+layout_mode = 0
+offset_left = -21.0716
+offset_top = 33.4666
+offset_right = 17.9284
+offset_bottom = 55.4666
+scale = Vector2(1.17364, 1.17364)
+theme_override_font_sizes/font_size = 10
+text = "Travel"
+
+[node name="Label" type="Label" parent="Control/SpikeZone"]
+layout_mode = 0
+offset_left = -203.0
+offset_top = -82.0
+offset_right = 209.0
+offset_bottom = -33.0
+text = "Really
+Dangerous Spike Zone"
+horizontal_alignment = 1
+
+[node name="BlackHoleDistrict" type="Control" parent="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 576.0
+offset_top = 75.0
+offset_right = 576.0
+offset_bottom = 75.0
+scale = Vector2(0.806775, 0.806775)
+script = ExtResource("3_y1xv5")
+waypoint = 4
+
+[node name="ColorRect2" type="ColorRect" parent="Control/BlackHoleDistrict"]
+layout_mode = 0
+offset_left = -44.0
+offset_top = -42.0
+offset_right = 50.0
+offset_bottom = 50.0
+color = Color(0.379095, 0.193826, 0, 1)
+
+[node name="Travel" type="Button" parent="Control/BlackHoleDistrict"]
+layout_mode = 0
+offset_left = -21.0716
+offset_top = 32.2271
+offset_right = 17.9284
+offset_bottom = 54.2271
+scale = Vector2(1.20185, 1.20185)
+theme_override_font_sizes/font_size = 10
+text = "Travel"
+
+[node name="Label" type="Label" parent="Control/BlackHoleDistrict"]
+layout_mode = 0
+offset_left = -203.0
+offset_top = -82.0
+offset_right = 209.0
+offset_bottom = -33.0
+text = "Black Hole
+District"
+horizontal_alignment = 1

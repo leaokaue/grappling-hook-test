@@ -8,6 +8,10 @@ extends Node2D
 
 var is_collected : bool = false
 
+var min_scale_collected : float = 0.0
+
+var fake_dist : float = 100
+
 func _ready() -> void:
 	area.body_entered.connect(on_body_entered)
 	tween()
@@ -30,7 +34,7 @@ func collect():
 		$collect.emitting = true
 		$bling.play()
 		
-		await get_tree().create_timer(2.0,false).timeout
+		await get_tree().create_timer(3.0,false).timeout
 		self.queue_free()
 
 func tween():
@@ -49,10 +53,10 @@ func handle_confusion(delta : float):
 	var max_sound_db : float = 15
 	
 	var min_pitch : float = 1.0
-	var max_pitch : float = 0.45
+	var max_pitch : float = 0.65
 	
 	var min_time_scale : float = 1.0
-	var max_time_scale : float = 0.1
+	var max_time_scale : float = -0.1
 	
 	var min_frequency : float = 10
 	var max_frequency : float = 25
@@ -63,14 +67,23 @@ func handle_confusion(delta : float):
 	var min_music_bus_db : float = 0.0
 	var max_music_bus_db : float = -25.0
 	
-	var l := get_length_to_player()
+	var l := get_length_to_player(delta)
 	
 	var max_player_range : float = 1000
 	var min_player_range : float = 100
 	
 	l = clampf(l,min_player_range,max_player_range)
 	
-	var mod : float = (min_player_range / l)
+	
+	var mod : float = ((l / max_player_range) -1) * -1
+	
+	#print(l)
+	#print(mod)
+	
+	if is_collected:
+		min_confusion_scale = min_scale_collected
+		min_ripple = 0
+		min_frequency = 0
 	
 	var confusion_scale := min_confusion_scale + ((max_confusion_scale - min_confusion_scale) * mod) 
 	var sound_db := min_sound_db + ((max_sound_db - min_sound_db) * mod)
@@ -91,6 +104,10 @@ func handle_confusion(delta : float):
 	m.set_shader_parameter("ripple_rate",ripple)
 	
 
-func get_length_to_player() -> float:
-	var length := (self.global_position - Global.player.global_position).length()
-	return length
+func get_length_to_player(delta : float) -> float:
+	if not is_collected:
+		var length := (self.global_position - Global.player.global_position).length()
+		return length
+	else:
+		fake_dist += delta * 500
+		return fake_dist

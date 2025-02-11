@@ -1,6 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://c2pejmkynibq"]
-
-[ext_resource type="Texture2D" uid="uid://jkkue63tphao" path="res://sprites/cobblestone.jpg" id="1_41yxn"]
+[gd_scene load_steps=2 format=3 uid="uid://c2pejmkynibq"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dtxcp"]
 size = Vector2(60, 56)
@@ -8,17 +6,6 @@ size = Vector2(60, 56)
 [node name="Block" type="StaticBody2D"]
 z_index = 1
 collision_layer = 9
-
-[node name="TextureRect" type="TextureRect" parent="."]
-visible = false
-modulate = Color(0.459817, 0.30564, 0, 1)
-offset_left = -179.0
-offset_top = -169.0
-offset_right = 178.0
-offset_bottom = 170.0
-texture = ExtResource("1_41yxn")
-expand_mode = 1
-stretch_mode = 1
 
 [node name="ColorRect" type="ColorRect" parent="."]
 anchors_preset = 8

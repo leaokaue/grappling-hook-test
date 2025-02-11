@@ -20,24 +20,24 @@ func _ready() -> void:
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	if downcast.is_colliding():
-		print("downcast")
+		#print("downcast")
 		vsprite.hide()
 		hsprite.show()
 		vsprite_col.disabled = true
+	elif upcast.is_colliding():
+		#print("upcast")
+		vsprite.hide()
+		hsprite.show()
+		vsprite_col.disabled = true
+		hsprite.scale *= -1
 	elif rightcast.is_colliding():
-		print("rightcast")
+		#print("rightcast")
 		hsprite.hide()
 		vsprite.show()
 		hsprite_col.disabled = true
 		vsprite.scale *= -1
 	elif leftcast.is_colliding():
-		print("leftcast")
+		#print("leftcast")
 		hsprite.hide()
 		vsprite.show()
 		hsprite_col.disabled = true
-	elif upcast.is_colliding():
-		print("upcast")
-		vsprite.hide()
-		hsprite.show()
-		vsprite_col.disabled = true
-		hsprite.scale *= -1

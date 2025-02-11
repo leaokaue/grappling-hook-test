@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=4 uid="uid://biquah45yq0nq"]
+
+[ext_resource type="TileSet" uid="uid://w5rst4ax56w1" path="res://resources/WorldTiles.tres" id="1_bxg6a"]
+
+[node name="WeepingBogs" type="TileMapLayer"]
+position = Vector2(-1530, -1764)
+tile_map_data = PackedByteArray("AAD8/wIAAAAAAAAABQD7/wIAAAAAAAAABQD6/wIAAAAAAAAABQD5/wIAAAAAAAAABQD4/wIAAAAAAAAABQD4/wEAAAAAAAAABQD5/wEAAAAAAAAABQD6/wEAAAAAAAAABQD7/wEAAAAAAAAABQD8/wEAAAAAAAAABQD8/wAAAAAAAAAABQD7/wAAAAAAAAAABQA=")
+tile_set = ExtResource("1_bxg6a")

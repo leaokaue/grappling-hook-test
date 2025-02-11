@@ -17,6 +17,9 @@ var grappled_body : CollisionObject2D
 
 var body_offset : Vector2 
 
+@onready var send := %Send
+@onready var hits := %Hit
+
 func _ready() -> void:
 	$Send.play()
 	#look_at_dir()
@@ -28,7 +31,8 @@ func _physics_process(delta: float) -> void:
 	
 	if grappled:
 		#if grappled_body is AnimatableBody2D:
-		self.global_position = grappled_body.global_position + body_offset
+		if is_instance_valid(grappled_body):
+			self.global_position = grappled_body.global_position + body_offset
 	
 	#print(self.global_position)
 	
@@ -44,7 +48,8 @@ func _on_body_collision(body : Node2D):
 		
 		if body is CollisionObject2D:
 			
-			#print(body.get_collision_layer_value(4))
+			grappled_body = body
+			body_offset = self.global_position - body.global_position
 			
 			if body.get_collision_layer_value(4):
 				#print("dying")
@@ -59,11 +64,21 @@ func _on_body_collision(body : Node2D):
 		set_deferred("freeze",true)
 		#self.lock_rotation = true
 		hit.emit()
-		grappled_body = body
-		body_offset = self.global_position - body.global_position
 		#self.call_deferred("reparent",body)
 
 func die():
+	if is_instance_valid(send):
+		var t := send.create_tween()
+		t.tween_interval(2.0)
+		t.tween_callback(send.queue_free)
+		send.reparent(get_tree().current_scene)
+	
+	if is_instance_valid(hits):
+		var t2 := hits.create_tween()
+		t2.tween_interval(2.0)
+		t2.tween_callback(hits.queue_free)
+		hits.reparent(get_tree().current_scene)
+	
 	self.queue_free()
 
 func look_at_dir():

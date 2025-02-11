@@ -5,9 +5,46 @@ signal update_coins
 
 signal fade_animation_finished
 
+signal toggle_rain(on : bool)
+
+signal teleport_to_waypoint(waypoint : int)
+
+signal player_dead
+
+signal clear_map
+
 var coins : int = 0
 
 const max_coins : int = 100
+
+var seen_map : Dictionary = {
+	"Spawn" : true,
+	"Bog" : true,
+	"Windmill" : false,
+	"Spike" : false,
+	"Space" : false,
+	 
+}
+
+var waypoints_unlocked : Dictionary = {
+	"Spawn" : true,
+	"Bog" : false,
+	"Windmill" : false,
+	"Spike" : false,
+	"Space" : false,
+	 
+}
+
+var waypoint_position : Dictionary = {
+	"Spawn" : Vector2(),
+	"Bog" : Vector2(),
+	"Windmill" : Vector2(),
+	"Spike" : Vector2(),
+	"Space" : Vector2(),
+	 
+}
+
+var can_use_waypoints : bool = false
 
 #gives an arrow towards the closest coin
 var has_coin_compass : bool = false
@@ -53,7 +90,12 @@ var has_steroids_3 : bool = false
 
 var player : Worm
 
+var background : BackgroundManager
+
+var music_player : MusicManager
+
 var t : Tween
+
 
 func _process(_delta: float) -> void:
 	pass
@@ -106,6 +148,15 @@ func unlock_item(item : Item.ITEMS, unlock : bool):
 			has_rope_pulley = unlock
 		i.LatchJumpBoost:
 			has_boost_latch = unlock
+
+func set_area_seen(area : int):
+	seen_map[Waypoint.WAYPOINTS.keys()[area]] = true
+
+func set_background(bg : BackgroundManager.BACKGROUNDS):
+	background.set_current_background(bg)
+
+func set_music(track : BackgroundManager.BACKGROUNDS):
+	music_player.change_track(track)
 
 func set_player_control(can_control : bool):
 	player.can_control = can_control

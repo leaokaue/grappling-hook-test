@@ -1,7 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://2up45yvg4gfs"]
+[gd_scene load_steps=3 format=3 uid="uid://2up45yvg4gfs"]
 
 [ext_resource type="Script" path="res://scripts/poison_block.gd" id="1_x205e"]
-[ext_resource type="Texture2D" uid="uid://jkkue63tphao" path="res://sprites/cobblestone.jpg" id="2_g83yh"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dtxcp"]
 size = Vector2(60, 56)
@@ -17,15 +16,6 @@ gravity = 900.0
 linear_damp_space_override = 3
 linear_damp = 1.0
 script = ExtResource("1_x205e")
-
-[node name="TextureRect" type="TextureRect" parent="."]
-visible = false
-modulate = Color(0.459817, 0.30564, 0, 1)
-offset_right = 292.0
-offset_bottom = 279.0
-texture = ExtResource("2_g83yh")
-expand_mode = 1
-stretch_mode = 1
 
 [node name="ColorRect" type="ColorRect" parent="."]
 anchors_preset = 8

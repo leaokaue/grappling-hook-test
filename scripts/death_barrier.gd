@@ -9,6 +9,8 @@ func _ready() -> void:
 
 func on_body_entered(body : Node2D):
 	if body is Worm:
+		if not body.can_control:
+			return
 		return_to_checkpoint(body)
 		body.destroy_grapple()
 

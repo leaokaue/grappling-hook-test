@@ -1,5 +1,6 @@
-[gd_scene load_steps=13 format=3 uid="uid://bnvneh2xfqhpp"]
+[gd_scene load_steps=16 format=3 uid="uid://bnvneh2xfqhpp"]
 
+[ext_resource type="Script" path="res://scripts/rain.gd" id="1_kj4sp"]
 [ext_resource type="Script" path="res://scripts/coin_counter.gd" id="1_le5ak"]
 [ext_resource type="Texture2D" uid="uid://b2xs1j1q1scfq" path="res://sprites/nolan.jpg" id="2_4iwo5"]
 [ext_resource type="Shader" path="res://shaders/shine.gdshader" id="3_hew1h"]
@@ -9,6 +10,66 @@
 [ext_resource type="Script" path="res://scripts/texture_progress_bar.gd" id="6_eqff7"]
 [ext_resource type="Texture2D" uid="uid://dvpi7nso38kqm" path="res://sprites/grapple.png" id="6_wlgv8"]
 [ext_resource type="Texture2D" uid="uid://dvd0js1533ixy" path="res://sprites/uibg2.png" id="9_sky3p"]
+
+[sub_resource type="Shader" id="Shader_sjp6m"]
+code = "// Rain and Snow shader by Brian Smith (steampunkdemon.itch.io)
+// MIT licence
+
+shader_type canvas_item;
+
+uniform float rain_amount = 200.0;
+uniform float near_rain_length : hint_range(0.01, 1.0) = 0.2;
+uniform float far_rain_length : hint_range(0.01, 1.0) = 0.1;
+uniform float near_rain_width : hint_range(0.1, 1.0) = 1.0;
+uniform float far_rain_width : hint_range(0.1, 1.0) = 0.5;
+uniform float near_rain_transparency : hint_range(0.1, 1.0) = 1.0;
+uniform float far_rain_transparency : hint_range(0.1, 1.0) = 0.5;
+// Replace the below reference to source_color with hint_color if you are using a version of Godot before 4.
+uniform vec4 rain_color : source_color = vec4(0.8, 0.8, 0.8, 1.0);
+uniform float base_rain_speed : hint_range(0.1, 1.0) = 0.5;
+uniform float additional_rain_speed : hint_range(0.1, 1.0) = 0.5;
+uniform float slant : hint_range(-1.0, 1.0) = 0.2;
+
+void fragment() {
+// To control the rainfall from your program comment out the below line and add a new uniform above as:
+// uniform float time = 10000.0;
+// Then update the time uniform from your _physics_process function by adding delta. You can then pause the rainfall by not changing the time uniform.
+	float time = 10000.0 + TIME;
+
+// Uncomment the following line if you are applying the shader to a TextureRect and using a version of Godot before 4.
+//	COLOR = texture(TEXTURE,UV);
+
+	vec2 uv = vec2(0.0);
+	float remainder = mod(UV.x - UV.y * slant, 1.0 / rain_amount);
+	uv.x = (UV.x - UV.y * slant) - remainder;
+	float rn = fract(sin(uv.x * rain_amount));
+	uv.y = fract((UV.y + rn));
+
+// Blurred trail. Works well for rain:
+	COLOR = mix(COLOR, rain_color, smoothstep(1.0 - (far_rain_length + (near_rain_length - far_rain_length) * rn), 1.0, fract(uv.y - time * (base_rain_speed + additional_rain_speed * rn))) * (far_rain_transparency + (near_rain_transparency - far_rain_transparency) * rn) * step(remainder * rain_amount, far_rain_width + (near_rain_width - far_rain_width) * rn));
+
+// No trail. Works well for snow:
+	//COLOR = mix(COLOR, rain_color, step(1.0 - (far_rain_length + (near_rain_length - far_rain_length) * rn), fract(uv.y - time * (base_rain_speed + additional_rain_speed * rn))) * (far_rain_transparency + (near_rain_transparency - far_rain_transparency) * rn) * step(remainder * rain_amount, far_rain_width + (near_rain_width - far_rain_width) * rn));
+}
+//void light() {
+	// Called for every pixel for every light affecting the CanvasItem.
+	// Uncomment to replace the default light processing function with this one.
+//}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_36udm"]
+shader = SubResource("Shader_sjp6m")
+shader_parameter/rain_amount = 500.0
+shader_parameter/near_rain_length = 0.052
+shader_parameter/far_rain_length = 0.081
+shader_parameter/near_rain_width = 0.159
+shader_parameter/far_rain_width = 0.1
+shader_parameter/near_rain_transparency = 0.865
+shader_parameter/far_rain_transparency = 0.5
+shader_parameter/rain_color = Color(0.594, 0.8052, 0.99, 0.243137)
+shader_parameter/base_rain_speed = 0.584
+shader_parameter/additional_rain_speed = 0.567
+shader_parameter/slant = 0.141
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_mapsa"]
 shader = ExtResource("3_hew1h")
@@ -32,6 +93,27 @@ gradient = SubResource("Gradient_dxa4k")
 
 [node name="UI" type="CanvasLayer"]
 layer = 15
+
+[node name="Label" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = 982.0
+offset_top = 1.0
+offset_right = 1151.0
+offset_bottom = 70.0
+theme_override_font_sizes/font_size = 20
+text = "FPS: 40"
+horizontal_alignment = 2
+
+[node name="Rain" type="ColorRect" parent="."]
+modulate = Color(1, 1, 1, 0)
+material = SubResource("ShaderMaterial_36udm")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0)
+script = ExtResource("1_kj4sp")
 
 [node name="BlackScreen" type="ColorRect" parent="." groups=["BlackScreen"]]
 modulate = Color(1, 1, 1, 0)

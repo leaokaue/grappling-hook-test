@@ -135,7 +135,6 @@ expand_mode = 1
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_sr8hx")
 debug_color = Color(0, 0.595, 0.7, 0)
 
@@ -157,7 +156,6 @@ pitch_scale = 1.2
 
 [node name="exist" type="AudioStreamPlayer2D" parent="."]
 unique_name_in_owner = true
-scale = Vector2(1, 1)
 stream = ExtResource("5_5577p")
 volume_db = -30.0
 autoplay = true

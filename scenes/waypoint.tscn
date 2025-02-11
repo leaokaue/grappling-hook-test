@@ -1,0 +1,234 @@
+[gd_scene load_steps=12 format=3 uid="uid://bvkgab3dksj67"]
+
+[ext_resource type="Texture2D" uid="uid://b2hpi4gi8412a" path="res://sprites/ball.png" id="1_0j18f"]
+[ext_resource type="Script" path="res://scripts/waypoint.gd" id="1_h3rfa"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ujt3p"]
+size = Vector2(276, 278)
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_adpof"]
+light_mode = 1
+
+[sub_resource type="Curve" id="Curve_7hahu"]
+_data = [Vector2(0.0967742, 0.054945), 0.0, 0.0, 0, 0, Vector2(0.129032, 1), 0.0, 0.0, 0, 0, Vector2(0.225806, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_82ai2"]
+curve = SubResource("Curve_7hahu")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_o3ofu"]
+particle_flag_align_y = true
+particle_flag_disable_z = true
+emission_shape = 6
+emission_ring_axis = Vector3(1, 1, 1)
+emission_ring_height = 1.0
+emission_ring_radius = 200.0
+emission_ring_inner_radius = 190.0
+orbit_velocity_min = 0.126
+orbit_velocity_max = 0.288
+radial_velocity_min = -2.23517e-05
+radial_velocity_max = -2.23517e-05
+gravity = Vector3(0, 0, 0)
+scale_min = 0.08
+scale_max = 0.12
+color = Color(0.594867, 0.877085, 1, 1)
+alpha_curve = SubResource("CurveTexture_82ai2")
+
+[sub_resource type="Gradient" id="Gradient_egpmb"]
+offsets = PackedFloat32Array(0, 0.0571429)
+colors = PackedColorArray(0, 0.783333, 1, 1, 0, 0.783333, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_f22a4"]
+gradient = SubResource("Gradient_egpmb")
+
+[sub_resource type="Gradient" id="Gradient_ncu21"]
+offsets = PackedFloat32Array(0)
+colors = PackedColorArray(0.577008, 0.577008, 0.577008, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_i02xa"]
+gradient = SubResource("Gradient_ncu21")
+
+[node name="Waypoint" type="Area2D"]
+z_index = -1
+collision_mask = 2
+script = ExtResource("1_h3rfa")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2(0, -68)
+shape = SubResource("RectangleShape2D_ujt3p")
+
+[node name="Ring" type="GPUParticles2D" parent="."]
+unique_name_in_owner = true
+z_index = -2
+material = SubResource("CanvasItemMaterial_adpof")
+position = Vector2(0, -112)
+rotation = 1.37465
+scale = Vector2(0.711588, 0.711588)
+emitting = false
+amount = 128
+process_material = SubResource("ParticleProcessMaterial_o3ofu")
+texture = ExtResource("1_0j18f")
+visibility_rect = Rect2(-200, -200, 400, 400)
+local_coords = true
+trail_enabled = true
+trail_lifetime = 0.39
+
+[node name="Obelisk" type="Node2D" parent="."]
+unique_name_in_owner = true
+z_index = -2
+position = Vector2(0, -112)
+metadata/_edit_lock_ = true
+metadata/_edit_group_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Obelisk"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -47.0
+offset_top = -62.0
+offset_right = 47.0
+offset_bottom = 141.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.277528, 0.277528, 0.277528, 1)
+
+[node name="Line1" type="TextureRect" parent="Obelisk"]
+unique_name_in_owner = true
+z_index = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -36.0
+offset_top = 155.0
+offset_right = 180.0
+offset_bottom = 162.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -1.57079
+texture = SubResource("GradientTexture1D_f22a4")
+expand_mode = 1
+
+[node name="Line2" type="TextureRect" parent="Obelisk"]
+unique_name_in_owner = true
+z_index = 2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 30.0
+offset_top = 155.0
+offset_right = 246.0
+offset_bottom = 162.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -1.57079
+texture = SubResource("GradientTexture1D_f22a4")
+expand_mode = 1
+
+[node name="BGLine1" type="TextureRect" parent="Obelisk"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -36.0
+offset_top = 157.0
+offset_right = 182.0
+offset_bottom = 164.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -1.57079
+texture = SubResource("GradientTexture1D_i02xa")
+expand_mode = 1
+
+[node name="BGLine2" type="TextureRect" parent="Obelisk"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 30.0
+offset_top = 157.0
+offset_right = 248.0
+offset_bottom = 164.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -1.57079
+texture = SubResource("GradientTexture1D_i02xa")
+expand_mode = 1
+
+[node name="Obelisk2" type="Node2D" parent="Obelisk"]
+unique_name_in_owner = true
+z_index = -2
+position = Vector2(-38, 132)
+
+[node name="ColorRect" type="ColorRect" parent="Obelisk/Obelisk2"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -47.0
+offset_top = -62.0
+offset_bottom = 44.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.277528, 0.277528, 0.277528, 1)
+
+[node name="ColorRect2" type="TextureRect" parent="Obelisk/Obelisk2"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -36.0
+offset_top = 43.0
+offset_right = 68.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -1.57079
+texture = SubResource("GradientTexture1D_i02xa")
+expand_mode = 1
+
+[node name="Obelisk3" type="Node2D" parent="Obelisk"]
+unique_name_in_owner = true
+z_index = -3
+position = Vector2(35, 99)
+rotation = 3.14159
+scale = Vector2(0.96, -1.44)
+
+[node name="ColorRect" type="ColorRect" parent="Obelisk/Obelisk3"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -47.0
+offset_top = -62.0
+offset_bottom = 44.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.277528, 0.277528, 0.277528, 1)
+
+[node name="ColorRect2" type="TextureRect" parent="Obelisk/Obelisk3"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -36.0
+offset_top = 43.0
+offset_right = 68.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -1.57079
+texture = SubResource("GradientTexture1D_i02xa")
+expand_mode = 1

@@ -11,6 +11,10 @@ const MOVE_SPEED = 50
 const MAX_SPEED = 100
 const JUMP_FORCE = -450
 
+var drown_buildup_buffer : float = 0.0
+
+var poison_buffer : float = 0.0
+
 var drown_buildup : float = 0.0 
 
 var max_drown_buildup : float = 2.5
@@ -47,8 +51,11 @@ const ui := preload("res://scenes/ui.tscn")
 
 const gr := preload("res://scenes/grapple.tscn")
 
+const map := preload("res://scenes/map.tscn")
+
 func _ready() -> void:
 	create_ui()
+	Global.teleport_to_waypoint.connect(teleport_to_waypoint)
 	Global.player = self
 
 func _process(delta: float) -> void:
@@ -92,11 +99,15 @@ func _physics_process(delta):
 		physics_material_override.friction = 1.0
 	
 	if in_liquid:
-		var water_speed : float = 0.5
 		var v_direction := Input.get_axis("up", "stop")
-		force.y = (MAX_SPEED * water_speed) * v_direction
-		if abs(linear_velocity.y) > (MAX_SPEED * water_speed):
-			linear_velocity.y = (MAX_SPEED * water_speed) * v_direction
+		if v_direction != 0:
+			var water_speed : float = 0.5
+			force.y = (MAX_SPEED * water_speed) * v_direction
+			if abs(linear_velocity.y) > (MAX_SPEED * water_speed):
+				linear_velocity.y = (MAX_SPEED * water_speed) * v_direction
+	
+	if Input.is_action_just_pressed("map"):
+		instantiate_map()
 	
 	if Input.is_action_just_pressed("jump"):
 		if is_grappling:
@@ -117,6 +128,8 @@ func _physics_process(delta):
 
 func handle_non_control(delta : float):
 	check_length()
+	
+	#print(Engine.time_scale)
 	
 	handle_liquids(delta)
 	
@@ -158,7 +171,7 @@ func handle_non_control(delta : float):
 @warning_ignore("unused_parameter")
 func _integrate_forces(state):
 	if not is_freefalling:
-		rotation_degrees = lerp(rotation_degrees,0.0,0.3)
+		rotation_degrees = lerp(rotation_degrees,0.0,0.8)
 
 func _set_animation(direction):
 	if direction > 0: animated_sprite_2d.flip_h = false
@@ -180,18 +193,23 @@ func _on_floor():
 		if ray_cast_2d.is_colliding():
 			return true
 
-func grapple():
+func instantiate_map():
+	var m := map.instantiate()
 	
+	get_tree().current_scene.add_child(m)
+	#can_control = false
+
+func grapple():
 	if not can_hook:
 		return
 	
 	current_hook_cooldown = max_hook_cooldown
 	can_hook = false
 	
-	var speed : float = 2
+	var speed : float = 2.0
 	
 	if Global.has_steroids_1:
-		speed = 3.5
+		speed = 3.0
 	
 	var g := gr.instantiate()
 	var dir := (get_global_mouse_position() - self.global_position).normalized() * 500 * speed
@@ -346,22 +364,34 @@ func handle_liquids(delta : float):
 			in_liquid = true
 	
 	if in_poison:
-		if not Global.has_poison_resist:
-			drown_buildup += delta
+		poison_buffer = 0.3
+		if poison_buffer > 0:
+			if not Global.has_poison_resist:
+				drown_buildup += delta * 1.5
+				drown_buildup_buffer = 0.3
 		#apply_central_force(Vector2(0,-1) * 600)
 	elif in_water:
 		drown_buildup += delta * 0.3
+		drown_buildup_buffer = 0.3
 		#apply_central_force(Vector2(0,-1) * 1100)
 	else:
-		drown_buildup -= delta 
+		if poison_buffer > 0:
+			poison_buffer -= delta
+			drown_buildup += delta * 2.0
+			drown_buildup_buffer = 0.3
+		
+		if drown_buildup_buffer > 0:
+			drown_buildup_buffer -= delta
+		else:
+			drown_buildup -= delta 
 	
-	var death_sound : float = 2
+	var death_sound : int = 2
 	var multiplier : float = 3.5
 	
 	var s : AudioStreamPlayer2D = %sizzle
 	
-	if in_poison:
-		death_sound = 3.0
+	if (in_poison) or (poison_buffer > 0):
+		death_sound = 3
 		multiplier = 1.0
 		
 		if not s.playing:
@@ -371,7 +401,6 @@ func handle_liquids(delta : float):
 			s.stop()
 	
 	if drown_buildup >= max_drown_buildup:
-		@warning_ignore("narrowing_conversion")
 		return_to_checkpoint(death_sound,multiplier)
 	
 	if drown_buildup > 0:
@@ -399,8 +428,11 @@ func scream(scream_type : int = 0):
 func return_to_checkpoint(scream_type : int = 0,duration_multiplier : float = 1.0):
 	can_control = false
 	scream(scream_type)
+	destroy_grapple()
 	can_scream = false
 	drown_buildup = 0.0
+	drown_buildup_buffer = 0.0
+	poison_buffer = 0.0
 	Global.set_fade_screen(false)
 	await Global.fade_animation_finished
 	await  get_tree().create_timer(1.4 * duration_multiplier,false).timeout
@@ -419,4 +451,30 @@ func return_to_checkpoint(scream_type : int = 0,duration_multiplier : float = 1.
 	can_control = true
 
 func teleport_to_waypoint(waypoint : int):
-	pass
+	var waypoint_pos : Vector2 = Global.waypoint_position[Waypoint.WAYPOINTS.keys()[waypoint]]
+	
+	Global.clear_map.emit()
+	can_control = false
+	#scream(scream_type)
+	destroy_grapple()
+	can_scream = false
+	drown_buildup = 0.0
+	drown_buildup_buffer = 0.0
+	poison_buffer = 0.0
+	Global.set_fade_screen(false)
+	await Global.fade_animation_finished
+	await  get_tree().create_timer(1.0).timeout
+	linear_velocity *= 0
+	self.global_position = waypoint_pos
+	self.rotation = 0
+	drown_buildup = 0.0
+	
+	for n in get_children():
+		if n is Camera2D:
+			n.reset_smoothing()
+	
+	await  get_tree().create_timer(1.6,false).timeout
+	Global.set_fade_screen(true)
+	await Global.fade_animation_finished
+	Global.can_use_waypoints = true
+	can_control = true

@@ -6,11 +6,14 @@ class_name Water
 func _ready() -> void:
 	
 	gravity_direction.y = -1
+	linear_damp_space_override = SPACE_OVERRIDE_COMBINE_REPLACE
 	
 	if poisonous:
-		gravity = 100
+		gravity = -150
+		linear_damp = 12
 	else:
-		gravity = 600
+		linear_damp = 6
+		gravity = -300
 
 func _physics_process(_delta: float) -> void:
 	#for body in get_overlapping_bodies():
