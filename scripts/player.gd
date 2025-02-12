@@ -27,7 +27,9 @@ var in_liquid : bool = false
 
 var is_grappling : bool = false
 
-var is_freefalling : bool = false
+var previous_freefall_state : bool = false
+
+var is_freefalling : bool = false : set = set_is_freefalling
 
 var can_scream : bool = true
 
@@ -42,6 +44,8 @@ var can_hook : bool = true
 var hook : GrappleHook
 
 @onready var line := $Line2D
+
+var last_trail : LineTrail2D
 
 #var global_joint : PinJoint2D
 
@@ -167,6 +171,27 @@ func handle_non_control(delta : float):
 	if _on_floor():
 		can_scream = true
 	
+
+func set_is_freefalling(freefalling : bool):
+	if previous_freefall_state == freefalling:
+		return
+	
+	is_freefalling = freefalling
+	
+	previous_freefall_state = is_freefalling
+	
+	if freefalling:
+		print("created line")
+		var t := $LineTrail2D.duplicate()
+		t.active = true
+		t.follow_player = true
+		last_trail = t
+		get_tree().current_scene.add_child(t)
+	else:
+		if is_instance_valid(last_trail):
+			print("killed  line")
+			last_trail.fading_away = true
+			last_trail.follow_player = false
 
 @warning_ignore("unused_parameter")
 func _integrate_forces(state):
@@ -369,16 +394,24 @@ func handle_liquids(delta : float):
 			if not Global.has_poison_resist:
 				drown_buildup += delta * 1.5
 				drown_buildup_buffer = 0.3
+			else:
+				drown_buildup += delta * 0.2
+				drown_buildup_buffer = 0.1
 		#apply_central_force(Vector2(0,-1) * 600)
 	elif in_water:
-		drown_buildup += delta * 0.3
+		drown_buildup += delta * 0.1
 		drown_buildup_buffer = 0.3
 		#apply_central_force(Vector2(0,-1) * 1100)
 	else:
 		if poison_buffer > 0:
 			poison_buffer -= delta
-			drown_buildup += delta * 2.0
-			drown_buildup_buffer = 0.3
+			
+			if not Global.has_poison_resist:
+				drown_buildup += delta * 1.5
+				drown_buildup_buffer = 0.3
+			else:
+				drown_buildup += delta * 0.45
+				drown_buildup_buffer = 0.1
 		
 		if drown_buildup_buffer > 0:
 			drown_buildup_buffer -= delta
@@ -389,6 +422,11 @@ func handle_liquids(delta : float):
 	var multiplier : float = 3.5
 	
 	var s : AudioStreamPlayer2D = %sizzle
+	
+	if Global.has_poison_resist:
+		s.pitch_scale = 0.65
+	else:
+		s.pitch_scale = 1.0
 	
 	if (in_poison) or (poison_buffer > 0):
 		death_sound = 3
@@ -433,6 +471,7 @@ func return_to_checkpoint(scream_type : int = 0,duration_multiplier : float = 1.
 	drown_buildup = 0.0
 	drown_buildup_buffer = 0.0
 	poison_buffer = 0.0
+	set_is_freefalling(false)
 	Global.set_fade_screen(false)
 	await Global.fade_animation_finished
 	await  get_tree().create_timer(1.4 * duration_multiplier,false).timeout

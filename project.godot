@@ -13,7 +13,7 @@ config_version=5
 config/name="Grappling Hook Test"
 run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="res://sprites/PeculiarCoin.png"
 
 [autoload]
 
@@ -80,6 +80,7 @@ map={
 2d_physics/layer_3="HookOnly"
 2d_physics/layer_4="Unhookable"
 2d_physics/layer_5="Liquid"
+2d_physics/layer_6="CrushingBlocks"
 
 [physics]
 

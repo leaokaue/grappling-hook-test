@@ -21,10 +21,12 @@ var property_name : StringName = ""
 @export var roids3 : Texture
 @export var compass : Texture
 @export var tracker : Texture
-@export var mystic_stone : Texture 
+@export var hover_stone : Texture
+@export var guiding_light : Texture 
 @export var dash_boots : Texture
 @export var jet_pack : Texture
 @export var cool_drink : Texture
+@export var tambaqui : Texture
 @export var extra_rope : Texture
 @export var green_potion : Texture
 @export var motorized_pulley : Texture
@@ -39,10 +41,12 @@ enum ITEMS {
 	SpeedBoost,
 	CoinCompass,
 	CoinTracker,
+	HoverStone,
 	FastTravel,
 	DashBoots,
 	JetPack,
 	HookCooldownReducer,
+	WaterDash,
 	GrappleRopeExtension,
 	PoisonResist,
 	RetractBoost,
@@ -81,36 +85,43 @@ func instantiate_ui():
 
 func match_item():
 	var i := ITEMS
-	@warning_ignore("unused_variable")
-	var t : Texture = sprite.texture
+	var t := sprite
+	
+	print(current_item)
 	
 	match current_item:
 		i.HookThrowBoost:
-			t = roids1
+			sprite.texture = roids1
 			i_name = "Healthy Medicine"
 			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
 		i.JumpBoost:
-			t = roids2
+			sprite.texture = roids2
 		i.SpeedBoost:
-			t = roids3
+			sprite.texture = roids3
 		i.CoinCompass:
-			t = compass
+			sprite.texture = compass
 		i.CoinTracker:
-			t = tracker
+			sprite.texture = tracker
 		i.FastTravel:
-			t = mystic_stone
+			sprite.texture =  guiding_light
 		i.DashBoots:
-			t = dash_boots
+			sprite.texture = dash_boots
 		i.JetPack:
-			t = jet_pack
+			sprite.texture = jet_pack
 		i.HookCooldownReducer:
-			t = cool_drink
+			sprite.texture = cool_drink
 		i.GrappleRopeExtension:
-			t = extra_rope
+			sprite.texture = extra_rope
 		i.RetractBoost:
-			t = motorized_pulley
+			sprite.texture = motorized_pulley
 		i.LatchJumpBoost:
-			t = titanium_glove
+			sprite.texture = titanium_glove
+		i.HoverStone:
+			sprite.texture = hover_stone
+		i.PoisonResist:
+			sprite.texture = green_potion
+	
+	#sprite.texture = t
 	
 
 func tween():

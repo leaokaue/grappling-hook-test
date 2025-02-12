@@ -23,7 +23,8 @@ var body_offset : Vector2
 func _ready() -> void:
 	$Send.play()
 	#look_at_dir()
-	self.body_entered.connect(_on_body_collision)
+	self.body_shape_entered.connect(_on_body_collision)
+	#self.body_entered.connect(_on_body_collision)
 
 func _physics_process(delta: float) -> void:
 	if looks:
@@ -42,11 +43,16 @@ func _physics_process(delta: float) -> void:
 		###print("locking")
 		##self.global_position = locked_position
 
-func _on_body_collision(body : Node2D):
-	#print("BALLS")
+func _on_body_collision(body_rid : RID,body : Node,_bsp : int,lsi : int):
 	if not grappled:
 		
-		if body is CollisionObject2D:
+		
+		if body is TileMapLayer:
+			var c := PhysicsServer2D.body_get_collision_layer(body_rid)
+			if c == 9:
+				player.destroy_grapple()
+				return
+		elif body is CollisionObject2D:
 			
 			grappled_body = body
 			body_offset = self.global_position - body.global_position
@@ -65,6 +71,32 @@ func _on_body_collision(body : Node2D):
 		#self.lock_rotation = true
 		hit.emit()
 		#self.call_deferred("reparent",body)
+
+#func _on_body_collision(body : Node2D):
+	##print("BALLS")
+	#if not grappled:
+		#
+		##print(body)
+		#
+		#if body is CollisionObject2D:
+			#
+			#grappled_body = body
+			#body_offset = self.global_position - body.global_position
+			#
+			#if body.get_collision_layer_value(4):
+				##print("dying")
+				#player.destroy_grapple()
+				#return
+		#
+		#$Hit.play()
+		#looks = false
+		##self.global_position = locked_position
+		#grappled = true
+		#frozen = true
+		#set_deferred("freeze",true)
+		##self.lock_rotation = true
+		#hit.emit()
+		##self.call_deferred("reparent",body)
 
 func die():
 	if is_instance_valid(send):

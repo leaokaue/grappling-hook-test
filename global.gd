@@ -52,9 +52,6 @@ var has_coin_compass : bool = false
 #displays how many coins an area has left
 var has_coin_tracker : bool = false
 
-#allows you to teleport to any waypoint without needing to be at one
-var has_mystical_stone : bool = false
-
 #chuffed coin!
 var has_chuffed_coin : bool = false
 
@@ -87,6 +84,15 @@ var has_steroids_2 : bool = false
 
 #increases move speed
 var has_steroids_3 : bool = false
+
+#lets the player hover for a bit
+var has_hover_stone : bool = false
+
+#allows player to waypoint anywhere
+var has_guiding_light : bool = false
+
+#water dash
+var has_tambaqui : bool = false
 
 var player : Worm
 
@@ -135,7 +141,7 @@ func unlock_item(item : Item.ITEMS, unlock : bool):
 		i.CoinTracker:
 			has_coin_tracker = unlock
 		i.FastTravel:
-			has_mystical_stone = unlock
+			has_guiding_light = unlock
 		i.DashBoots:
 			has_dash_boots = unlock
 		i.JetPack:
@@ -148,6 +154,12 @@ func unlock_item(item : Item.ITEMS, unlock : bool):
 			has_rope_pulley = unlock
 		i.LatchJumpBoost:
 			has_boost_latch = unlock
+		i.HoverStone:
+			has_hover_stone = unlock
+		i.WaterDash:
+			has_tambaqui = unlock
+		i.PoisonResist:
+			has_poison_resist = unlock
 
 func set_area_seen(area : int):
 	seen_map[Waypoint.WAYPOINTS.keys()[area]] = true

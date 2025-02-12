@@ -14,7 +14,7 @@ func _ready() -> void:
 	Global.set_player_control(false)
 
 func _physics_process(delta: float) -> void:
-	control.modulate.a = move_toward(control.modulate.a,1.0,0.6 * delta)
+	control.modulate.a = move_toward(control.modulate.a,1.0,1.9 * delta)
 	
 	if Input.is_action_just_pressed("grapple"):
 		Global.set_player_control(true)
