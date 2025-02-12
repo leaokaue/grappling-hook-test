@@ -1,15 +1,38 @@
 extends RigidBody2D
 class_name Worm
 
+@warning_ignore("unused_signal")
+signal emit_dash_cooldown(cooldown : float)
+
 var last_checkpoint : Vector2
+
+@export var debug_mode : bool = false
 
 @onready var animated_sprite_2d = %Sprite2D
 @onready var ray_cast_2d = $RayCast2D
 @onready var liquid_cast_2d = $LiquidCast
 
+#PLAYER
+
 const MOVE_SPEED = 50
 const MAX_SPEED = 100
 const JUMP_FORCE = -450
+
+var can_control : bool = true
+
+#EQUIPMENT
+
+var dash_direction : int = 1
+
+var is_dashing : bool = false
+
+var dash_time : float = 0.0
+
+var dash_cooldown : float = 0.0
+
+const max_dash_cooldown : float = 2.0
+
+#LIQUIDS
 
 var drown_buildup_buffer : float = 0.0
 
@@ -19,17 +42,17 @@ var drown_buildup : float = 0.0
 
 var max_drown_buildup : float = 2.5
 
-var can_control : bool = true
-
 var in_liquid : bool = false
 
 #var can_jump : bool = true
 
+var is_freefalling : bool = false : set = set_is_freefalling
+
+#HOOK / FREEFALL
+
 var is_grappling : bool = false
 
 var previous_freefall_state : bool = false
-
-var is_freefalling : bool = false : set = set_is_freefalling
 
 var can_scream : bool = true
 
@@ -61,6 +84,8 @@ func _ready() -> void:
 	create_ui()
 	Global.teleport_to_waypoint.connect(teleport_to_waypoint)
 	Global.player = self
+	if debug_mode:
+		last_checkpoint = global_position
 
 func _process(delta: float) -> void:
 	if not can_hook:
@@ -69,8 +94,20 @@ func _process(delta: float) -> void:
 			can_hook = true
 
 func _physics_process(delta):
-	var direction = Input.get_axis("left", "right")
+	var direction : float = Input.get_axis("left", "right")
 	var force = Vector2.ZERO
+	
+	
+	if is_grappling:
+		if linear_velocity.x > 0:
+			dash_direction = 1
+		else:
+			dash_direction = -1
+	elif direction != 0:
+		if not is_dashing:
+			dash_direction = round(direction)
+	
+	print(dash_direction)
 	
 	handle_non_control(delta)
 	
@@ -91,12 +128,39 @@ func _physics_process(delta):
 			if hook.grappled:
 				retract(delta)
 	
-	if direction != 0:
+	if Input.is_action_just_pressed("dash"):
+		if (not is_dashing) and (dash_direction != 0):
+			if Global.current_equipment == Global.EQUIPMENTS.DashBoots:
+				if dash_cooldown >= 2.0:
+					is_dashing = true
+					dash_cooldown = 0.0
+					dash_time = 0.15
+	
+	# UPGRADE /////////////////////////////////////////////////////////////
+	
+	var m_bonus : float = 1.0
+	
+	if Global.has_steroids_3:
+		m_bonus = 1.35
+		m_bonus = 1.35
+	# UPGRADE /////////////////////////////////////////////////////////////
+	
+	if is_dashing:
+		var d : float = 2.5
+		force.x = (MOVE_SPEED * d) * dash_direction
+		if abs(linear_velocity.x) > (MAX_SPEED * d):
+			linear_velocity.x = (MAX_SPEED * d ) * dash_direction
+		
+		if not is_freefalling:
+			linear_velocity.y = 0
+		
+	
+	elif direction != 0:
 		if (not is_freefalling) or (in_liquid):
-			force.x = MOVE_SPEED * direction
+			force.x = (MOVE_SPEED * m_bonus) * direction
 			physics_material_override.friction = 0.1
-			if abs(linear_velocity.x) > MAX_SPEED:
-				linear_velocity.x = MAX_SPEED * direction
+			if abs(linear_velocity.x) > (MAX_SPEED * m_bonus):
+				linear_velocity.x = (MAX_SPEED * m_bonus) * direction
 				#linear_velocity.x = move_toward(linear_velocity.x,MAX_SPEED * direction, delta * 3)
 				#print(linear_velocity.x)
 	else:
@@ -113,18 +177,26 @@ func _physics_process(delta):
 	if Input.is_action_just_pressed("map"):
 		instantiate_map()
 	
+	# UPGRADE /////////////////////////////////////////////////////////////
+	var j_bonus : float = 1.0
+	
+	if Global.has_steroids_2:
+		j_bonus = 1.35
+	# UPGRADE /////////////////////////////////////////////////////////////
+	
 	if Input.is_action_just_pressed("jump"):
 		if is_grappling:
 			if is_instance_valid(hook):
 				if hook.grappled:
-					force.y = JUMP_FORCE * 0.8
+					force.y = (JUMP_FORCE * j_bonus)* 0.8
 					destroy_grapple()
 		elif _on_floor(): 
-			force.y = JUMP_FORCE
+			force.y = (JUMP_FORCE * j_bonus) 
 	
 	if Input.is_action_just_pressed("stop"):
 		if _on_floor():
 			linear_velocity = Vector2()
+		
 	
 	_set_animation(direction)
 	
@@ -136,6 +208,8 @@ func handle_non_control(delta : float):
 	#print(Engine.time_scale)
 	
 	handle_liquids(delta)
+	
+	handle_equipment_cooldowns(delta)
 	
 	if is_grappling:
 		rotate_joint()
@@ -172,6 +246,26 @@ func handle_non_control(delta : float):
 		can_scream = true
 	
 
+func handle_equipment_cooldowns(delta : float):
+	
+	if _on_floor():
+		if not is_dashing:
+			dash_cooldown += delta * 2.0
+	elif not is_grappling:
+		if not is_dashing:
+			dash_cooldown += delta
+	
+	dash_cooldown = clampf(dash_cooldown,0.0,2.0)
+	
+	dash_time -= delta
+	
+	if dash_time <= 0:
+		is_dashing = false
+	
+	dash_time = clampf(dash_time,0.0,10.0)
+	
+	emit_dash_cooldown.emit(dash_cooldown)
+
 func set_is_freefalling(freefalling : bool):
 	if previous_freefall_state == freefalling:
 		return
@@ -181,7 +275,7 @@ func set_is_freefalling(freefalling : bool):
 	previous_freefall_state = is_freefalling
 	
 	if freefalling:
-		print("created line")
+		#print("created line")
 		var t := $LineTrail2D.duplicate()
 		t.active = true
 		t.follow_player = true
@@ -189,7 +283,7 @@ func set_is_freefalling(freefalling : bool):
 		get_tree().current_scene.add_child(t)
 	else:
 		if is_instance_valid(last_trail):
-			print("killed  line")
+			#print("killed  line")
 			last_trail.fading_away = true
 			last_trail.follow_player = false
 

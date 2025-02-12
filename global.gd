@@ -44,6 +44,16 @@ var waypoint_position : Dictionary = {
 	 
 }
 
+enum EQUIPMENTS {
+	None,
+	DashBoots,
+	Tambaqui,
+	HoverStone,
+	Jetpack
+}
+
+var current_equipment : EQUIPMENTS = EQUIPMENTS.DashBoots
+
 var can_use_waypoints : bool = false
 
 #gives an arrow towards the closest coin

@@ -1,12 +1,16 @@
-[gd_scene load_steps=16 format=3 uid="uid://bnvneh2xfqhpp"]
+[gd_scene load_steps=20 format=3 uid="uid://bnvneh2xfqhpp"]
 
 [ext_resource type="Script" path="res://scripts/rain.gd" id="1_kj4sp"]
 [ext_resource type="Script" path="res://scripts/coin_counter.gd" id="1_le5ak"]
 [ext_resource type="Texture2D" uid="uid://b2xs1j1q1scfq" path="res://sprites/nolan.jpg" id="2_4iwo5"]
+[ext_resource type="Script" path="res://scripts/item_ui.gd" id="2_ejolm"]
+[ext_resource type="Texture2D" uid="uid://d3rf28vioo657" path="res://sprites/items/dash_boots.png" id="3_b3lae"]
 [ext_resource type="Shader" path="res://shaders/shine.gdshader" id="3_hew1h"]
+[ext_resource type="Texture2D" uid="uid://dcjmi3lyyjvne" path="res://sprites/equip_bar_behind-fill.png" id="4_1rntb"]
 [ext_resource type="Texture2D" uid="uid://dy1vyv8rptpvm" path="res://sprites/uibg1.png" id="4_m8224"]
 [ext_resource type="Texture2D" uid="uid://botg44dsl6ad1" path="res://sprites/grapplebarbg.png" id="4_nbvbl"]
 [ext_resource type="Texture2D" uid="uid://b1nfnd1n3qxwb" path="res://sprites/grapplebar.png" id="5_6kawo"]
+[ext_resource type="Texture2D" uid="uid://c3l6ocrlykhhh" path="res://sprites/equip_bar_over.png" id="5_cap3f"]
 [ext_resource type="Script" path="res://scripts/texture_progress_bar.gd" id="6_eqff7"]
 [ext_resource type="Texture2D" uid="uid://dvpi7nso38kqm" path="res://sprites/grapple.png" id="6_wlgv8"]
 [ext_resource type="Texture2D" uid="uid://dvd0js1533ixy" path="res://sprites/uibg2.png" id="9_sky3p"]
@@ -127,6 +131,86 @@ color = Color(0, 0, 0, 1)
 
 [node name="Node2DUI" type="Node2D" parent="."]
 scale = Vector2(0.681819, 0.681819)
+
+[node name="Items" type="Control" parent="Node2DUI"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 237.6
+offset_top = 19.0666
+offset_right = 277.6
+offset_bottom = 59.0666
+script = ExtResource("2_ejolm")
+
+[node name="BG" type="Node2D" parent="Node2DUI/Items"]
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2DUI/Items/BG"]
+modulate = Color(1, 1, 1, 0.415686)
+z_index = -1
+position = Vector2(116.572, 36.7538)
+rotation = 0.813334
+scale = Vector2(0.483397, 0.478772)
+texture = ExtResource("4_m8224")
+
+[node name="Sprite2D2" type="Sprite2D" parent="Node2DUI/Items/BG"]
+modulate = Color(1, 1, 1, 0.415686)
+z_index = -1
+position = Vector2(167.2, 71.8666)
+rotation = 0.813334
+scale = Vector2(0.483397, 0.478772)
+texture = ExtResource("4_m8224")
+
+[node name="Sprite2D3" type="Sprite2D" parent="Node2DUI/Items/BG"]
+modulate = Color(1, 1, 1, 0.415686)
+z_index = -1
+position = Vector2(278.666, 23.4666)
+rotation = 0.813334
+scale = Vector2(0.483397, 0.478772)
+texture = ExtResource("4_m8224")
+
+[node name="Sprite2D4" type="Sprite2D" parent="Node2DUI/Items/BG"]
+modulate = Color(1, 1, 1, 0.415686)
+z_index = -1
+position = Vector2(347.6, 57.1999)
+rotation = 0.813334
+scale = Vector2(0.483397, 0.478772)
+texture = ExtResource("4_m8224")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Node2DUI/Items"]
+layout_mode = 0
+offset_top = -3.0
+offset_right = 616.0
+offset_bottom = 164.0
+
+[node name="DashUI" type="HBoxContainer" parent="Node2DUI/Items/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="TextureRect" type="TextureRect" parent="Node2DUI/Items/VBoxContainer/DashUI"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("3_b3lae")
+expand_mode = 1
+
+[node name="Dashbar" type="TextureProgressBar" parent="Node2DUI/Items/VBoxContainer/DashUI"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+max_value = 2.33
+step = 0.0
+value = 2.0
+allow_greater = true
+fill_mode = 3
+nine_patch_stretch = true
+stretch_margin_left = 85
+stretch_margin_top = 60
+stretch_margin_right = 150
+texture_under = ExtResource("4_1rntb")
+texture_over = ExtResource("5_cap3f")
+texture_progress = ExtResource("4_1rntb")
+tint_under = Color(0.309804, 0.0588235, 0, 1)
+tint_over = Color(0.615686, 0.4, 0, 1)
+tint_progress = Color(1, 0.811765, 0.243137, 1)
 
 [node name="CoinCounter" type="Node2D" parent="Node2DUI"]
 position = Vector2(-26, -18)

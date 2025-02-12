@@ -31,7 +31,7 @@ func _ready() -> void:
 	previous_background = current_background
 
 func set_current_background(bg : BACKGROUNDS):
-	print("attempting background change")
+	#print("attempting background change")
 	previous_background = current_background
 	current_background = bg
 	

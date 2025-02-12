@@ -82,7 +82,6 @@ scream_type = 1
 
 [node name="Vcol" type="CollisionPolygon2D" parent="VSprite/DeathBarrier"]
 unique_name_in_owner = true
-visible = false
 z_index = 1
 rotation = -0.00254784
 polygon = PackedVector2Array(0.0765018, -29.9999, -28.0764, 29.9285, 27.9234, 30.0713)
