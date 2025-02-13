@@ -1899,7 +1899,7 @@ empty_track = ExtResource("8_c5a5t")
 position = Vector2(-780, 448)
 
 [node name="Worm" parent="SpawnPos" instance=ExtResource("3_pgxup")]
-position = Vector2(5160, -1960)
+position = Vector2(9780, -4928)
 debug_mode = true
 
 [node name="Camera2D" type="Camera2D" parent="SpawnPos/Worm"]

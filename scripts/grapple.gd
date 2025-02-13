@@ -57,12 +57,25 @@ func _on_body_collision(body_rid : RID,body : Node,_bsp : int,lsi : int):
 		elif body is CollisionObject2D:
 			
 			grappled_body = body
-			print(grappled_body)
+			#print(grappled_body)
 			body_offset = self.global_position - body.global_position
 			
 			if body is AnimatableBody2D:
 				#self.reparent(body)
 				self.call_deferred("reparent",body)
+				await get_tree().physics_frame
+				await get_tree().physics_frame
+				await get_tree().physics_frame
+				
+				var i : GrappleHook
+				
+				for s in body.get_children():
+					if s is GrappleHook:
+						i = s
+						print(i)
+						if is_instance_valid(Global.player.global_joint):
+							Global.player.global_joint.node_a = i.get_path()
+				
 			
 			if body.get_collision_layer_value(4):
 				#print("dying")
