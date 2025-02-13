@@ -1,12 +1,15 @@
-[gd_scene load_steps=5 format=3 uid="uid://d2es5ksc3ksgp"]
+[gd_scene load_steps=8 format=3 uid="uid://d2es5ksc3ksgp"]
 
 [ext_resource type="Texture2D" uid="uid://dvd0js1533ixy" path="res://sprites/uibg2.png" id="1_i8q1j"]
 [ext_resource type="Script" path="res://scripts/map.gd" id="1_ifiad"]
 [ext_resource type="Texture2D" uid="uid://dy1vyv8rptpvm" path="res://sprites/uibg1.png" id="2_qbysm"]
 [ext_resource type="Script" path="res://scenes/on_map_waypoint.gd" id="3_y1xv5"]
+[ext_resource type="Script" path="res://scenes/equipment_ui.gd" id="5_lgy1i"]
+[ext_resource type="Texture2D" uid="uid://d3rf28vioo657" path="res://sprites/items/dash_boots.png" id="6_g7j35"]
+[ext_resource type="Script" path="res://scripts/item_slot.gd" id="10_ikw3k"]
 
 [node name="Map" type="CanvasLayer"]
-layer = 25
+layer = 100
 script = ExtResource("1_ifiad")
 
 [node name="Control" type="Control" parent="."]
@@ -17,6 +20,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
 
 [node name="ColorRect" type="ColorRect" parent="Control"]
 layout_mode = 1
@@ -27,49 +31,52 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.345098)
 
-[node name="MapSprite" type="Control" parent="Control"]
+[node name="TabContainer" type="TabContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+tab_alignment = 1
+current_tab = 1
+tab_focus_mode = 1
+
+[node name="Map" type="Control" parent="Control/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="MapSprite" type="Control" parent="Control/TabContainer/Map"]
 modulate = Color(0.646029, 0.646029, 0.646029, 1)
 anchors_preset = 0
+offset_top = -36.0
 offset_right = 40.0
-offset_bottom = 40.0
+offset_bottom = 4.0
 metadata/_edit_lock_ = true
 metadata/_edit_group_ = true
 
-[node name="TextureRect" type="TextureRect" parent="Control/MapSprite"]
+[node name="TextureRect" type="TextureRect" parent="Control/TabContainer/Map/MapSprite"]
 clip_children = 2
 layout_mode = 0
 offset_left = 77.0
 offset_top = -9.0
 offset_right = 589.0
 offset_bottom = 503.0
+mouse_filter = 2
 texture = ExtResource("1_i8q1j")
 
-[node name="ColorRect2" type="ColorRect" parent="Control/MapSprite/TextureRect"]
-layout_mode = 0
-offset_left = -77.0
-offset_top = 9.0
-offset_right = 1076.0
-offset_bottom = 659.0
-color = Color(0.419608, 0.32549, 0.0235294, 1)
-
-[node name="TextureRect2" type="TextureRect" parent="Control/MapSprite"]
+[node name="TextureRect2" type="TextureRect" parent="Control/TabContainer/Map/MapSprite"]
 clip_children = 2
 layout_mode = 0
 offset_left = 275.0
 offset_top = 12.0
 offset_right = 787.0
 offset_bottom = 524.0
+mouse_filter = 2
 texture = ExtResource("1_i8q1j")
 
-[node name="ColorRect2" type="ColorRect" parent="Control/MapSprite/TextureRect2"]
-layout_mode = 0
-offset_left = -77.0
-offset_top = 9.0
-offset_right = 1076.0
-offset_bottom = 659.0
-color = Color(0.419608, 0.32549, 0.0235294, 1)
-
-[node name="TextureRect3" type="TextureRect" parent="Control/MapSprite"]
+[node name="TextureRect3" type="TextureRect" parent="Control/TabContainer/Map/MapSprite"]
 clip_children = 2
 layout_mode = 0
 offset_left = 1048.0
@@ -77,17 +84,10 @@ offset_top = 480.0
 offset_right = 1560.0
 offset_bottom = 992.0
 rotation = -3.14159
+mouse_filter = 2
 texture = ExtResource("1_i8q1j")
 
-[node name="ColorRect2" type="ColorRect" parent="Control/MapSprite/TextureRect3"]
-layout_mode = 0
-offset_left = -77.0
-offset_top = 9.0
-offset_right = 1076.0
-offset_bottom = 659.0
-color = Color(0.419608, 0.32549, 0.0235294, 1)
-
-[node name="TextureRect4" type="TextureRect" parent="Control/MapSprite"]
+[node name="TextureRect4" type="TextureRect" parent="Control/TabContainer/Map/MapSprite"]
 clip_children = 2
 layout_mode = 0
 offset_left = 593.0
@@ -95,18 +95,20 @@ offset_top = 660.0
 offset_right = 1105.0
 offset_bottom = 1172.0
 rotation = -3.14159
+mouse_filter = 2
 texture = ExtResource("1_i8q1j")
 
-[node name="TextureRect5" type="TextureRect" parent="Control/MapSprite"]
+[node name="TextureRect5" type="TextureRect" parent="Control/TabContainer/Map/MapSprite"]
 clip_children = 2
 layout_mode = 0
 offset_left = 454.0
 offset_top = 159.0
 offset_right = 966.0
 offset_bottom = 671.0
+mouse_filter = 2
 texture = ExtResource("1_i8q1j")
 
-[node name="TextureRect6" type="TextureRect" parent="Control/MapSprite"]
+[node name="TextureRect6" type="TextureRect" parent="Control/TabContainer/Map/MapSprite"]
 clip_children = 2
 layout_mode = 0
 offset_left = 827.0
@@ -114,9 +116,10 @@ offset_top = 167.0
 offset_right = 1339.0
 offset_bottom = 679.0
 rotation = 0.785397
+mouse_filter = 2
 texture = ExtResource("2_qbysm")
 
-[node name="TextureRect7" type="TextureRect" parent="Control/MapSprite"]
+[node name="TextureRect7" type="TextureRect" parent="Control/TabContainer/Map/MapSprite"]
 clip_children = 2
 layout_mode = 0
 offset_left = 830.0
@@ -124,9 +127,10 @@ offset_top = 53.0
 offset_right = 1342.0
 offset_bottom = 565.0
 rotation = 0.785397
+mouse_filter = 2
 texture = ExtResource("2_qbysm")
 
-[node name="TextureRect8" type="TextureRect" parent="Control/MapSprite"]
+[node name="TextureRect8" type="TextureRect" parent="Control/TabContainer/Map/MapSprite"]
 clip_children = 2
 layout_mode = 0
 offset_left = 813.0
@@ -134,9 +138,10 @@ offset_top = 476.0
 offset_right = 1325.0
 offset_bottom = 988.0
 rotation = -2.35619
+mouse_filter = 2
 texture = ExtResource("2_qbysm")
 
-[node name="TextureRect9" type="TextureRect" parent="Control/MapSprite"]
+[node name="TextureRect9" type="TextureRect" parent="Control/TabContainer/Map/MapSprite"]
 clip_children = 2
 layout_mode = 0
 offset_left = 370.0
@@ -144,9 +149,10 @@ offset_top = 469.0
 offset_right = 882.0
 offset_bottom = 981.0
 rotation = -2.35619
+mouse_filter = 2
 texture = ExtResource("2_qbysm")
 
-[node name="TextureRect10" type="TextureRect" parent="Control/MapSprite"]
+[node name="TextureRect10" type="TextureRect" parent="Control/TabContainer/Map/MapSprite"]
 clip_children = 2
 layout_mode = 0
 offset_left = 363.0
@@ -154,19 +160,20 @@ offset_top = 764.0
 offset_right = 875.0
 offset_bottom = 1276.0
 rotation = -2.35619
+mouse_filter = 2
 texture = ExtResource("2_qbysm")
 
-[node name="SpawnIsland" type="Control" parent="Control"]
+[node name="SpawnIsland" type="Control" parent="Control/TabContainer/Map"]
 layout_mode = 3
 anchors_preset = 0
-offset_left = 569.0
-offset_top = 516.0
-offset_right = 569.0
-offset_bottom = 516.0
+offset_left = 430.0
+offset_top = 491.0
+offset_right = 430.0
+offset_bottom = 491.0
 scale = Vector2(0.756491, 0.756491)
 script = ExtResource("3_y1xv5")
 
-[node name="ColorRect2" type="ColorRect" parent="Control/SpawnIsland"]
+[node name="ColorRect2" type="ColorRect" parent="Control/TabContainer/Map/SpawnIsland"]
 layout_mode = 0
 offset_left = -44.0
 offset_top = -42.0
@@ -174,7 +181,7 @@ offset_right = 50.0
 offset_bottom = 50.0
 color = Color(0.379095, 0.193826, 0, 1)
 
-[node name="Travel" type="Button" parent="Control/SpawnIsland"]
+[node name="Travel" type="Button" parent="Control/TabContainer/Map/SpawnIsland"]
 layout_mode = 0
 offset_left = -23.794
 offset_top = 33.0473
@@ -184,7 +191,7 @@ scale = Vector2(1.32322, 1.32322)
 theme_override_font_sizes/font_size = 10
 text = "Travel"
 
-[node name="Label" type="Label" parent="Control/SpawnIsland"]
+[node name="Label" type="Label" parent="Control/TabContainer/Map/SpawnIsland"]
 layout_mode = 0
 offset_left = -203.0
 offset_top = -68.0
@@ -193,18 +200,18 @@ offset_bottom = -45.0
 text = "Spawn Island"
 horizontal_alignment = 1
 
-[node name="WeepingBogs" type="Control" parent="Control"]
+[node name="WeepingBogs" type="Control" parent="Control/TabContainer/Map"]
 layout_mode = 3
 anchors_preset = 0
-offset_left = 331.0
-offset_top = 380.0
-offset_right = 331.0
-offset_bottom = 380.0
+offset_left = 355.0
+offset_top = 336.0
+offset_right = 355.0
+offset_bottom = 336.0
 scale = Vector2(0.87386, 0.87386)
 script = ExtResource("3_y1xv5")
 waypoint = 1
 
-[node name="ColorRect2" type="ColorRect" parent="Control/WeepingBogs"]
+[node name="ColorRect2" type="ColorRect" parent="Control/TabContainer/Map/WeepingBogs"]
 layout_mode = 0
 offset_left = -44.0
 offset_top = -42.0
@@ -212,7 +219,7 @@ offset_right = 50.0
 offset_bottom = 50.0
 color = Color(0.379095, 0.193826, 0, 1)
 
-[node name="Travel" type="Button" parent="Control/WeepingBogs"]
+[node name="Travel" type="Button" parent="Control/TabContainer/Map/WeepingBogs"]
 layout_mode = 0
 offset_left = -24.0314
 offset_top = 36.6192
@@ -222,7 +229,7 @@ scale = Vector2(1.27023, 1.27023)
 theme_override_font_sizes/font_size = 10
 text = "Travel"
 
-[node name="Label" type="Label" parent="Control/WeepingBogs"]
+[node name="Label" type="Label" parent="Control/TabContainer/Map/WeepingBogs"]
 layout_mode = 0
 offset_left = -203.0
 offset_top = -68.0
@@ -231,18 +238,18 @@ offset_bottom = -45.0
 text = "Weeping Bogs"
 horizontal_alignment = 1
 
-[node name="WindmillianRecluse" type="Control" parent="Control"]
+[node name="WindmillianRecluse" type="Control" parent="Control/TabContainer/Map"]
 layout_mode = 3
 anchors_preset = 0
-offset_left = 842.0
-offset_top = 362.0
-offset_right = 842.0
-offset_bottom = 362.0
+offset_left = 746.0
+offset_top = 338.0
+offset_right = 746.0
+offset_bottom = 338.0
 scale = Vector2(0.897414, 0.897414)
 script = ExtResource("3_y1xv5")
 waypoint = 2
 
-[node name="ColorRect2" type="ColorRect" parent="Control/WindmillianRecluse"]
+[node name="ColorRect2" type="ColorRect" parent="Control/TabContainer/Map/WindmillianRecluse"]
 layout_mode = 0
 offset_left = -44.0
 offset_top = -42.0
@@ -250,7 +257,7 @@ offset_right = 50.0
 offset_bottom = 50.0
 color = Color(0.379095, 0.193826, 0, 1)
 
-[node name="Travel" type="Button" parent="Control/WindmillianRecluse"]
+[node name="Travel" type="Button" parent="Control/TabContainer/Map/WindmillianRecluse"]
 layout_mode = 0
 offset_left = -20.0575
 offset_top = 36.7723
@@ -260,7 +267,7 @@ scale = Vector2(1.19948, 1.19948)
 theme_override_font_sizes/font_size = 10
 text = "Travel"
 
-[node name="Label" type="Label" parent="Control/WindmillianRecluse"]
+[node name="Label" type="Label" parent="Control/TabContainer/Map/WindmillianRecluse"]
 layout_mode = 0
 offset_left = -203.0
 offset_top = -68.0
@@ -269,18 +276,18 @@ offset_bottom = -45.0
 text = "Windmillian Recluse"
 horizontal_alignment = 1
 
-[node name="SpikeZone" type="Control" parent="Control"]
+[node name="SpikeZone" type="Control" parent="Control/TabContainer/Map"]
 layout_mode = 3
 anchors_preset = 0
 offset_left = 576.0
-offset_top = 236.0
+offset_top = 231.0
 offset_right = 576.0
-offset_bottom = 236.0
+offset_bottom = 231.0
 scale = Vector2(0.806775, 0.806775)
 script = ExtResource("3_y1xv5")
 waypoint = 3
 
-[node name="ColorRect2" type="ColorRect" parent="Control/SpikeZone"]
+[node name="ColorRect2" type="ColorRect" parent="Control/TabContainer/Map/SpikeZone"]
 layout_mode = 0
 offset_left = -44.0
 offset_top = -42.0
@@ -288,7 +295,7 @@ offset_right = 50.0
 offset_bottom = 50.0
 color = Color(0.379095, 0.193826, 0, 1)
 
-[node name="Travel" type="Button" parent="Control/SpikeZone"]
+[node name="Travel" type="Button" parent="Control/TabContainer/Map/SpikeZone"]
 layout_mode = 0
 offset_left = -21.0716
 offset_top = 33.4666
@@ -298,7 +305,7 @@ scale = Vector2(1.17364, 1.17364)
 theme_override_font_sizes/font_size = 10
 text = "Travel"
 
-[node name="Label" type="Label" parent="Control/SpikeZone"]
+[node name="Label" type="Label" parent="Control/TabContainer/Map/SpikeZone"]
 layout_mode = 0
 offset_left = -203.0
 offset_top = -82.0
@@ -308,18 +315,18 @@ text = "Really
 Dangerous Spike Zone"
 horizontal_alignment = 1
 
-[node name="BlackHoleDistrict" type="Control" parent="Control"]
+[node name="BlackHoleDistrict" type="Control" parent="Control/TabContainer/Map"]
 layout_mode = 3
 anchors_preset = 0
 offset_left = 576.0
-offset_top = 75.0
+offset_top = 113.0
 offset_right = 576.0
-offset_bottom = 75.0
+offset_bottom = 113.0
 scale = Vector2(0.806775, 0.806775)
 script = ExtResource("3_y1xv5")
 waypoint = 4
 
-[node name="ColorRect2" type="ColorRect" parent="Control/BlackHoleDistrict"]
+[node name="ColorRect2" type="ColorRect" parent="Control/TabContainer/Map/BlackHoleDistrict"]
 layout_mode = 0
 offset_left = -44.0
 offset_top = -42.0
@@ -327,7 +334,7 @@ offset_right = 50.0
 offset_bottom = 50.0
 color = Color(0.379095, 0.193826, 0, 1)
 
-[node name="Travel" type="Button" parent="Control/BlackHoleDistrict"]
+[node name="Travel" type="Button" parent="Control/TabContainer/Map/BlackHoleDistrict"]
 layout_mode = 0
 offset_left = -21.0716
 offset_top = 32.2271
@@ -337,7 +344,7 @@ scale = Vector2(1.20185, 1.20185)
 theme_override_font_sizes/font_size = 10
 text = "Travel"
 
-[node name="Label" type="Label" parent="Control/BlackHoleDistrict"]
+[node name="Label" type="Label" parent="Control/TabContainer/Map/BlackHoleDistrict"]
 layout_mode = 0
 offset_left = -203.0
 offset_top = -82.0
@@ -346,3 +353,390 @@ offset_bottom = -33.0
 text = "Black Hole
 District"
 horizontal_alignment = 1
+
+[node name="Equipment" type="Control" parent="Control/TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="MapSprite" type="Control" parent="Control/TabContainer/Equipment"]
+modulate = Color(0.646029, 0.646029, 0.646029, 1)
+z_index = 1
+layout_mode = 3
+anchors_preset = 0
+offset_top = -36.0
+offset_right = 40.0
+offset_bottom = 4.0
+mouse_filter = 2
+metadata/_edit_lock_ = true
+metadata/_edit_group_ = true
+
+[node name="TextureRect" type="TextureRect" parent="Control/TabContainer/Equipment/MapSprite"]
+clip_children = 2
+z_index = -1
+layout_mode = 0
+offset_left = 77.0
+offset_top = -9.0
+offset_right = 589.0
+offset_bottom = 503.0
+mouse_filter = 2
+texture = ExtResource("1_i8q1j")
+
+[node name="TextureRect2" type="TextureRect" parent="Control/TabContainer/Equipment/MapSprite"]
+clip_children = 2
+z_index = -1
+layout_mode = 0
+offset_left = 275.0
+offset_top = 12.0
+offset_right = 787.0
+offset_bottom = 524.0
+mouse_filter = 2
+texture = ExtResource("1_i8q1j")
+
+[node name="TextureRect3" type="TextureRect" parent="Control/TabContainer/Equipment/MapSprite"]
+clip_children = 2
+z_index = -1
+layout_mode = 0
+offset_left = 1048.0
+offset_top = 480.0
+offset_right = 1560.0
+offset_bottom = 992.0
+rotation = -3.14159
+mouse_filter = 2
+texture = ExtResource("1_i8q1j")
+
+[node name="TextureRect4" type="TextureRect" parent="Control/TabContainer/Equipment/MapSprite"]
+clip_children = 2
+z_index = -1
+layout_mode = 0
+offset_left = 593.0
+offset_top = 660.0
+offset_right = 1105.0
+offset_bottom = 1172.0
+rotation = -3.14159
+mouse_filter = 2
+texture = ExtResource("1_i8q1j")
+
+[node name="TextureRect5" type="TextureRect" parent="Control/TabContainer/Equipment/MapSprite"]
+clip_children = 2
+z_index = -1
+layout_mode = 0
+offset_left = 454.0
+offset_top = 159.0
+offset_right = 966.0
+offset_bottom = 671.0
+mouse_filter = 2
+texture = ExtResource("1_i8q1j")
+
+[node name="TextureRect6" type="TextureRect" parent="Control/TabContainer/Equipment/MapSprite"]
+clip_children = 2
+z_index = -1
+layout_mode = 0
+offset_left = 827.0
+offset_top = 167.0
+offset_right = 1339.0
+offset_bottom = 679.0
+rotation = 0.785397
+mouse_filter = 2
+texture = ExtResource("2_qbysm")
+
+[node name="TextureRect7" type="TextureRect" parent="Control/TabContainer/Equipment/MapSprite"]
+clip_children = 2
+z_index = -1
+layout_mode = 0
+offset_left = 830.0
+offset_top = 53.0
+offset_right = 1342.0
+offset_bottom = 565.0
+rotation = 0.785397
+mouse_filter = 2
+texture = ExtResource("2_qbysm")
+
+[node name="TextureRect8" type="TextureRect" parent="Control/TabContainer/Equipment/MapSprite"]
+clip_children = 2
+z_index = -1
+layout_mode = 0
+offset_left = 813.0
+offset_top = 476.0
+offset_right = 1325.0
+offset_bottom = 988.0
+rotation = -2.35619
+mouse_filter = 2
+texture = ExtResource("2_qbysm")
+
+[node name="TextureRect9" type="TextureRect" parent="Control/TabContainer/Equipment/MapSprite"]
+clip_children = 2
+z_index = -1
+layout_mode = 0
+offset_left = 370.0
+offset_top = 469.0
+offset_right = 882.0
+offset_bottom = 981.0
+rotation = -2.35619
+mouse_filter = 2
+texture = ExtResource("2_qbysm")
+
+[node name="TextureRect10" type="TextureRect" parent="Control/TabContainer/Equipment/MapSprite"]
+clip_children = 2
+z_index = -1
+layout_mode = 0
+offset_left = 363.0
+offset_top = 764.0
+offset_right = 875.0
+offset_bottom = 1276.0
+rotation = -2.35619
+mouse_filter = 2
+texture = ExtResource("2_qbysm")
+
+[node name="DashBoots" type="Control" parent="Control/TabContainer/Equipment"]
+anchors_preset = 0
+offset_left = 178.0
+offset_top = 58.0
+offset_right = 318.0
+offset_bottom = 198.0
+mouse_filter = 2
+
+[node name="TextureButton" type="TextureButton" parent="Control/TabContainer/Equipment/DashBoots" node_paths=PackedStringArray("bg")]
+z_index = 1
+layout_mode = 0
+offset_left = -26.0
+offset_top = -25.1284
+offset_right = 164.0
+offset_bottom = 164.872
+pivot_offset = Vector2(95, 95)
+texture_normal = ExtResource("6_g7j35")
+ignore_texture_size = true
+stretch_mode = 4
+script = ExtResource("5_lgy1i")
+bg = NodePath("../BG")
+
+[node name="BG" type="TextureRect" parent="Control/TabContainer/Equipment/DashBoots"]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_left = -39.0
+offset_top = 66.8715
+offset_right = 151.0
+offset_bottom = 256.872
+rotation = -0.785397
+scale = Vector2(0.825243, 0.825243)
+mouse_filter = 2
+texture = ExtResource("1_i8q1j")
+expand_mode = 1
+
+[node name="BG2" type="TextureRect" parent="Control/TabContainer/Equipment/DashBoots/BG"]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_left = -3.5353
+offset_top = 183.141
+offset_right = 186.465
+offset_bottom = 373.141
+rotation = -1.57079
+mouse_filter = 2
+texture = ExtResource("1_i8q1j")
+expand_mode = 1
+
+[node name="ActiveSlot" type="Control" parent="Control/TabContainer/Equipment" node_paths=PackedStringArray("clear_button", "bg", "item_rect", "dash_boots", "checker")]
+anchors_preset = 0
+offset_left = 461.0
+offset_top = 140.0
+offset_right = 699.0
+offset_bottom = 378.0
+script = ExtResource("10_ikw3k")
+clear_button = NodePath("../Clear")
+bg = NodePath("BG")
+item_rect = NodePath("TextureRect")
+dash_boots = NodePath("../DashBoots/TextureButton")
+checker = NodePath("../Panel")
+
+[node name="BG" type="TextureRect" parent="Control/TabContainer/Equipment/ActiveSlot"]
+modulate = Color(0, 0, 0, 1)
+offset_left = -48.0
+offset_top = 112.0
+offset_right = 142.0
+offset_bottom = 302.0
+rotation = -0.785397
+scale = Vector2(1.26889, 1.26889)
+texture = ExtResource("1_i8q1j")
+expand_mode = 1
+
+[node name="BG2" type="TextureRect" parent="Control/TabContainer/Equipment/ActiveSlot/BG"]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_left = -3.5353
+offset_top = 183.141
+offset_right = 186.465
+offset_bottom = 373.141
+rotation = -1.57079
+texture = ExtResource("1_i8q1j")
+expand_mode = 1
+
+[node name="TextureRect" type="TextureRect" parent="Control/TabContainer/Equipment/ActiveSlot"]
+z_index = 1
+offset_left = -4.0
+offset_top = -14.0
+offset_right = 186.0
+offset_bottom = 176.0
+scale = Vector2(1.28219, 1.28219)
+texture = ExtResource("6_g7j35")
+expand_mode = 1
+
+[node name="Panel" type="Panel" parent="Control/TabContainer/Equipment"]
+layout_mode = 0
+offset_left = 455.0
+offset_top = 256.0
+offset_right = 645.0
+offset_bottom = 446.0
+rotation = -0.785397
+scale = Vector2(0.90984, 0.889209)
+
+[node name="Clear" type="Button" parent="Control/TabContainer/Equipment"]
+layout_mode = 0
+offset_left = 534.0
+offset_top = 373.0
+offset_right = 622.0
+offset_bottom = 404.0
+text = "Clear Item
+"
+
+[node name="Label" type="Label" parent="Control/TabContainer/Equipment"]
+layout_mode = 0
+offset_left = 399.0
+offset_top = 503.0
+offset_right = 760.0
+offset_bottom = 526.0
+text = "You can only select equipment at a Checkpoint
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="Control/TabContainer/Equipment"]
+layout_mode = 0
+offset_left = 399.0
+offset_top = 478.0
+offset_right = 761.0
+offset_bottom = 501.0
+text = "Drag and drop equipment into the center node"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Menu" type="Control" parent="Control/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="MapSprite" type="Control" parent="Control/TabContainer/Menu"]
+modulate = Color(0.646029, 0.646029, 0.646029, 1)
+layout_mode = 3
+anchors_preset = 0
+offset_top = -36.0
+offset_right = 40.0
+offset_bottom = 4.0
+mouse_filter = 2
+metadata/_edit_lock_ = true
+metadata/_edit_group_ = true
+
+[node name="TextureRect" type="TextureRect" parent="Control/TabContainer/Menu/MapSprite"]
+clip_children = 2
+layout_mode = 0
+offset_left = 77.0
+offset_top = -9.0
+offset_right = 589.0
+offset_bottom = 503.0
+mouse_filter = 2
+texture = ExtResource("1_i8q1j")
+
+[node name="TextureRect2" type="TextureRect" parent="Control/TabContainer/Menu/MapSprite"]
+clip_children = 2
+layout_mode = 0
+offset_left = 275.0
+offset_top = 12.0
+offset_right = 787.0
+offset_bottom = 524.0
+mouse_filter = 2
+texture = ExtResource("1_i8q1j")
+
+[node name="TextureRect3" type="TextureRect" parent="Control/TabContainer/Menu/MapSprite"]
+clip_children = 2
+layout_mode = 0
+offset_left = 1048.0
+offset_top = 480.0
+offset_right = 1560.0
+offset_bottom = 992.0
+rotation = -3.14159
+mouse_filter = 2
+texture = ExtResource("1_i8q1j")
+
+[node name="TextureRect4" type="TextureRect" parent="Control/TabContainer/Menu/MapSprite"]
+clip_children = 2
+layout_mode = 0
+offset_left = 593.0
+offset_top = 660.0
+offset_right = 1105.0
+offset_bottom = 1172.0
+rotation = -3.14159
+mouse_filter = 2
+texture = ExtResource("1_i8q1j")
+
+[node name="TextureRect5" type="TextureRect" parent="Control/TabContainer/Menu/MapSprite"]
+clip_children = 2
+layout_mode = 0
+offset_left = 454.0
+offset_top = 159.0
+offset_right = 966.0
+offset_bottom = 671.0
+mouse_filter = 2
+texture = ExtResource("1_i8q1j")
+
+[node name="TextureRect6" type="TextureRect" parent="Control/TabContainer/Menu/MapSprite"]
+clip_children = 2
+layout_mode = 0
+offset_left = 827.0
+offset_top = 167.0
+offset_right = 1339.0
+offset_bottom = 679.0
+rotation = 0.785397
+mouse_filter = 2
+texture = ExtResource("2_qbysm")
+
+[node name="TextureRect7" type="TextureRect" parent="Control/TabContainer/Menu/MapSprite"]
+clip_children = 2
+layout_mode = 0
+offset_left = 830.0
+offset_top = 53.0
+offset_right = 1342.0
+offset_bottom = 565.0
+rotation = 0.785397
+mouse_filter = 2
+texture = ExtResource("2_qbysm")
+
+[node name="TextureRect8" type="TextureRect" parent="Control/TabContainer/Menu/MapSprite"]
+clip_children = 2
+layout_mode = 0
+offset_left = 813.0
+offset_top = 476.0
+offset_right = 1325.0
+offset_bottom = 988.0
+rotation = -2.35619
+mouse_filter = 2
+texture = ExtResource("2_qbysm")
+
+[node name="TextureRect9" type="TextureRect" parent="Control/TabContainer/Menu/MapSprite"]
+clip_children = 2
+layout_mode = 0
+offset_left = 370.0
+offset_top = 469.0
+offset_right = 882.0
+offset_bottom = 981.0
+rotation = -2.35619
+mouse_filter = 2
+texture = ExtResource("2_qbysm")
+
+[node name="TextureRect10" type="TextureRect" parent="Control/TabContainer/Menu/MapSprite"]
+clip_children = 2
+layout_mode = 0
+offset_left = 363.0
+offset_top = 764.0
+offset_right = 875.0
+offset_bottom = 1276.0
+rotation = -2.35619
+mouse_filter = 2
+texture = ExtResource("2_qbysm")

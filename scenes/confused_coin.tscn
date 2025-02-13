@@ -86,14 +86,14 @@ shader_parameter/wave_frequency = 4.0
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.231183, 1), 0.0, 0.0, 0, 0, Vector2(0.801075, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 4
 
-[sub_resource type="CurveTexture" id="CurveTexture_prwm1"]
+[sub_resource type="CurveTexture" id="CurveTexture_wy8pl"]
 curve = SubResource("Curve_qexnq")
 
 [sub_resource type="Curve" id="Curve_q3vyb"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.629032, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 3
 
-[sub_resource type="CurveTexture" id="CurveTexture_qr2wd"]
+[sub_resource type="CurveTexture" id="CurveTexture_2pxek"]
 curve = SubResource("Curve_q3vyb")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_yhcpg"]
@@ -106,9 +106,9 @@ initial_velocity_max = 283.79
 gravity = Vector3(0, 98, 0)
 scale_min = 0.1
 scale_max = 0.1
-scale_curve = SubResource("CurveTexture_qr2wd")
+scale_curve = SubResource("CurveTexture_2pxek")
 color = Color(1, 0.916667, 0, 1)
-alpha_curve = SubResource("CurveTexture_prwm1")
+alpha_curve = SubResource("CurveTexture_wy8pl")
 
 [node name="ConfusedCoin" type="Node2D"]
 scale = Vector2(0.355873, 0.358999)

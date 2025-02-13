@@ -22,11 +22,9 @@ var can_control : bool = true
 
 #EQUIPMENT
 
+@onready var dashcast : RayCast2D = $DashCast
+
 var dash_direction : int = 1
-
-var is_dashing : bool = false
-
-var dash_time : float = 0.0
 
 var dash_cooldown : float = 0.0
 
@@ -98,16 +96,15 @@ func _physics_process(delta):
 	var force = Vector2.ZERO
 	
 	
-	if is_grappling:
+	if is_freefalling:
 		if linear_velocity.x > 0:
 			dash_direction = 1
 		else:
 			dash_direction = -1
 	elif direction != 0:
-		if not is_dashing:
-			dash_direction = round(direction)
+		dash_direction = round(direction)
 	
-	print(dash_direction)
+	#print(dash_direction)
 	
 	handle_non_control(delta)
 	
@@ -129,12 +126,11 @@ func _physics_process(delta):
 				retract(delta)
 	
 	if Input.is_action_just_pressed("dash"):
-		if (not is_dashing) and (dash_direction != 0):
 			if Global.current_equipment == Global.EQUIPMENTS.DashBoots:
-				if dash_cooldown >= 2.0:
-					is_dashing = true
-					dash_cooldown = 0.0
-					dash_time = 0.15
+				if dash_cooldown >= max_dash_cooldown:
+					#%LineTrail2D.show()
+					#%LineTrail2D.set_point_position(0,dashcast.global_position)
+					apply_dash()
 	
 	# UPGRADE /////////////////////////////////////////////////////////////
 	
@@ -145,17 +141,7 @@ func _physics_process(delta):
 		m_bonus = 1.35
 	# UPGRADE /////////////////////////////////////////////////////////////
 	
-	if is_dashing:
-		var d : float = 2.5
-		force.x = (MOVE_SPEED * d) * dash_direction
-		if abs(linear_velocity.x) > (MAX_SPEED * d):
-			linear_velocity.x = (MAX_SPEED * d ) * dash_direction
-		
-		if not is_freefalling:
-			linear_velocity.y = 0
-		
-	
-	elif direction != 0:
+	if direction != 0:
 		if (not is_freefalling) or (in_liquid):
 			force.x = (MOVE_SPEED * m_bonus) * direction
 			physics_material_override.friction = 0.1
@@ -202,8 +188,102 @@ func _physics_process(delta):
 	
 	apply_central_impulse(force)
 
+func apply_dash():
+	print(dash_direction)
+	
+	%LineTrail2D.set_point_position(0,Vector2(0,0))
+	
+	if dash_direction == 0:
+		return
+	
+	var length : float = (dashcast.get_collision_point() - dashcast.global_position).length()
+	
+	print(length)
+	
+	if length < 20:
+		return
+	
+	%teleport1.emitting = true
+	
+	dash_cooldown = 0.0
+	
+	await get_tree().physics_frame
+	
+	%teleport1.show()
+	
+	var dash_length : float = 125
+	
+	var col_decrease : float = 10
+	
+	if dash_direction > 0:
+		#dashcast.target_position.x = 175
+		col_decrease = 25
+	else:
+		#dashcast.target_position.x = -175
+		col_decrease = -25
+	
+	await get_tree().physics_frame
+	
+	var col : Vector2
+	
+	if dashcast.is_colliding():
+		col = dashcast.get_collision_point() - Vector2(col_decrease,0.0)
+		self.global_position = col
+	else:
+		self.global_position += dashcast.target_position
+		col = dashcast.target_position + dashcast.global_position
+	
+	print(linear_velocity.y)
+	
+	if linear_velocity.y > 0:
+		linear_velocity.y = 0
+	
+	print(linear_velocity.y)
+	
+	%LineTrail2D.set_point_position(1,dashcast.global_position - col)
+	
+	%teleport2.emitting = true
+	
+	
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	#%LineTrail2D.set_point_position(1,Vector2(0,0))
+
+func handle_dashcast():
+	
+	if not Global.current_equipment == Global.EQUIPMENTS.DashBoots:
+		$Marker.hide()
+		return
+	
+	$Marker.show()
+	
+	var col_decrease : float
+	
+	var col : Vector2
+	
+	if dash_direction > 0:
+		dashcast.target_position.x = 175
+		col_decrease = 25
+	else:
+		dashcast.target_position.x = -175
+		col_decrease = -25
+	
+	if dashcast.is_colliding():
+		col = dashcast.get_collision_point() - Vector2(col_decrease,0.0)
+	else:
+		col = dashcast.target_position + dashcast.global_position
+	
+	%Marker.global_position = lerp(%Marker.global_position,col,0.6)
+
 func handle_non_control(delta : float):
 	check_length()
+	
+	handle_dashcast()
 	
 	#print(Engine.time_scale)
 	
@@ -249,21 +329,14 @@ func handle_non_control(delta : float):
 func handle_equipment_cooldowns(delta : float):
 	
 	if _on_floor():
-		if not is_dashing:
-			dash_cooldown += delta * 2.0
+		if dash_cooldown < max_dash_cooldown:
+			dash_cooldown += delta * 1.5
 	elif not is_grappling:
-		if not is_dashing:
-			dash_cooldown += delta
+		if dash_cooldown < max_dash_cooldown:
+			dash_cooldown += delta * 1.4
 	
-	dash_cooldown = clampf(dash_cooldown,0.0,2.0)
-	
-	dash_time -= delta
-	
-	if dash_time <= 0:
-		is_dashing = false
-	
-	dash_time = clampf(dash_time,0.0,10.0)
-	
+	dash_cooldown = clampf(dash_cooldown,0.0,max_dash_cooldown)
+
 	emit_dash_cooldown.emit(dash_cooldown)
 
 func set_is_freefalling(freefalling : bool):

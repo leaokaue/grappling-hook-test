@@ -1,10 +1,11 @@
-[gd_scene load_steps=17 format=3 uid="uid://bacl7irhgnrr7"]
+[gd_scene load_steps=24 format=3 uid="uid://bacl7irhgnrr7"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_d3wq5"]
 [ext_resource type="Texture2D" uid="uid://bdw2ln7jh2dda" path="res://sprites/Wormchelt.png" id="2_4q2ix"]
 [ext_resource type="Script" path="res://scripts/line_trail.gd" id="2_ap5d5"]
 [ext_resource type="Texture2D" uid="uid://bk2s75us1jsj8" path="res://sprites/air_trail.png" id="2_odrpe"]
 [ext_resource type="AudioStream" uid="uid://84ge45s7w0d6" path="res://sounds/scream.mp3" id="3_p5reh"]
+[ext_resource type="Texture2D" uid="uid://b2hpi4gi8412a" path="res://sprites/ball.png" id="4_74kgy"]
 [ext_resource type="Texture2D" uid="uid://drekgwtmn12em" path="res://sprites/poisonbarbg.png" id="4_lc4xj"]
 [ext_resource type="AudioStream" uid="uid://lqak5ne0y0ry" path="res://sounds/spike_death_horrible.mp3" id="4_qltkw"]
 [ext_resource type="AudioStream" uid="uid://2dj8lww8invu" path="res://sounds/drowning.mp3" id="5_lw7l2"]
@@ -15,6 +16,36 @@
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_asclu"]
 friction = 0.1
 rough = true
+
+[sub_resource type="Curve" id="Curve_57xgx"]
+_data = [Vector2(0.0960854, 0.235849), 0.0, 0.0, 0, 0, Vector2(1, 0.59434), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_cyxjh"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.33195, 1), 0.0, 0.0, 0, 0, Vector2(0.697095, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_2oyaa"]
+curve = SubResource("Curve_cyxjh")
+
+[sub_resource type="Curve" id="Curve_71nq6"]
+_data = [Vector2(0, 0.197802), 0.0, 0.0, 0, 0, Vector2(0.165975, 1), 0.0, 0.0, 0, 0, Vector2(0.629032, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.340659), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_8gxqo"]
+curve = SubResource("Curve_71nq6")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_qsc3v"]
+particle_flag_disable_z = true
+spread = 180.0
+initial_velocity_min = 180.0
+initial_velocity_max = 180.0
+gravity = Vector3(0, 98, 0)
+scale_min = 0.08
+scale_max = 0.08
+scale_curve = SubResource("CurveTexture_8gxqo")
+color = Color(1, 0.916667, 0, 1)
+alpha_curve = SubResource("CurveTexture_2oyaa")
 
 [sub_resource type="Curve" id="Curve_kk74s"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.11032, 0.179245), 0.0, 0.0, 0, 0, Vector2(1, 0.792453), 0.0, 0.0, 0, 0]
@@ -33,13 +64,66 @@ size = Vector2(14, 30)
 texture_filter = 5
 collision_layer = 2
 physics_material_override = SubResource("PhysicsMaterial_asclu")
-continuous_cd = 1
+continuous_cd = 2
 contact_monitor = true
 max_contacts_reported = 1
 script = ExtResource("1_d3wq5")
 
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="."]
+remote_path = NodePath("../DashCast/LineTrail2D")
+
+[node name="CastTransform2D" type="RemoteTransform2D" parent="."]
+remote_path = NodePath("../DashCast")
+update_rotation = false
+
+[node name="Marker" type="Line2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(105, -4.76837e-07)
+rotation = 1.52031
+scale = Vector2(0.829195, 0.829195)
+points = PackedVector2Array(0.317071, -30.1722, 7.42207, -27.3981, 11, -23, 13, -17, 8.97892, -10.414, 2.77407, -7.10498, -4, -9, -8, -12, -9.98802, -17.4101, -8.47927, -23.3715, -4.62246, -28.0067)
+closed = true
+width = 2.42
+default_color = Color(1, 0.8, 0, 0.266667)
+
 [node name="RayCast2D" type="RayCast2D" parent="."]
 target_position = Vector2(0, 23)
+
+[node name="DashCast" type="RayCast2D" parent="."]
+top_level = true
+target_position = Vector2(125, 0)
+
+[node name="LineTrail2D" type="Line2D" parent="DashCast"]
+unique_name_in_owner = true
+visible = false
+top_level = true
+points = PackedVector2Array(0, 0, 0, 0)
+width = 30.0
+width_curve = SubResource("Curve_57xgx")
+default_color = Color(1, 0.916667, 0, 0.333333)
+texture = ExtResource("2_odrpe")
+texture_mode = 2
+antialiased = true
+
+[node name="teleport1" type="GPUParticles2D" parent="DashCast"]
+unique_name_in_owner = true
+emitting = false
+amount = 128
+process_material = SubResource("ParticleProcessMaterial_qsc3v")
+texture = ExtResource("4_74kgy")
+lifetime = 0.2
+one_shot = true
+explosiveness = 1.0
+
+[node name="teleport2" type="GPUParticles2D" parent="DashCast"]
+unique_name_in_owner = true
+emitting = false
+amount = 128
+process_material = SubResource("ParticleProcessMaterial_qsc3v")
+texture = ExtResource("4_74kgy")
+lifetime = 0.2
+one_shot = true
+explosiveness = 1.0
 
 [node name="LineTrail2D" type="Line2D" parent="."]
 position = Vector2(0, 5)

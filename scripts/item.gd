@@ -96,30 +96,56 @@ func match_item():
 			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
 		i.JumpBoost:
 			sprite.texture = roids2
+			i_name = "Healthy Medicine"
+			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
 		i.SpeedBoost:
 			sprite.texture = roids3
+			i_name = "Healthy Medicine"
+			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
 		i.CoinCompass:
 			sprite.texture = compass
+			i_name = "Healthy Medicine"
+			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
 		i.CoinTracker:
 			sprite.texture = tracker
+			i_name = "Healthy Medicine"
+			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
 		i.FastTravel:
 			sprite.texture =  guiding_light
+			i_name = "Healthy Medicine"
+			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
 		i.DashBoots:
 			sprite.texture = dash_boots
+			i_name = "Warp Boots"
+			i_desc = "They can't shoot an atom! Press Shift to warp forwards. Small chance of being teleported into the void."
 		i.JetPack:
 			sprite.texture = jet_pack
+			i_name = "Healthy Medicine"
+			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
 		i.HookCooldownReducer:
 			sprite.texture = cool_drink
+			i_name = "Healthy Medicine"
+			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
 		i.GrappleRopeExtension:
 			sprite.texture = extra_rope
+			i_name = "Healthy Medicine"
+			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
 		i.RetractBoost:
 			sprite.texture = motorized_pulley
+			i_name = "Healthy Medicine"
+			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
 		i.LatchJumpBoost:
 			sprite.texture = titanium_glove
+			i_name = "Healthy Medicine"
+			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
 		i.HoverStone:
 			sprite.texture = hover_stone
+			i_name = "Healthy Medicine"
+			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
 		i.PoisonResist:
 			sprite.texture = green_potion
+			i_name = "Healthy Medicine"
+			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
 	
 	#sprite.texture = t
 	

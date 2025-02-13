@@ -57,8 +57,11 @@ scream_type = 1
 
 [node name="HCol" type="CollisionPolygon2D" parent="HSprite/DeathBarrier"]
 unique_name_in_owner = true
+visible = false
 z_index = 1
+position = Vector2(0, 3)
 rotation = -0.00254784
+scale = Vector2(0.615017, 0.615017)
 polygon = PackedVector2Array(0, -28, -30, 28, 30, 28)
 
 [node name="Spike" type="Polygon2D" parent="HSprite"]
@@ -82,8 +85,11 @@ scream_type = 1
 
 [node name="Vcol" type="CollisionPolygon2D" parent="VSprite/DeathBarrier"]
 unique_name_in_owner = true
+visible = false
 z_index = 1
+position = Vector2(-1.88237e-05, 3)
 rotation = -0.00254784
+scale = Vector2(0.615017, 0.615017)
 polygon = PackedVector2Array(0.0765018, -29.9999, -28.0764, 29.9285, 27.9234, 30.0713)
 
 [node name="Spike" type="Polygon2D" parent="VSprite"]

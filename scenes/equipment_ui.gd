@@ -1,0 +1,61 @@
+extends TextureButton
+class_name SGGateItem
+
+signal picked_up(int)
+
+signal released(Vector2)
+
+@export var darken : float = 0.9
+
+@onready var dark : Color = Color(darken,darken,darken)
+
+@export var object := Global.EQUIPMENTS.DashBoots
+
+#@export var behind : TextureRect
+
+@export var bg : TextureRect
+
+@onready var init_pos : Vector2 = self.position
+@onready var init_rot : float = self.rotation
+
+@export_category("Audio")
+@export var pick_noise : AudioStream
+@export var drop_noise : AudioStream
+@export var sound : AudioStreamPlayer
+
+var mouse_offset : Vector2
+var currently_pressed : bool = false
+
+func _ready() -> void:
+	mouse_entered.connect(on_mouse_enter)
+	mouse_exited.connect(on_mouse_exit)
+	button_down.connect(on_clicked)
+	button_up.connect(on_release)
+
+func _physics_process(_delta: float) -> void:
+	if currently_pressed:
+		self.global_position = get_global_mouse_position() - mouse_offset
+
+func on_mouse_enter():
+	self.modulate = dark
+
+func on_mouse_exit():
+	self.modulate = Color(1.0,1.0,1.0)
+
+func on_clicked():
+	z_index += 1
+	get_mouse_offset()
+	currently_pressed = true
+	rotation += deg_to_rad(randf_range(-10,10))
+	self.modulate = Color(1.0,1.0,1.0)
+	picked_up.emit(object)
+
+func on_release():
+	z_index -= 1
+	currently_pressed = false
+	self.rotation = init_rot
+	self.position = init_pos
+	released.emit()
+
+func get_mouse_offset():
+	mouse_offset = (get_global_mouse_position() - global_position)
