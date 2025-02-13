@@ -30,10 +30,11 @@ func _physics_process(delta: float) -> void:
 	if looks:
 		look_at_dir()
 	
-	if grappled:
+	#if grappled:
 		#if grappled_body is AnimatableBody2D:
-		if is_instance_valid(grappled_body):
-			self.global_position = grappled_body.global_position + body_offset
+			#print("going through")
+		##if is_instance_valid(grappled_body):
+			#self.global_position = grappled_body.global_position + body_offset
 	
 	#print(self.global_position)
 	
@@ -52,10 +53,16 @@ func _on_body_collision(body_rid : RID,body : Node,_bsp : int,lsi : int):
 			if c == 9:
 				player.destroy_grapple()
 				return
+		
 		elif body is CollisionObject2D:
 			
 			grappled_body = body
+			print(grappled_body)
 			body_offset = self.global_position - body.global_position
+			
+			if body is AnimatableBody2D:
+				#self.reparent(body)
+				self.call_deferred("reparent",body)
 			
 			if body.get_collision_layer_value(4):
 				#print("dying")

@@ -6,7 +6,8 @@ enum BACKGROUNDS {
 	Rainy,
 	Clouds,
 	Night,
-	Space
+	Space,
+	Empty
 }
 
 @onready var sunny_bg := %BgHappy
@@ -18,6 +19,8 @@ enum BACKGROUNDS {
 @onready var night_bg := %BgDark
 
 @onready var space_bg := %BgVOID
+
+@onready var bg_empty := %BgEmpty
 
 var current_background : BACKGROUNDS
 
@@ -69,6 +72,8 @@ func get_background(bg : BACKGROUNDS) -> Sprite2D:
 			return night_bg
 		4:
 			return space_bg
+		5:
+			return bg_empty
 	
 	push_error("SOMETHING HAS GONE TERRIBLY WRONG")
 	return null

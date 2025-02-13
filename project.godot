@@ -86,6 +86,7 @@ dash={
 2d_physics/layer_4="Unhookable"
 2d_physics/layer_5="Liquid"
 2d_physics/layer_6="CrushingBlocks"
+2d_physics/layer_7="Windmill"
 
 [physics]
 

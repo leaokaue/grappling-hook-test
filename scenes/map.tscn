@@ -549,6 +549,7 @@ checker = NodePath("../Panel")
 
 [node name="BG" type="TextureRect" parent="Control/TabContainer/Equipment/ActiveSlot"]
 modulate = Color(0, 0, 0, 1)
+layout_mode = 0
 offset_left = -48.0
 offset_top = 112.0
 offset_right = 142.0
@@ -571,6 +572,7 @@ expand_mode = 1
 
 [node name="TextureRect" type="TextureRect" parent="Control/TabContainer/Equipment/ActiveSlot"]
 z_index = 1
+layout_mode = 0
 offset_left = -4.0
 offset_top = -14.0
 offset_right = 186.0

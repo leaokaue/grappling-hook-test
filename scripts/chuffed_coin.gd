@@ -23,6 +23,7 @@ func collect():
 		#$Line2D.hide()
 		$collect.emitting = true
 		$bling.play()
+		$exist.emitting = false
 		
 		await get_tree().create_timer(3.0,false).timeout
 		self.queue_free()

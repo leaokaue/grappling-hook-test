@@ -11,13 +11,15 @@ class_name MusicManager
 
 @export var blackhole_track : AudioStream
 
+@export var empty_track : AudioStream
+
 var current_track : BackgroundManager.BACKGROUNDS
 
 var previous_track : BackgroundManager.BACKGROUNDS
 
 var t : Tween
 
-var track_pos_array : Array[float] = [0,0,0,0,0]
+var track_pos_array : Array[float] = [0,0,0,0,0,0]
 
 func _ready() -> void:
 	Global.music_player = self
@@ -55,7 +57,7 @@ func get_track(track : BackgroundManager.BACKGROUNDS) -> Dictionary:
 		2:
 			return {
 				"stream" : windmill_track,
-				"max_db" : -20
+				"max_db" : -25
 			}
 		3:
 			return {
@@ -64,8 +66,13 @@ func get_track(track : BackgroundManager.BACKGROUNDS) -> Dictionary:
 			}
 		4:
 			return {
-				"track" : blackhole_track,
+				"stream" : blackhole_track,
 				"max_db" : -20
+			}
+		5:
+			return {
+				"stream" : empty_track,
+				"max_db" : -23
 			}
 	
 	return {}
@@ -82,6 +89,8 @@ func set_track_pos(track : AudioStream,pos : float):
 			track_pos_array[3] = pos
 		blackhole_track:
 			track_pos_array[4] = pos
+		empty_track:
+			track_pos_array[5] = pos
 
 func get_track_pos(track : AudioStream) -> float:
 	match track:

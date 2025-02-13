@@ -1,0 +1,40 @@
+[gd_scene load_steps=4 format=3 uid="uid://dun7nv3do60w8"]
+
+[ext_resource type="Script" path="res://scripts/windmill_block_detector.gd" id="1_wuhsm"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nhc4u"]
+size = Vector2(82, 78)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_abp4y"]
+size = Vector2(60, 56)
+
+[node name="WindmillBlockDetector" type="Area2D" node_paths=PackedStringArray("collision_shape")]
+collision_layer = 64
+collision_mask = 64
+script = ExtResource("1_wuhsm")
+owned_by_spinner = false
+collision_shape = NodePath("WindmillBlock/CollisionShape2D")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_nhc4u")
+
+[node name="WindmillBlock" type="Node2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WindmillBlock"]
+position = Vector2(1.52588e-05, 0)
+shape = SubResource("RectangleShape2D_abp4y")
+debug_color = Color(0.13, 0.3765, 1, 0)
+
+[node name="ColorRect" type="ColorRect" parent="WindmillBlock/CollisionShape2D"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -31.0
+offset_top = -29.0
+offset_right = 31.0
+offset_bottom = 29.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.58, 0.372747, 0.1914, 1)

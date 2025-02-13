@@ -1,5 +1,6 @@
-[gd_resource type="TileSet" load_steps=13 format=3 uid="uid://w5rst4ax56w1"]
+[gd_resource type="TileSet" load_steps=14 format=3 uid="uid://w5rst4ax56w1"]
 
+[ext_resource type="PackedScene" uid="uid://dun7nv3do60w8" path="res://scenes/windmill_block.tscn" id="1_x5mad"]
 [ext_resource type="PackedScene" uid="uid://2up45yvg4gfs" path="res://scenes/water_block.tscn" id="2_0f1op"]
 [ext_resource type="PackedScene" uid="uid://dasxlqcm51tw0" path="res://scenes/ghost_hook_block.tscn" id="2_20lv8"]
 [ext_resource type="PackedScene" uid="uid://c86ebt78ug24x" path="res://scenes/hook_block.tscn" id="2_pi43u"]
@@ -13,6 +14,7 @@
 
 [sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_3upqg"]
 resource_name = "Blocks"
+scenes/1/scene = ExtResource("1_x5mad")
 scenes/2/scene = ExtResource("2_pi43u")
 scenes/3/scene = ExtResource("3_2hlfc")
 scenes/4/scene = ExtResource("4_grroj")
@@ -33,9 +35,16 @@ texture_region_size = Vector2i(60, 56)
 2:0/0 = 0
 2:0/0/physics_layer_1/polygon_0/points = PackedVector2Array(-30, -28, 30, -28, 30, 28, -30, 28)
 3:0/0 = 0
+3:0/0/z_index = -2
+3:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-30, -28, 30, -28, 30, 28, -30, 28)
+3:0/0/physics_layer_0/polygon_0/one_way = true
+3:0/0/physics_layer_2/polygon_0/points = PackedVector2Array(-30, -28, 30, -28, 30, 28, -30, 28)
 4:0/0 = 0
+4:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-30, -28, 30, -28, 30, 28, -30, 28)
 5:0/0 = 0
+5:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-30, -28, 30, -28, 30, 28, -30, 28)
 6:0/0 = 0
+6:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-30, -28, 30, -28, 30, 28, -30, 28)
 7:0/0 = 0
 8:0/0 = 0
 9:0/0 = 0
@@ -934,5 +943,6 @@ texture_region_size = Vector2i(60, 56)
 tile_size = Vector2i(60, 56)
 physics_layer_0/collision_layer = 1
 physics_layer_1/collision_layer = 9
+physics_layer_2/collision_layer = 4
 sources/0 = SubResource("TileSetScenesCollectionSource_3upqg")
 sources/1 = SubResource("TileSetAtlasSource_2gabt")

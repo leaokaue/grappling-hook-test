@@ -5,6 +5,10 @@ signal update_coins
 
 signal fade_animation_finished
 
+signal change_target_zoom(zoom : float)
+
+signal reset_zoom
+
 signal toggle_rain(on : bool)
 
 signal teleport_to_waypoint(waypoint : int)
@@ -52,7 +56,7 @@ enum EQUIPMENTS {
 	Jetpack
 }
 
-var current_equipment : EQUIPMENTS = EQUIPMENTS.DashBoots
+var current_equipment : EQUIPMENTS = EQUIPMENTS.None
 
 var can_use_waypoints : bool = false
 

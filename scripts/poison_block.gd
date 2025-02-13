@@ -12,8 +12,8 @@ func _ready() -> void:
 		gravity = -150
 		linear_damp = 12
 	else:
-		linear_damp = 6
-		gravity = -300
+		linear_damp = 2
+		gravity = -450
 
 func _physics_process(_delta: float) -> void:
 	#for body in get_overlapping_bodies():

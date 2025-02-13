@@ -97,10 +97,12 @@ func _physics_process(delta):
 	
 	
 	if is_freefalling:
-		if linear_velocity.x > 0:
+		if linear_velocity.x > 1:
 			dash_direction = 1
-		else:
+		elif linear_velocity.x < -1:
 			dash_direction = -1
+		elif linear_velocity.x == 0:
+			dash_direction = 0
 	elif direction != 0:
 		dash_direction = round(direction)
 	
@@ -220,7 +222,7 @@ func apply_dash():
 		col_decrease = 25
 	else:
 		#dashcast.target_position.x = -175
-		col_decrease = -25
+		col_decrease = 5
 	
 	await get_tree().physics_frame
 	
@@ -260,7 +262,6 @@ func handle_dashcast():
 		$Marker.hide()
 		return
 	
-	$Marker.show()
 	
 	var col_decrease : float
 	
@@ -278,7 +279,16 @@ func handle_dashcast():
 	else:
 		col = dashcast.target_position + dashcast.global_position
 	
-	%Marker.global_position = lerp(%Marker.global_position,col,0.6)
+	#print(dash_direction)
+	
+	if (abs(col - dashcast.global_position).length() > 25) and (dash_direction != 0):
+		$Marker.show()
+	else:
+		#print("hiding marker")
+		$Marker.hide()
+	
+	%Marker.global_position.y = lerp(%Marker.global_position.y,col.y,0.9)
+	%Marker.global_position.x = lerp(%Marker.global_position.x,col.x,0.3)
 
 func handle_non_control(delta : float):
 	check_length()

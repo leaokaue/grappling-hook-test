@@ -16,6 +16,13 @@ func on_body_entered(body : Node2D):
 			Global.toggle_rain.emit(true)
 		else:
 			Global.toggle_rain.emit(false)
+		
+		if bg == b.Empty:
+			Global.change_target_zoom.emit(0.95)
+		elif bg == b.Clouds:
+			Global.change_target_zoom.emit(0.5)
+		else:
+			Global.reset_zoom.emit()
 
 #func ready_check_player():
 	#for i in get_overlapping_bodies():

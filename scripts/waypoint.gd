@@ -6,7 +6,8 @@ enum WAYPOINTS {
 	Bog,
 	Windmill,
 	Spike,
-	Space
+	Space,
+	Empty
 }
 
 @export var waypoint : WAYPOINTS
