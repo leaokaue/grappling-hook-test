@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://d2es5ksc3ksgp"]
+[gd_scene load_steps=9 format=3 uid="uid://d2es5ksc3ksgp"]
 
 [ext_resource type="Texture2D" uid="uid://dvd0js1533ixy" path="res://sprites/uibg2.png" id="1_i8q1j"]
 [ext_resource type="Script" path="res://scripts/map.gd" id="1_ifiad"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scenes/on_map_waypoint.gd" id="3_y1xv5"]
 [ext_resource type="Script" path="res://scenes/equipment_ui.gd" id="5_lgy1i"]
 [ext_resource type="Texture2D" uid="uid://d3rf28vioo657" path="res://sprites/items/dash_boots.png" id="6_g7j35"]
+[ext_resource type="Texture2D" uid="uid://tqrrxtnsyvkn" path="res://sprites/items/tambaqui.png" id="7_xusdj"]
 [ext_resource type="Script" path="res://scripts/item_slot.gd" id="10_ikw3k"]
 
 [node name="Map" type="CanvasLayer"]
@@ -509,6 +510,16 @@ stretch_mode = 4
 script = ExtResource("5_lgy1i")
 bg = NodePath("../BG")
 
+[node name="Label" type="Label" parent="Control/TabContainer/Equipment/DashBoots"]
+z_index = 1
+layout_mode = 0
+offset_left = -61.0
+offset_top = 1.0
+offset_right = 177.0
+offset_bottom = 24.0
+text = "Warp Boots"
+horizontal_alignment = 1
+
 [node name="BG" type="TextureRect" parent="Control/TabContainer/Equipment/DashBoots"]
 modulate = Color(0, 0, 0, 1)
 layout_mode = 0
@@ -534,7 +545,115 @@ mouse_filter = 2
 texture = ExtResource("1_i8q1j")
 expand_mode = 1
 
-[node name="ActiveSlot" type="Control" parent="Control/TabContainer/Equipment" node_paths=PackedStringArray("clear_button", "bg", "item_rect", "dash_boots", "checker")]
+[node name="BG3" type="TextureRect" parent="Control/TabContainer/Equipment/DashBoots/BG"]
+visible = false
+modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_left = 132.0
+offset_top = 100.0
+offset_right = 346.0
+offset_bottom = 176.0
+rotation = -2.35619
+mouse_filter = 2
+texture = ExtResource("1_i8q1j")
+expand_mode = 1
+
+[node name="BG4" type="TextureRect" parent="Control/TabContainer/Equipment/DashBoots/BG"]
+visible = false
+modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_left = 136.985
+offset_top = 106.359
+offset_right = 350.985
+offset_bottom = 182.359
+rotation = -2.35619
+mouse_filter = 2
+texture = ExtResource("1_i8q1j")
+expand_mode = 1
+
+[node name="Tambaqui" type="Control" parent="Control/TabContainer/Equipment"]
+anchors_preset = 0
+offset_left = 210.0
+offset_top = 318.0
+offset_right = 350.0
+offset_bottom = 458.0
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="Control/TabContainer/Equipment/Tambaqui"]
+z_index = 2
+offset_left = -63.0
+offset_top = 115.0
+offset_right = 175.0
+offset_bottom = 164.0
+text = "Tambaqui
+"
+horizontal_alignment = 1
+
+[node name="TextureButton" type="TextureButton" parent="Control/TabContainer/Equipment/Tambaqui" node_paths=PackedStringArray("bg")]
+z_index = 1
+layout_mode = 0
+offset_left = -26.0
+offset_top = -25.1284
+offset_right = 164.0
+offset_bottom = 164.872
+pivot_offset = Vector2(95, 95)
+texture_normal = ExtResource("7_xusdj")
+ignore_texture_size = true
+stretch_mode = 4
+script = ExtResource("5_lgy1i")
+object = 2
+bg = NodePath("../BG")
+
+[node name="BG" type="TextureRect" parent="Control/TabContainer/Equipment/Tambaqui"]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_left = -39.0
+offset_top = 66.8715
+offset_right = 151.0
+offset_bottom = 256.872
+rotation = -0.785397
+scale = Vector2(0.825243, 0.825243)
+mouse_filter = 2
+texture = ExtResource("1_i8q1j")
+expand_mode = 1
+
+[node name="BG2" type="TextureRect" parent="Control/TabContainer/Equipment/Tambaqui/BG"]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_left = -3.5353
+offset_top = 183.141
+offset_right = 186.465
+offset_bottom = 373.141
+rotation = -1.57079
+mouse_filter = 2
+texture = ExtResource("1_i8q1j")
+expand_mode = 1
+
+[node name="BG3" type="TextureRect" parent="Control/TabContainer/Equipment/Tambaqui/BG"]
+visible = false
+modulate = Color(0, 0, 0, 1)
+offset_left = 34.0635
+offset_top = 184.607
+offset_right = 248.064
+offset_bottom = 260.607
+rotation = -2.35619
+mouse_filter = 2
+texture = ExtResource("1_i8q1j")
+expand_mode = 1
+
+[node name="BG4" type="TextureRect" parent="Control/TabContainer/Equipment/Tambaqui/BG"]
+visible = false
+modulate = Color(0, 0, 0, 1)
+offset_left = 39.049
+offset_top = 190.966
+offset_right = 253.049
+offset_bottom = 266.966
+rotation = -2.35619
+mouse_filter = 2
+texture = ExtResource("1_i8q1j")
+expand_mode = 1
+
+[node name="ActiveSlot" type="Control" parent="Control/TabContainer/Equipment" node_paths=PackedStringArray("clear_button", "bg", "item_rect", "dash_boots", "tambaqui", "checker")]
 anchors_preset = 0
 offset_left = 461.0
 offset_top = 140.0
@@ -545,6 +664,7 @@ clear_button = NodePath("../Clear")
 bg = NodePath("BG")
 item_rect = NodePath("TextureRect")
 dash_boots = NodePath("../DashBoots/TextureButton")
+tambaqui = NodePath("../Tambaqui/TextureButton")
 checker = NodePath("../Panel")
 
 [node name="BG" type="TextureRect" parent="Control/TabContainer/Equipment/ActiveSlot"]
@@ -580,6 +700,15 @@ offset_bottom = 176.0
 scale = Vector2(1.28219, 1.28219)
 texture = ExtResource("6_g7j35")
 expand_mode = 1
+
+[node name="Label" type="Label" parent="Control/TabContainer/Equipment/ActiveSlot"]
+z_index = 2
+offset_left = -6.0
+offset_top = 9.0
+offset_right = 232.0
+offset_bottom = 44.0
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
 
 [node name="Panel" type="Panel" parent="Control/TabContainer/Equipment"]
 layout_mode = 0

@@ -11,6 +11,8 @@ signal released(Vector2)
 
 @export var object := Global.EQUIPMENTS.DashBoots
 
+@export var label : Label
+
 #@export var behind : TextureRect
 
 @export var bg : TextureRect
@@ -27,6 +29,7 @@ var mouse_offset : Vector2
 var currently_pressed : bool = false
 
 func _ready() -> void:
+	get_label()
 	mouse_entered.connect(on_mouse_enter)
 	mouse_exited.connect(on_mouse_exit)
 	button_down.connect(on_clicked)
@@ -55,7 +58,20 @@ func on_release():
 	currently_pressed = false
 	self.rotation = init_rot
 	self.position = init_pos
-	released.emit()
+	released.emit(self)
 
 func get_mouse_offset():
 	mouse_offset = (get_global_mouse_position() - global_position)
+
+func item_hide():
+	self.hide()
+	self.label.hide()
+
+func item_show():
+	self.show()
+	self.label.show()
+
+func get_label():
+	for c in get_parent().get_children():
+		if c is Label:
+			label = c

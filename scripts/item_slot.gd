@@ -3,6 +3,12 @@ class_name EquipmentSlot
 
 #signal completed
 
+signal item_chosen
+
+@onready var label := $Label
+
+static var label_text : String
+
 @export var clear_button : Button
 
 @export var bg : Control
@@ -17,7 +23,7 @@ class_name EquipmentSlot
 
 #@export var blocker : Panel
 
-@onready var item_array : Array[SGGateItem] = [dash_boots]#tambaqui,hover_stone,jetpack]
+@onready var item_array : Array[SGGateItem] = [dash_boots,tambaqui]#tambaqui,hover_stone,jetpack]
 
 var holding_object : bool = false
 
@@ -27,6 +33,7 @@ var hovering_panel : bool = false
 
 func _ready() -> void:
 	connect_item_signals()
+	
 	checker.mouse_entered.connect(panel_hover)
 	checker.mouse_exited.connect(panel_leave)
 	clear_button.pressed.connect(clear_item)
@@ -50,10 +57,10 @@ func on_item_pickup(item : Global.EQUIPMENTS):
 	holding_object = true
 	held_object = item
 
-func on_item_release():
+func on_item_release(item_node : SGGateItem):
 	holding_object = false
 	if hovering_panel:
-		check_panel(held_object)
+		check_panel(item_node,held_object)
 
 func panel_hover():
 	hovering_panel = true
@@ -61,31 +68,18 @@ func panel_hover():
 func panel_leave():
 	hovering_panel = false
 
-func check_panel(item : Global.EQUIPMENTS):
+func check_panel(item_node : SGGateItem, item : Global.EQUIPMENTS):
 	
 	var e := Global.EQUIPMENTS
 	
 	for i in item_array:
-		i.show()
+		i.item_show()
 	
-	match item:
-		e.DashBoots:
-			Global.current_equipment = e.DashBoots
-			item_rect.texture = dash_boots.texture_normal
-			dash_boots.hide()
-		e.Tambaqui:
-			Global.current_equipment = e.Tambaqui
-			item_rect.texture = tambaqui.texture_normal
-			tambaqui.hide()
-		e.HoverStone:
-			Global.current_equipment = e.HoverStone
-			item_rect.texture = hover_stone.texture_normal
-			hover_stone.hide()
-		e.Jetpack:
-			Global.current_equipment = e.Jetpack
-			item_rect.texture = jetpack.texture_normal
-			jetpack.hide()
-	
+	Global.current_equipment = item
+	item_rect.texture = item_node.texture_normal
+	item_node.item_hide()
+	label_text = item_node.label.text
+	label.text = label_text
 	clear_button.disabled = false
 
 func check_texture(item : Global.EQUIPMENTS):
@@ -93,6 +87,8 @@ func check_texture(item : Global.EQUIPMENTS):
 	
 	for i in item_array:
 		i.show()
+	
+	label.text = label_text
 	
 	match item:
 		e.None:
@@ -117,6 +113,8 @@ func clear_item():
 	var e := Global.EQUIPMENTS
 	
 	item_rect.texture = Texture.new()
+	label_text = ""
+	label.text = label_text
 	
 	clear_button.disabled = true
 	

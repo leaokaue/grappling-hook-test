@@ -13,12 +13,15 @@ class_name LineTrail2D
 
 var follow_player : bool = false
 
+var player_offset : Vector2
+
 var fading_away : bool = false
 
 func _ready() -> void:
 	self.top_level = true
 	
 	self.clear_points()
+	
 	self.add_sibling.call_deferred(line_point)
 	self.line_point.position = self.position
 

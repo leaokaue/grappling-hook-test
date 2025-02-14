@@ -4,6 +4,8 @@ class_name Worm
 @warning_ignore("unused_signal")
 signal emit_dash_cooldown(cooldown : float)
 
+signal emit_fish_cooldown(cooldown : float)
+
 var last_checkpoint : Vector2
 
 @export var debug_mode : bool = false
@@ -29,6 +31,16 @@ var dash_direction : int = 1
 var dash_cooldown : float = 0.0
 
 const max_dash_cooldown : float = 2.0
+
+var previous_tambaqui_state : bool = false
+
+var is_tambaqui : bool = false : set = set_is_tambaqui
+
+var tambaqui_bar : float = 7.0
+
+const tambaqui_max_bar : float = 7.0
+
+var last_fish_trail : Node2D
 
 #LIQUIDS
 
@@ -67,6 +79,7 @@ var hook : GrappleHook
 @onready var line := $Line2D
 
 var last_trail : LineTrail2D
+
 
 #var global_joint : PinJoint2D
 
@@ -122,10 +135,26 @@ func _physics_process(delta):
 		else:
 			destroy_grapple()
 	
-	if Input.is_action_pressed("retract"):
+	
+	if Input.is_action_just_pressed("retract"):
+		if Global.current_equipment == Global.EQUIPMENTS.Tambaqui:
+			if not is_grappling:
+				if tambaqui_bar > 1.2:
+					is_tambaqui = true
+					print("Entering Tambaqui Mode")
+	
+	elif Input.is_action_pressed("retract"):
 		if is_grappling:
 			if hook.grappled:
 				retract(delta)
+	
+	apply_tambaqui(delta)
+	
+	
+	if Input.is_action_just_released("retract"):
+		print("Exiting")
+		if is_tambaqui:
+			is_tambaqui = false
 	
 	if Input.is_action_just_pressed("dash"):
 			if Global.current_equipment == Global.EQUIPMENTS.DashBoots:
@@ -213,7 +242,7 @@ func apply_dash():
 	
 	%teleport1.show()
 	
-	var dash_length : float = 125
+	#var dash_length : float = 125
 	
 	var col_decrease : float = 10
 	
@@ -246,15 +275,32 @@ func apply_dash():
 	
 	%teleport2.emitting = true
 	
-	
-	await get_tree().physics_frame
-	await get_tree().physics_frame
-	await get_tree().physics_frame
-	await get_tree().physics_frame
-	await get_tree().physics_frame
-	await get_tree().physics_frame
-	await get_tree().physics_frame
 	#%LineTrail2D.set_point_position(1,Vector2(0,0))
+
+func apply_tambaqui(delta : float):
+	if is_tambaqui:
+		is_freefalling = true
+		
+		var speed : float = 200
+		var vel_dec : float = 0.5
+		
+		drown_buildup -= delta * 0.2
+		
+		if is_instance_valid(last_fish_trail):
+			last_fish_trail.global_position = self.global_position
+			last_fish_trail.global_rotation = self.global_rotation
+		
+		if in_liquid:
+			vel_dec = 0.0
+			speed = 450
+		
+		var dir := (get_global_mouse_position() - self.global_position).normalized()
+		self.rotation = dir.rotated(Vector2.DOWN.angle()).angle()
+		
+		
+		linear_velocity *= vel_dec * delta
+		apply_central_impulse(dir * speed)
+
 
 func handle_dashcast():
 	
@@ -319,7 +365,7 @@ func handle_non_control(delta : float):
 	
 	check_length()
 	
-	if (not is_grappling) and (not _on_floor()) and (not in_liquid):
+	if (not is_grappling) and (not _on_floor()) and (not in_liquid) and (not is_tambaqui):
 		var t : float = 1
 		if is_freefalling:
 			t = 1.5
@@ -348,6 +394,23 @@ func handle_equipment_cooldowns(delta : float):
 	dash_cooldown = clampf(dash_cooldown,0.0,max_dash_cooldown)
 
 	emit_dash_cooldown.emit(dash_cooldown)
+	
+	if not is_tambaqui:
+		if in_liquid:
+			if tambaqui_bar < tambaqui_max_bar:
+				tambaqui_bar += delta * 0.75
+		else:
+			if tambaqui_bar < tambaqui_max_bar:
+				tambaqui_bar -= delta * 0.01
+	else:
+		if tambaqui_bar > 0:
+			tambaqui_bar -= delta
+		else:
+			is_tambaqui = false
+	
+	tambaqui_bar = clampf(tambaqui_bar,0.0,tambaqui_max_bar)
+	
+	emit_fish_cooldown.emit(tambaqui_bar)
 
 func set_is_freefalling(freefalling : bool):
 	if previous_freefall_state == freefalling:
@@ -370,6 +433,36 @@ func set_is_freefalling(freefalling : bool):
 			last_trail.fading_away = true
 			last_trail.follow_player = false
 
+func set_is_tambaqui(tambaqui : bool):
+	if previous_tambaqui_state == tambaqui:
+		return
+	
+	is_tambaqui = tambaqui
+	
+	previous_tambaqui_state = is_tambaqui
+	
+	var f : Node2D = $FishTrails
+	
+	var fd := f.duplicate()
+	
+	if not tambaqui:
+		linear_velocity *= 0
+	
+	if tambaqui:
+		for child in fd.get_children():
+			if child is LineTrail2D:
+				child.active = true
+				#child.follow_player = true
+		
+		last_fish_trail = fd
+		get_tree().current_scene.add_child(fd)
+	else:
+		if is_instance_valid(last_fish_trail):
+			for child in last_fish_trail.get_children():
+				if child is LineTrail2D:
+					child.fading_away = true
+					#child.follow_player = false
+
 @warning_ignore("unused_parameter")
 func _integrate_forces(state):
 	if not is_freefalling:
@@ -378,10 +471,6 @@ func _integrate_forces(state):
 func _set_animation(direction):
 	if direction > 0: animated_sprite_2d.flip_h = false
 	elif direction < 0: animated_sprite_2d.flip_h = true
-	
-	#if not _on_floor(): animated_sprite_2d.play("jump")
-	#elif abs(linear_velocity.x) > 0.1: animated_sprite_2d.play("run")
-	#else: animated_sprite_2d.play("idle")
 
 func _on_floor():
 	
@@ -436,10 +525,93 @@ func destroy_grapple():
 		hook.die()
 		destroy_joint()
 
-#func create_joint():
-	#var j := DampedSpringJoint2D.new()
-	#global_joint = j
-	#get_tree().root.add_child(j)
+func handle_liquids(delta : float):
+	if not can_control:
+		drown_buildup = 0.0
+		return
+	
+	var p : TextureProgressBar = %poison
+	
+	p.max_value = max_drown_buildup
+	p.value = drown_buildup
+	p.show()
+	
+	var area2d : Area2D = $LiquidReg
+	var a := area2d.get_overlapping_areas()
+	
+	var in_water : bool = false
+	var in_poison : bool = false
+	
+	in_liquid = false
+	
+	for area in a:
+		if area is Water:
+			if area.poisonous:
+				in_poison = true
+			else:
+				in_water = true
+			
+			in_liquid = true
+	
+	if in_poison:
+		poison_buffer = 0.3
+		if poison_buffer > 0:
+			if not Global.has_poison_resist:
+				drown_buildup += delta * 1.5
+				drown_buildup_buffer = 0.3
+			else:
+				drown_buildup += delta * 0.2
+				drown_buildup_buffer = 0.1
+		#apply_central_force(Vector2(0,-1) * 600)
+	elif in_water:
+		drown_buildup += delta * 0.15
+		drown_buildup_buffer = 0.3
+		#apply_central_force(Vector2(0,-1) * 1100)
+	else:
+		if poison_buffer > 0:
+			poison_buffer -= delta
+			
+			if not Global.has_poison_resist:
+				drown_buildup += delta * 1.5
+				drown_buildup_buffer = 0.3
+			else:
+				drown_buildup += delta * 0.45
+				drown_buildup_buffer = 0.1
+		
+		if drown_buildup_buffer > 0:
+			drown_buildup_buffer -= delta
+		else:
+			drown_buildup -= delta 
+	
+	var death_sound : int = 2
+	var multiplier : float = 3.5
+	
+	var s : AudioStreamPlayer2D = %sizzle
+	
+	if Global.has_poison_resist:
+		s.pitch_scale = 0.65
+	else:
+		s.pitch_scale = 1.0
+	
+	if (in_poison) or (poison_buffer > 0):
+		death_sound = 3
+		multiplier = 1.0
+		
+		if not s.playing:
+			s.play()
+	else:
+		if s.playing:
+			s.stop()
+	
+	if drown_buildup >= max_drown_buildup:
+		return_to_checkpoint(death_sound,multiplier)
+	
+	if drown_buildup > 0:
+		p.modulate.a = move_toward(p.modulate.a,1.0,delta * 3.0)
+	else:
+		p.modulate.a = 0.0
+	
+	drown_buildup = clampf(drown_buildup,0,max_drown_buildup)
 
 func rotate_joint():
 	var j := global_joint
@@ -537,94 +709,6 @@ func create_ui():
 	var u := ui.instantiate()
 	get_tree().current_scene.add_child.call_deferred(u)
 
-func handle_liquids(delta : float):
-	if not can_control:
-		drown_buildup = 0.0
-		return
-	
-	var p : TextureProgressBar = %poison
-	
-	p.max_value = max_drown_buildup
-	p.value = drown_buildup
-	p.show()
-	
-	var area2d : Area2D = $LiquidReg
-	var a := area2d.get_overlapping_areas()
-	
-	var in_water : bool = false
-	var in_poison : bool = false
-	
-	in_liquid = false
-	
-	for area in a:
-		if area is Water:
-			if area.poisonous:
-				in_poison = true
-			else:
-				in_water = true
-			
-			in_liquid = true
-	
-	if in_poison:
-		poison_buffer = 0.3
-		if poison_buffer > 0:
-			if not Global.has_poison_resist:
-				drown_buildup += delta * 1.5
-				drown_buildup_buffer = 0.3
-			else:
-				drown_buildup += delta * 0.2
-				drown_buildup_buffer = 0.1
-		#apply_central_force(Vector2(0,-1) * 600)
-	elif in_water:
-		drown_buildup += delta * 0.1
-		drown_buildup_buffer = 0.3
-		#apply_central_force(Vector2(0,-1) * 1100)
-	else:
-		if poison_buffer > 0:
-			poison_buffer -= delta
-			
-			if not Global.has_poison_resist:
-				drown_buildup += delta * 1.5
-				drown_buildup_buffer = 0.3
-			else:
-				drown_buildup += delta * 0.45
-				drown_buildup_buffer = 0.1
-		
-		if drown_buildup_buffer > 0:
-			drown_buildup_buffer -= delta
-		else:
-			drown_buildup -= delta 
-	
-	var death_sound : int = 2
-	var multiplier : float = 3.5
-	
-	var s : AudioStreamPlayer2D = %sizzle
-	
-	if Global.has_poison_resist:
-		s.pitch_scale = 0.65
-	else:
-		s.pitch_scale = 1.0
-	
-	if (in_poison) or (poison_buffer > 0):
-		death_sound = 3
-		multiplier = 1.0
-		
-		if not s.playing:
-			s.play()
-	else:
-		if s.playing:
-			s.stop()
-	
-	if drown_buildup >= max_drown_buildup:
-		return_to_checkpoint(death_sound,multiplier)
-	
-	if drown_buildup > 0:
-		p.modulate.a = move_toward(p.modulate.a,1.0,delta * 3.0)
-	else:
-		p.modulate.a = 0.0
-	
-	drown_buildup = clampf(drown_buildup,0,max_drown_buildup)
-
 func scream(scream_type : int = 0):
 	if not can_scream:
 		return
@@ -648,6 +732,7 @@ func return_to_checkpoint(scream_type : int = 0,duration_multiplier : float = 1.
 	drown_buildup = 0.0
 	drown_buildup_buffer = 0.0
 	poison_buffer = 0.0
+	is_tambaqui = false
 	set_is_freefalling(false)
 	Global.set_fade_screen(false)
 	await Global.fade_animation_finished

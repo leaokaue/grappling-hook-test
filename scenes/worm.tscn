@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://bacl7irhgnrr7"]
+[gd_scene load_steps=31 format=3 uid="uid://bacl7irhgnrr7"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_d3wq5"]
 [ext_resource type="Texture2D" uid="uid://bdw2ln7jh2dda" path="res://sprites/Wormchelt.png" id="2_4q2ix"]
@@ -8,9 +8,11 @@
 [ext_resource type="Texture2D" uid="uid://b2hpi4gi8412a" path="res://sprites/ball.png" id="4_74kgy"]
 [ext_resource type="Texture2D" uid="uid://drekgwtmn12em" path="res://sprites/poisonbarbg.png" id="4_lc4xj"]
 [ext_resource type="AudioStream" uid="uid://lqak5ne0y0ry" path="res://sounds/spike_death_horrible.mp3" id="4_qltkw"]
+[ext_resource type="Texture2D" uid="uid://bjitpodhrj2f6" path="res://sprites/water_trail_l.png" id="5_kayxv"]
 [ext_resource type="AudioStream" uid="uid://2dj8lww8invu" path="res://sounds/drowning.mp3" id="5_lw7l2"]
 [ext_resource type="Texture2D" uid="uid://mcb1ibd4kpgc" path="res://sprites/poisonbarfill.png" id="5_qtas3"]
 [ext_resource type="AudioStream" uid="uid://c7cqe1v7tc6px" path="res://sounds/acid_death.mp3" id="6_oqllm"]
+[ext_resource type="Texture2D" uid="uid://dncu2ajjocxm6" path="res://sprites/water_trail_r.png" id="6_rp1c5"]
 [ext_resource type="AudioStream" uid="uid://c6lpykemf2ubq" path="res://sounds/sizzle.mp3" id="7_y18mt"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_asclu"]
@@ -51,6 +53,27 @@ alpha_curve = SubResource("CurveTexture_2oyaa")
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.11032, 0.179245), 0.0, 0.0, 0, 0, Vector2(1, 0.792453), 0.0, 0.0, 0, 0]
 point_count = 3
 
+[sub_resource type="Curve" id="Curve_xv285"]
+max_value = 10.0
+_data = [Vector2(0, 7.54717), 0.0, 0.0, 0, 0, Vector2(1, 0.981132), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_i1y2q"]
+offsets = PackedFloat32Array(0, 0.485477)
+colors = PackedColorArray(0, 0.516667, 1, 0, 0, 0.516667, 1, 0.752941)
+
+[sub_resource type="Curve" id="Curve_ogqjb"]
+_data = [Vector2(0.0569395, 0), 0.0, 0.0, 0, 0, Vector2(0.327402, 0.528302), 0.0, 0.0, 0, 0, Vector2(1, 0.792453), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Gradient" id="Gradient_bj2gm"]
+offsets = PackedFloat32Array(0, 0.502075)
+colors = PackedColorArray(0, 0.516667, 1, 0, 0, 0.516667, 1, 0.6)
+
+[sub_resource type="Gradient" id="Gradient_wf0ja"]
+offsets = PackedFloat32Array(0, 0.485477)
+colors = PackedColorArray(0, 0.516667, 1, 0, 0, 0.516667, 1, 0.635294)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6ibcn"]
 size = Vector2(14, 30)
 
@@ -71,6 +94,8 @@ script = ExtResource("1_d3wq5")
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="."]
 remote_path = NodePath("../DashCast/LineTrail2D")
+
+[node name="FishTransform" type="RemoteTransform2D" parent="."]
 
 [node name="Marker" type="Node2D" parent="."]
 unique_name_in_owner = true
@@ -152,6 +177,66 @@ script = ExtResource("2_ap5d5")
 active = false
 max_points = 80
 
+[node name="FishTrails" type="Node2D" parent="."]
+position = Vector2(0, 6)
+
+[node name="FishTrail2D2" type="Line2D" parent="FishTrails"]
+position = Vector2(0, 3)
+width = 33.895
+width_curve = SubResource("Curve_xv285")
+default_color = Color(0, 0.516667, 1, 0.243137)
+gradient = SubResource("Gradient_i1y2q")
+texture = ExtResource("6_rp1c5")
+texture_mode = 2
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+sharp_limit = 1.0
+round_precision = 16
+antialiased = true
+script = ExtResource("2_ap5d5")
+active = false
+max_points = 69
+max_line_deletal = 30
+
+[node name="FishTrail2D" type="Line2D" parent="FishTrails"]
+position = Vector2(0, -3)
+width = 33.895
+width_curve = SubResource("Curve_ogqjb")
+default_color = Color(0, 0.516667, 1, 0.243137)
+gradient = SubResource("Gradient_bj2gm")
+texture = ExtResource("2_odrpe")
+texture_mode = 2
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+sharp_limit = 1.0
+round_precision = 16
+antialiased = true
+script = ExtResource("2_ap5d5")
+active = false
+max_points = 69
+max_line_deletal = 30
+
+[node name="FishTrail2D3" type="Line2D" parent="FishTrails"]
+position = Vector2(1, 3)
+width = 33.895
+width_curve = SubResource("Curve_xv285")
+default_color = Color(0, 0.516667, 1, 0.243137)
+gradient = SubResource("Gradient_wf0ja")
+texture = ExtResource("5_kayxv")
+texture_mode = 2
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+sharp_limit = 1.0
+round_precision = 16
+antialiased = true
+script = ExtResource("2_ap5d5")
+active = false
+max_points = 69
+max_line_deletal = 30
+
 [node name="LiquidReg" type="Area2D" parent="."]
 collision_layer = 0
 collision_mask = 16
@@ -182,12 +267,14 @@ shape = SubResource("RectangleShape2D_iawq7")
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
 clip_children = 1
-polygon = PackedVector2Array(-5, 17, -7, 9, -7, 3, -8, -2, -6, -4, -5, -10, 1, -10, 2, -9, 4, -10, 6, -6, 6, -4, 7, -2, 8, 3, 7, 8, 9, 18, -5, 18)
+polygon = PackedVector2Array(-5, 17, -5.9054, 14.6989, -6.0514, 13.3224, -6.62324, 10.2554, -6.82031, 8.5625, -6.96094, 7.08594, -7.03906, 6.9375, -7.19531, 7.02344, -7.22656, 6.60156, -7.38281, 6.58594, -7.35156, 5.88281, -7.4375, 5.61719, -7.35752, 5.08255, -7.66722, 4.61062, -7.49219, 3.61719, -7.50781, 2.89063, -7.79688, 1.25, -7.78906, 0.53125, -8.09901, 0.671875, -7.77344, 0.179688, -8, 0.148438, -7.62707, -0.507968, -8.14326, -0.49322, -8.00076, -0.764683, -8.13942, -0.853312, -6.98319, -1.91757, -7.89856, -2.43701, -7.81094, -2.6665, -7.01595, -2.58566, -7.47119, -3.15239, -6.45851, -3.09664, -6.93233, -3.98855, -6.42134, -3.76557, -5.89177, -3.68196, -6, -4, -6.96442, -5.53008, -6.76599, -5.74091, -5.93509, -4.82319, -5.68706, -6.75784, -5.67466, -8.32044, -5.48863, -8.44446, -5.33981, -8.13442, -5.35221, -8.55607, -5.42662, -10.4783, -4.95313, -9.75, -4.45845, -10.7542, -3.96875, -9.73438, -3.38432, -10.8481, -3.23438, -10.3672, -2.99219, -10.0313, -2.6439, -10.6708, -2.53125, -10.3359, -2.28906, -9.96094, -2.05991, -10.3892, -1.79688, -10.0078, -1.47592, -10.4414, -1.125, -9.75, -0.641642, -10.4101, -0.375, -9.78125, -0.00550699, -10.3997, 0.304688, -9.85156, 0.734912, -10.4101, 1.04688, -9.47656, 1.42319, -10.1598, 1.51563, -9.41406, 1.84375, -8.46094, 2.20532, -10.0034, 2.61719, -9.25781, 3.05002, -9.96168, 3.26563, -9.19531, 3.68616, -9.71139, 3.82031, -8.9375, 4.51001, -9.51325, 4.67188, -8.375, 4.98971, -8.78326, 5.19531, -7.61719, 5.49028, -8.03242, 5.55469, -5.79688, 5.75781, -5.58594, 5.78125, -6.22656, 5.86719, -6.25, 5.98438, -6.10156, 6.12478, -5.10664, 6.03373, -4.6183, 6.0089, -4.26238, 7.68914, -3.72437, 6.99387, -3.58366, 7.39945, -3.14498, 7.1263, -3.06221, 7.36435, -2.61777, 7.06215, -2.61777, 7.52202, -1.88199, 7.90305, -1.3827, 7.50888, -1.33015, 7.85049, -1.01481, 7.50888, -0.935977, 7.60085, -0.515529, 7.79793, -0.252749, 7.61399, 0.0888653, 7.86363, 0.640704, 7.61399, 0.995456, 7.67968, 1.4159, 7.54829, 1.7838, 7.53515, 2.70353, 7.52201, 3.49187, 7.81107, 3.99115, 7.56143, 4.12254, 7.61399, 4.49043, 7.58771, 5.05541, 7.40376, 5.54155, 7.4826, 5.88317, 7.23296, 6.09339, 7, 8, 7.57257, 10.8561, 7.79354, 13.2647, 8.1029, 14.8557, 9, 18, -5, 18)
 
 [node name="Sprite2D" type="Sprite2D" parent="Polygon2D"]
 unique_name_in_owner = true
+texture_filter = 6
 scale = Vector2(0.0284502, 0.0284502)
 texture = ExtResource("2_4q2ix")
+metadata/_edit_lock_ = true
 
 [node name="Polygon2D2" type="Polygon2D" parent="."]
 position = Vector2(-1, -2)
