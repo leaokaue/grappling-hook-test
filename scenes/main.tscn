@@ -1906,7 +1906,7 @@ empty_track = ExtResource("8_c5a5t")
 position = Vector2(-780, 448)
 
 [node name="Worm" parent="SpawnPos" instance=ExtResource("3_pgxup")]
-position = Vector2(697.32, -141.459)
+position = Vector2(5460, -2184)
 debug_mode = true
 
 [node name="Camera2D" type="Camera2D" parent="SpawnPos/Worm"]
@@ -1929,7 +1929,6 @@ tile_set = ExtResource("6_gj11r")
 navigation_enabled = false
 
 [node name="SpawnBG" type="Area2D" parent="SpawnIsland/Terrain"]
-visible = false
 position = Vector2(-540, 448)
 script = ExtResource("11_18ho3")
 

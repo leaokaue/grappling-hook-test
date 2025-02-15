@@ -1,8 +1,8 @@
 extends Camera2D
 
-@onready var init_zoom : Vector2 = self.zoom
+@onready var init_zoom : Vector2 = Vector2(0.7,0.7)
 
-var target_zoom : Vector2 = init_zoom
+var target_zoom : Vector2 = Vector2(0.7,0.7)
 
 func _ready() -> void:
 	Global.reset_camera_smoothing.connect(signal_reset_smoothing)
@@ -11,6 +11,8 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	#print(target_zoom)
+	
 	if self.zoom != target_zoom:
 		self.zoom = self.zoom.lerp(target_zoom,delta * 0.3)
 
@@ -21,4 +23,5 @@ func reset_zoom():
 	target_zoom = init_zoom
 
 func set_zoom_target(target : float):
+	print(get_stack())
 	target_zoom = Vector2(target,target)
