@@ -17,8 +17,6 @@ func _ready() -> void:
 	tween()
 
 func _physics_process(delta: float) -> void:
-	sprite.rotation_degrees += 40 * delta
-	
 	if get_length_to_player(delta) > 1000:
 		return
 	
@@ -38,7 +36,7 @@ func collect():
 		$collect.emitting = true
 		$bling.play()
 		
-		await get_tree().create_timer(3.0,false).timeout
+		await get_tree().create_timer(5.0,false).timeout
 		self.queue_free()
 
 func tween():
@@ -50,31 +48,34 @@ func tween():
 	t.tween_property(sprite,"position:y",-5,0.5)
 
 func handle_confusion(delta : float):
-	var min_confusion_scale : float = 5.5
-	var max_confusion_scale : float = 25.5
+	#var min_confusion_scale : float = 5.5
+	#var max_confusion_scale : float = 25.5
 	
-	var min_sound_db : float = -40
-	var max_sound_db : float = 5
+	var min_sound_db : float = -30
+	var max_sound_db : float = 8
 	
 	var min_pitch : float = 1.0
 	var max_pitch : float = 0.65
 	
-	var min_time_scale : float = 1.0
-	var max_time_scale : float = -0.11
+	#var min_time_scale : float = 1.0
+	#var max_time_scale : float = -0.11
 	
-	var min_frequency : float = 10
-	var max_frequency : float = 25
+	var min_frequency : float = 1
+	var max_frequency : float = 1
 	
-	var min_ripple : int = 5
-	var max_ripple : int = 6
+	var min_ripple : int = 1
+	var max_ripple : int = 1
 	
-	var min_music_bus_db : float = 0.0
+	var min_music_bus_db : float = -15.0
 	var max_music_bus_db : float = -25.0
 	
 	var l := get_length_to_player(delta)
 	
-	var max_player_range : float = 800
-	var min_player_range : float = 100
+	var max_player_range : float = 500
+	var min_player_range : float = 10
+	
+	var min_force : float = 100
+	var max_force : float = 1550
 	
 	l = clampf(l,min_player_range,max_player_range)
 	
@@ -85,22 +86,32 @@ func handle_confusion(delta : float):
 	#print(mod)
 	
 	if is_collected:
-		min_confusion_scale = min_scale_collected
-		min_ripple = 0
-		min_frequency = 0
+		#min_confusion_scale = min_scale_collected
+		#min_ripple = 0
+		#min_frequency = 0
+		pass
 	
-	var confusion_scale := min_confusion_scale + ((max_confusion_scale - min_confusion_scale) * mod) 
+	var to := (self.global_position - Global.player.global_position).normalized()
+	
+	#var confusion_scale := min_confusion_scale + ((max_confusion_scale - min_confusion_scale) * mod) 
 	var sound_db := min_sound_db + ((max_sound_db - min_sound_db) * mod)
 	var pitch := min_pitch + ((max_pitch - min_pitch) * mod)
-	var time_scale := min_time_scale + ((max_time_scale - min_time_scale) * mod)
+	#var time_scale := min_time_scale + ((max_time_scale - min_time_scale) * mod)
 	var frequency := min_frequency + ((max_frequency - min_frequency) * mod)
+	var force := min_force + ((max_force - min_force) * mod)
 	var ripple := min_ripple + ((max_ripple - min_ripple) * mod)
+	var effect := mod
 	var music_db := min_music_bus_db + ((max_music_bus_db - min_music_bus_db) * mod)
 	
-	%Confusion.scale = Vector2(confusion_scale,confusion_scale)
+	#%Confusion.scale = Vector2(confusion_scale,confusion_scale)
+	Global.player.apply_central_force(to * -force)
+	Global.set_nightmare_effect.emit(effect)
 	%exist.volume_db = sound_db
-	%exist.pitch_scale = pitch
-	Engine.time_scale = time_scale
+	%exist.volume_db = sound_db
+	%exist2.pitch_scale = pitch
+	#Engine.time_scale = time_scale
+	
+	
 	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Music"),music_db)
 	
 	var m : ShaderMaterial = %Confusion.material
@@ -113,5 +124,5 @@ func get_length_to_player(delta : float) -> float:
 		var length := (self.global_position - Global.player.global_position).length()
 		return length
 	else:
-		fake_dist += delta * 500
+		fake_dist += delta * 250
 		return fake_dist

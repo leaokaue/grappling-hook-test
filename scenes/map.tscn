@@ -3,8 +3,8 @@
 [ext_resource type="Texture2D" uid="uid://dvd0js1533ixy" path="res://sprites/uibg2.png" id="1_i8q1j"]
 [ext_resource type="Script" path="res://scripts/map.gd" id="1_ifiad"]
 [ext_resource type="Texture2D" uid="uid://dy1vyv8rptpvm" path="res://sprites/uibg1.png" id="2_qbysm"]
-[ext_resource type="Script" path="res://scenes/on_map_waypoint.gd" id="3_y1xv5"]
-[ext_resource type="Script" path="res://scenes/equipment_ui.gd" id="5_lgy1i"]
+[ext_resource type="Script" path="res://scripts/on_map_waypoint.gd" id="3_y1xv5"]
+[ext_resource type="Script" path="res://scripts/equipment_ui.gd" id="5_lgy1i"]
 [ext_resource type="Texture2D" uid="uid://d3rf28vioo657" path="res://sprites/items/dash_boots.png" id="6_g7j35"]
 [ext_resource type="Texture2D" uid="uid://tqrrxtnsyvkn" path="res://sprites/items/tambaqui.png" id="7_xusdj"]
 [ext_resource type="Script" path="res://scripts/item_slot.gd" id="10_ikw3k"]
@@ -40,11 +40,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 tab_alignment = 1
-current_tab = 1
+current_tab = 0
 tab_focus_mode = 1
 
 [node name="Map" type="Control" parent="Control/TabContainer"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
@@ -356,6 +355,7 @@ District"
 horizontal_alignment = 1
 
 [node name="Equipment" type="Control" parent="Control/TabContainer"]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
@@ -581,6 +581,7 @@ mouse_filter = 2
 
 [node name="Label" type="Label" parent="Control/TabContainer/Equipment/Tambaqui"]
 z_index = 2
+layout_mode = 0
 offset_left = -63.0
 offset_top = 115.0
 offset_right = 175.0
@@ -632,6 +633,7 @@ expand_mode = 1
 [node name="BG3" type="TextureRect" parent="Control/TabContainer/Equipment/Tambaqui/BG"]
 visible = false
 modulate = Color(0, 0, 0, 1)
+layout_mode = 0
 offset_left = 34.0635
 offset_top = 184.607
 offset_right = 248.064
@@ -644,6 +646,7 @@ expand_mode = 1
 [node name="BG4" type="TextureRect" parent="Control/TabContainer/Equipment/Tambaqui/BG"]
 visible = false
 modulate = Color(0, 0, 0, 1)
+layout_mode = 0
 offset_left = 39.049
 offset_top = 190.966
 offset_right = 253.049
@@ -703,6 +706,7 @@ expand_mode = 1
 
 [node name="Label" type="Label" parent="Control/TabContainer/Equipment/ActiveSlot"]
 z_index = 2
+layout_mode = 0
 offset_left = -6.0
 offset_top = 9.0
 offset_right = 232.0

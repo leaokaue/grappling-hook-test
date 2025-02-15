@@ -1,0 +1,199 @@
+[gd_scene load_steps=8 format=3 uid="uid://pdmey8k4km8h"]
+
+[ext_resource type="Script" path="res://scripts/windmill_spinner_block.gd" id="1_uua7s"]
+[ext_resource type="Script" path="res://scripts/windmill_block_detector.gd" id="2_gq6ci"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_884bx"]
+friction = 5.0
+rough = true
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_coo3j"]
+size = Vector2(82, 78)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dtxcp"]
+size = Vector2(60, 56)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_e26b7"]
+size = Vector2(360, 4984)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4yovh"]
+size = Vector2(320, 5880)
+
+[node name="BigSpinner" type="AnimatableBody2D"]
+z_index = 1
+position = Vector2(7920, -9632)
+collision_layer = 4
+physics_material_override = SubResource("PhysicsMaterial_884bx")
+script = ExtResource("1_uua7s")
+clockwise = false
+spin_speed = 5.0
+v_cell_distance = -32
+platform_speed = 4.0
+
+[node name="WindmillBlockDetector" type="Area2D" parent="." node_paths=PackedStringArray("spinner", "collision_shape")]
+unique_name_in_owner = true
+collision_layer = 64
+collision_mask = 64
+script = ExtResource("2_gq6ci")
+spinner = NodePath("..")
+collision_shape = NodePath("CollisionShape2D")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WindmillBlockDetector"]
+shape = SubResource("RectangleShape2D_coo3j")
+disabled = true
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -31.0
+offset_top = -29.0
+offset_right = 31.0
+offset_bottom = 29.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.356408, 0.219945, 0.0996386, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2(1.52588e-05, 0)
+shape = SubResource("RectangleShape2D_dtxcp")
+disabled = true
+debug_color = Color(0.13, 0.3765, 1, 0)
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2(0, 28)
+shape = SubResource("RectangleShape2D_e26b7")
+disabled = true
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2(0, 8)
+rotation = -1.57079
+shape = SubResource("RectangleShape2D_4yovh")
+disabled = true
+
+[node name="ColorRect2" type="ColorRect" parent="."]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = 168.0
+offset_right = 180.0
+offset_bottom = 2520.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.237483, 0.140152, 0.054206, 1)
+
+[node name="ColorRect5" type="ColorRect" parent="."]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -2464.0
+offset_right = 180.0
+offset_bottom = -168.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.237483, 0.140152, 0.054206, 1)
+
+[node name="ColorRect6" type="ColorRect" parent="."]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -540.0
+offset_top = -560.0
+offset_right = -180.0
+offset_bottom = -168.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.237483, 0.140152, 0.054206, 1)
+
+[node name="ColorRect7" type="ColorRect" parent="."]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 180.0
+offset_top = -560.0
+offset_right = 540.0
+offset_bottom = -168.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.237483, 0.140152, 0.054206, 1)
+
+[node name="ColorRect8" type="ColorRect" parent="."]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 180.0
+offset_top = 168.0
+offset_right = 540.0
+offset_bottom = 560.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.237483, 0.140152, 0.054206, 1)
+
+[node name="ColorRect9" type="ColorRect" parent="."]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -540.0
+offset_top = 168.0
+offset_right = -180.0
+offset_bottom = 560.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.237483, 0.140152, 0.054206, 1)
+
+[node name="ColorRect3" type="ColorRect" parent="."]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -179.0
+offset_top = -168.0
+offset_right = 181.0
+offset_bottom = 2600.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 1.57079
+color = Color(0.237483, 0.140152, 0.054206, 1)
+
+[node name="ColorRect4" type="ColorRect" parent="."]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 2940.0
+offset_top = -168.0
+offset_right = 3300.0
+offset_bottom = 2600.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 1.57079
+color = Color(0.237483, 0.140152, 0.054206, 1)

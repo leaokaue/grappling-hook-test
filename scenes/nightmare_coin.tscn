@@ -1,0 +1,179 @@
+[gd_scene load_steps=19 format=3 uid="uid://cgr82nin8tx0k"]
+
+[ext_resource type="Script" path="res://scripts/nightmare_coin.gd" id="1_vreuo"]
+[ext_resource type="Texture2D" uid="uid://umjm64f76xqr" path="res://scenes/nightmare_coin.png" id="2_6kbxp"]
+[ext_resource type="Shader" path="res://shaders/shine.gdshader" id="3_jv1id"]
+[ext_resource type="AudioStream" uid="uid://dqrncoravva2h" path="res://sounds/confused_bling.mp3" id="4_3r5ju"]
+[ext_resource type="AudioStream" uid="uid://djd5ucsxlxigf" path="res://sounds/nightmare_scream.mp3" id="5_0b6ju"]
+[ext_resource type="Texture2D" uid="uid://b2hpi4gi8412a" path="res://sprites/ball.png" id="6_b2lxp"]
+[ext_resource type="AudioStream" uid="uid://dbo6qkomkgfa4" path="res://sounds/nightmare_scream2.mp3" id="6_t2l8f"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_37fjr"]
+shader = ExtResource("3_jv1id")
+shader_parameter/Line_Smoothness = 0.045
+shader_parameter/Line_Width = 0.09
+shader_parameter/Brightness = 3.0
+shader_parameter/Rotation_deg = 30.0
+shader_parameter/Distortion = 1.8
+shader_parameter/Speed = 0.7
+shader_parameter/Position = 0.0
+shader_parameter/Position_Min = 0.25
+shader_parameter/Position_Max = 0.5
+shader_parameter/Alpha = 1.0
+
+[sub_resource type="Gradient" id="Gradient_d7h6m"]
+offsets = PackedFloat32Array(1)
+colors = PackedColorArray(1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_rialx"]
+gradient = SubResource("Gradient_d7h6m")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sr8hx"]
+size = Vector2(179.839, 192)
+
+[sub_resource type="Shader" id="Shader_br371"]
+code = "// Attach to a ColorRect in front of texture/background
+
+shader_type canvas_item;
+
+// Handles the concentric ripples
+uniform float frequency: hint_range(0, 30, 0.01) = 4.0;
+uniform float amplitude: hint_range(0, 5, 0.1) = 2.0;
+uniform float ripple_rate : hint_range(0, 20.0, 1) = 5;
+
+// Handles the waves themselves
+uniform float wave_amplitude: hint_range(0.001, 0.1, 0.001) = 0.05;
+uniform float wave_frequency: hint_range(0, 15, 0.01) = 4.0;
+
+uniform sampler2D noise;
+
+uniform sampler2D SCREEN_TEXTURE: hint_screen_texture, filter_linear_mipmap;
+
+vec2 wave(vec2 uv, float time) {
+    return vec2(
+        uv.x + sin(uv.y * wave_frequency + time) * wave_amplitude,
+        uv.y + sin(uv.x * wave_frequency + time) * wave_amplitude
+    );
+}
+
+void fragment() {
+	vec2 center_position = -1.0 + 2.0 * UV / (1.0 / TEXTURE_PIXEL_SIZE);
+	float center_distance = length(center_position);
+	
+	float ripple = sin(center_distance * -frequency * PI + ripple_rate * TIME) * amplitude / (center_distance + 1.0);
+	
+	vec2 uv = FRAGCOORD.xy / (1.0 / SCREEN_PIXEL_SIZE).xy + (center_position/center_distance) * ripple * wave_amplitude;
+    vec2 background_wave = wave(uv, TIME);
+	vec4 background_texture = texture(SCREEN_TEXTURE,background_wave) * sqrt(amplitude);
+
+	float alpha_scalar = (1.0 - min(center_distance, 1.0)) * background_texture.x * 2.5; 
+	
+	background_texture.a *= 1.0 * alpha_scalar * (ripple + background_texture.x * background_texture.y);
+	background_texture.a = max(background_texture.a - (background_texture.y * 0.45), 0.0);
+	
+	COLOR = vec4(background_texture.xyz, background_texture.a);
+
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lmi6g"]
+shader = SubResource("Shader_br371")
+shader_parameter/frequency = 1.94
+shader_parameter/amplitude = 1.3
+shader_parameter/ripple_rate = 1.0
+shader_parameter/wave_amplitude = 0.001
+shader_parameter/wave_frequency = 4.0
+
+[sub_resource type="Curve" id="Curve_nunbv"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.231183, 1), 0.0, 0.0, 0, 0, Vector2(0.801075, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_esav7"]
+curve = SubResource("Curve_nunbv")
+
+[sub_resource type="Curve" id="Curve_ilioj"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.629032, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_ef8yb"]
+curve = SubResource("Curve_ilioj")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_8kb8e"]
+particle_flag_align_y = true
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 35.1
+spread = 180.0
+initial_velocity_max = 633.97
+gravity = Vector3(0, 10, 0)
+scale_min = 0.1
+scale_max = 0.1
+scale_curve = SubResource("CurveTexture_ef8yb")
+color = Color(0.968627, 0, 0, 1)
+alpha_curve = SubResource("CurveTexture_esav7")
+
+[node name="NightmareCoin" type="Node2D"]
+scale = Vector2(0.355873, 0.358999)
+script = ExtResource("1_vreuo")
+
+[node name="Polygon2D" type="Node2D" parent="."]
+
+[node name="confused" type="Sprite2D" parent="Polygon2D"]
+clip_children = 2
+texture_filter = 6
+scale = Vector2(0.357906, 0.357906)
+texture = ExtResource("2_6kbxp")
+
+[node name="TextureRect" type="TextureRect" parent="Polygon2D/confused"]
+material = SubResource("ShaderMaterial_37fjr")
+offset_left = -228.0
+offset_top = 254.0
+offset_right = 312.0
+offset_bottom = 712.0
+rotation = -1.5708
+texture = SubResource("GradientTexture1D_rialx")
+expand_mode = 1
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_sr8hx")
+debug_color = Color(0, 0.595, 0.7, 0)
+
+[node name="Confusion" type="ColorRect" parent="."]
+unique_name_in_owner = true
+z_index = 10
+material = SubResource("ShaderMaterial_lmi6g")
+offset_left = -110.0
+offset_top = -110.0
+offset_right = 110.0
+offset_bottom = 110.0
+scale = Vector2(5.5, 5.5)
+pivot_offset = Vector2(110, 110)
+
+[node name="bling" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_3r5ju")
+volume_db = -10.0
+pitch_scale = 0.78
+
+[node name="exist" type="AudioStreamPlayer2D" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("5_0b6ju")
+volume_db = -30.0
+autoplay = true
+max_distance = 1500.0
+
+[node name="exist2" type="AudioStreamPlayer2D" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("6_t2l8f")
+autoplay = true
+max_distance = 500.0
+
+[node name="collect" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 256
+process_material = SubResource("ParticleProcessMaterial_8kb8e")
+texture = ExtResource("6_b2lxp")
+lifetime = 0.6
+one_shot = true
+explosiveness = 0.9

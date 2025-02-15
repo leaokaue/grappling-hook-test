@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://dasxlqcm51tw0"]
+[gd_scene load_steps=6 format=3 uid="uid://dasxlqcm51tw0"]
 
 [ext_resource type="Script" path="res://scripts/ghost_hook_block.gd" id="1_v161c"]
+[ext_resource type="Script" path="res://scripts/visibleenabler.gd" id="2_lolli"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dtxcp"]
 size = Vector2(289, 272)
@@ -15,6 +16,12 @@ radius = 496.568
 z_index = -1
 scale = Vector2(0.20541, 0.20541)
 script = ExtResource("1_v161c")
+
+[node name="VisibleEnabler" type="VisibleOnScreenNotifier2D" parent="."]
+visible = false
+scale = Vector2(1.2, 1.2)
+rect = Rect2(-240, -240, 480, 480)
+script = ExtResource("2_lolli")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 anchors_preset = 8
@@ -41,7 +48,6 @@ collision_mask = 4
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="HookDetector"]
 visible = false
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_57jhh")
 
 [node name="PlayerDetector" type="Area2D" parent="."]
@@ -50,5 +56,4 @@ collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerDetector"]
 visible = false
-scale = Vector2(1, 1)
 shape = SubResource("CircleShape2D_nwwnt")

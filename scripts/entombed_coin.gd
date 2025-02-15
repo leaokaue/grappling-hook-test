@@ -52,7 +52,7 @@ func _process(delta: float) -> void:
 	pass
 
 func check_velocity(body : Worm):
-	print(body.linear_velocity.length())
+	#print(body.linear_velocity.length())
 	
 	if not body.is_freefalling:
 		return
@@ -90,16 +90,16 @@ func knockback_body(body : Worm):
 	else:
 		rot *= -1
 	
-	print(dir)
-	print(dir.angle())
+	#print(dir)
+	#print(dir.angle())
 	
 	dir = dir.rotated(deg_to_rad(rot))
 	body.is_freefalling = true
 	body.can_control = false
 	body.physics_material_override.bounce = 2.1
 	#body.physics_material_override.absorbent = true
-	print(dir)
-	print(dir.angle())
+	#print(dir)
+	#print(dir.angle())
 	body.apply_central_impulse(dir * 15700)
 	await get_tree().create_timer(3.2,false).timeout
 	body.physics_material_override.bounce = 0.0

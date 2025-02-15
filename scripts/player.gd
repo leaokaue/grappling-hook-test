@@ -12,7 +12,6 @@ var last_checkpoint : Vector2
 
 @onready var animated_sprite_2d = %Sprite2D
 @onready var ray_cast_2d = $RayCast2D
-@onready var liquid_cast_2d = $LiquidCast
 
 #PLAYER
 
@@ -21,6 +20,8 @@ const MAX_SPEED = 100
 const JUMP_FORCE = -450
 
 var can_control : bool = true
+
+var default_gravity : float = 1.0
 
 #EQUIPMENT
 
@@ -100,7 +101,13 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	if not can_hook:
-		current_hook_cooldown -= delta
+		
+		var m : float = 1.0
+		
+		if Global.has_cool_drink:
+			m = 1.5
+		
+		current_hook_cooldown -= delta * m
 		if current_hook_cooldown < 0:
 			can_hook = true
 
@@ -130,7 +137,9 @@ func _physics_process(delta):
 		return
 	
 	if Input.is_action_just_pressed("grapple"):
-		if not is_grappling:
+		if is_tambaqui:
+			apply_tambaqui_dash()
+		elif not is_grappling:
 			grapple()
 		else:
 			destroy_grapple()
@@ -152,7 +161,7 @@ func _physics_process(delta):
 	
 	
 	if Input.is_action_just_released("retract"):
-		print("Exiting")
+		#print("Exiting")
 		if is_tambaqui:
 			is_tambaqui = false
 	
@@ -281,7 +290,7 @@ func apply_tambaqui(delta : float):
 	if is_tambaqui:
 		is_freefalling = true
 		
-		var speed : float = 200
+		var speed : float = 125
 		var vel_dec : float = 0.5
 		
 		drown_buildup -= delta * 0.2
@@ -292,15 +301,53 @@ func apply_tambaqui(delta : float):
 		
 		if in_liquid:
 			vel_dec = 0.0
-			speed = 450
+			speed = 375
+		
+		if Global.has_steroids_3:
+			speed += 100
 		
 		var dir := (get_global_mouse_position() - self.global_position).normalized()
 		self.rotation = dir.rotated(Vector2.DOWN.angle()).angle()
 		
-		
 		linear_velocity *= vel_dec * delta
 		apply_central_impulse(dir * speed)
 
+func apply_tambaqui_dash():
+	if is_tambaqui:
+		if tambaqui_bar < 1.2:
+			return
+		
+		tambaqui_bar -= 1.2
+		is_freefalling = true
+		
+		var speed : float = 160
+		%splash.emitting = true
+		if drown_buildup_buffer > 0:
+			speed = 330
+		
+		var dir := (get_global_mouse_position() - self.global_position).normalized()
+		self.rotation = dir.rotated(Vector2.DOWN.angle()).angle()
+		
+		is_tambaqui = false
+		
+		
+		await get_tree().physics_frame
+		await get_tree().physics_frame
+		await get_tree().physics_frame
+		
+		apply_central_impulse(dir * (speed * 4))
+		
+		await get_tree().physics_frame
+		await get_tree().physics_frame
+		await get_tree().physics_frame
+		
+		set_fish_trail(true)
+		
+		await get_tree().create_timer(2.0,false).timeout
+		
+		if not is_tambaqui:
+			set_fish_trail(false)
+		
 
 func handle_dashcast():
 	
@@ -341,6 +388,8 @@ func handle_non_control(delta : float):
 	
 	handle_dashcast()
 	
+	handle_failsafes(delta)
+	
 	#print(Engine.time_scale)
 	
 	handle_liquids(delta)
@@ -356,11 +405,11 @@ func handle_non_control(delta : float):
 			#print(hook.global_position)
 			line.show()
 			if hook.grappled:
-				self.gravity_scale = 0.7
+				self.default_gravity = 0.7
 			else:
-				self.gravity_scale = 1.0
+				self.default_gravity = 1.0
 	else:
-		self.gravity_scale = 1.0
+		self.default_gravity = 1.0
 		line.hide()
 	
 	check_length()
@@ -401,10 +450,13 @@ func handle_equipment_cooldowns(delta : float):
 				tambaqui_bar += delta * 0.75
 		else:
 			if tambaqui_bar < tambaqui_max_bar:
-				tambaqui_bar -= delta * 0.01
+				tambaqui_bar += delta * 0.01
 	else:
 		if tambaqui_bar > 0:
-			tambaqui_bar -= delta
+			if in_liquid:
+				tambaqui_bar -= delta
+			else:
+				tambaqui_bar -= delta * 1.15
 		else:
 			is_tambaqui = false
 	
@@ -441,12 +493,15 @@ func set_is_tambaqui(tambaqui : bool):
 	
 	previous_tambaqui_state = is_tambaqui
 	
+	if not tambaqui:
+		linear_velocity *= 0
+	
+	set_fish_trail(tambaqui)
+
+func set_fish_trail(tambaqui : bool):
 	var f : Node2D = $FishTrails
 	
 	var fd := f.duplicate()
-	
-	if not tambaqui:
-		linear_velocity *= 0
 	
 	if tambaqui:
 		for child in fd.get_children():
@@ -508,6 +563,7 @@ func grapple():
 	is_grappling = true
 	is_freefalling = true
 	
+	g.grappled = false
 	g.player = self
 	g.hit.connect(impulse_to_grapple)
 	g.hit.connect(create_joint)
@@ -536,22 +592,20 @@ func handle_liquids(delta : float):
 	p.value = drown_buildup
 	p.show()
 	
-	var area2d : Area2D = $LiquidReg
-	var a := area2d.get_overlapping_areas()
-	
 	var in_water : bool = false
 	var in_poison : bool = false
 	
 	in_liquid = false
 	
-	for area in a:
-		if area is Water:
-			if area.poisonous:
-				in_poison = true
-			else:
-				in_water = true
-			
-			in_liquid = true
+	if $PoisonCast.is_colliding():
+		in_liquid = true
+		in_poison = true
+	elif $WaterCast.is_colliding():
+		in_liquid = true
+		in_water = true
+	
+	handle_liquid_gravity(delta,in_water,in_poison)
+	
 	
 	if in_poison:
 		poison_buffer = 0.3
@@ -613,6 +667,20 @@ func handle_liquids(delta : float):
 	
 	drown_buildup = clampf(drown_buildup,0,max_drown_buildup)
 
+func handle_liquid_gravity(delta : float,in_water : bool,in_poison : bool):
+	var gravity : float = 1.0
+	var damp : float = 0.0
+	
+	if in_poison:
+		gravity *= 0.2
+		linear_damp = 12
+	elif in_water:
+		linear_damp = 2
+		gravity_scale *= 0.6
+	else:
+		linear_damp = 0.0
+		gravity_scale = default_gravity
+
 func rotate_joint():
 	var j := global_joint
 	
@@ -635,6 +703,9 @@ func create_joint():
 	j.stiffness = 5.0
 	j.damping = 0.5
 	j.global_position = hook.global_position
+	
+	var timeout := TimeoutManager.new()
+	timeout.timeout = 60
 	#hook.add_child(j)
 	get_tree().root.add_child(j)
 	
@@ -724,8 +795,26 @@ func scream(scream_type : int = 0):
 			%scream4.play()
 	
 
+var is_teleporting : bool = false
+
+@onready var previous_pos : Vector2 = self.global_position
+
+@onready var current_pos : Vector2 = self.global_position
+
+func handle_failsafes(delta : float):
+	current_pos = self.global_position
+	
+	if ((previous_pos - current_pos).length() > 500) and (not is_teleporting):
+		self.global_position = previous_pos
+		Global.reset_camera_smoothing.emit()
+		#self.linear_velocity *= 0
+		
+	
+	previous_pos = self.global_position
+
 func return_to_checkpoint(scream_type : int = 0,duration_multiplier : float = 1.0):
 	can_control = false
+	is_teleporting = true
 	scream(scream_type)
 	destroy_grapple()
 	can_scream = false
@@ -749,6 +838,7 @@ func return_to_checkpoint(scream_type : int = 0,duration_multiplier : float = 1.
 	await  get_tree().create_timer(0.5,false).timeout
 	Global.set_fade_screen(true)
 	await Global.fade_animation_finished
+	is_teleporting = false
 	can_control = true
 
 func teleport_to_waypoint(waypoint : int):
@@ -756,6 +846,7 @@ func teleport_to_waypoint(waypoint : int):
 	
 	Global.clear_map.emit()
 	can_control = false
+	is_teleporting = true
 	#scream(scream_type)
 	destroy_grapple()
 	can_scream = false
@@ -778,4 +869,5 @@ func teleport_to_waypoint(waypoint : int):
 	Global.set_fade_screen(true)
 	await Global.fade_animation_finished
 	Global.can_use_waypoints = true
+	is_teleporting = false
 	can_control = true

@@ -1,6 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://dun7nv3do60w8"]
+[gd_scene load_steps=4 format=3 uid="uid://dkeulnxpg61qj"]
 
-[ext_resource type="Script" path="res://scripts/windmill_block_detector.gd" id="1_wuhsm"]
+[ext_resource type="Script" path="res://scripts/windmill_block_detector.gd" id="1_pl3rk"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nhc4u"]
 size = Vector2(82, 78)
@@ -11,7 +11,7 @@ size = Vector2(60, 56)
 [node name="WindmillBlockDetector" type="Area2D" node_paths=PackedStringArray("collision_shape")]
 collision_layer = 64
 collision_mask = 64
-script = ExtResource("1_wuhsm")
+script = ExtResource("1_pl3rk")
 owned_by_spinner = false
 collision_shape = NodePath("WindmillBlock/CollisionShape2D")
 
@@ -24,9 +24,18 @@ debug_color = Color(0.75, 0.4275, 0.475875, 0)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="WindmillBlock"]
 position = Vector2(1.52588e-05, 0)
 shape = SubResource("RectangleShape2D_abp4y")
+disabled = true
 debug_color = Color(0.13, 0.3765, 1, 0)
 
-[node name="ColorRect" type="ColorRect" parent="WindmillBlock/CollisionShape2D"]
+[node name="StaticBody2D" type="StaticBody2D" parent="WindmillBlock/CollisionShape2D"]
+position = Vector2(-1.52588e-05, 0)
+collision_layer = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WindmillBlock/CollisionShape2D/StaticBody2D"]
+shape = SubResource("RectangleShape2D_abp4y")
+
+[node name="ColorRect" type="ColorRect" parent="WindmillBlock/CollisionShape2D/StaticBody2D"]
+z_index = -2
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -38,4 +47,4 @@ offset_right = 31.0
 offset_bottom = 29.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.58, 0.372747, 0.1914, 1)
+color = Color(0.237483, 0.140152, 0.054206, 1)

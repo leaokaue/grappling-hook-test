@@ -1,5 +1,6 @@
-@tool
 extends StaticBody2D
+
+@export var auto_rotates : bool = true
 
 @onready var downcast : RayCast2D = %Downcast
 @onready var rightcast : RayCast2D = %Rightcast 
@@ -14,11 +15,16 @@ extends StaticBody2D
 
 func _ready() -> void:
 	#print("ready")
-	await get_tree().physics_frame
-	await get_tree().physics_frame
-	await get_tree().physics_frame
-	await get_tree().physics_frame
-	await get_tree().physics_frame
+	
+	if not auto_rotates:
+		return
+	else:
+		await get_tree().physics_frame
+		await get_tree().physics_frame
+		await get_tree().physics_frame
+		await get_tree().physics_frame
+		await get_tree().physics_frame
+	
 	if downcast.is_colliding():
 		#print("downcast")
 		vsprite.hide()

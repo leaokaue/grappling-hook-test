@@ -11,13 +11,17 @@ var has_checked : bool = false
 
 func try_reparent_collision(wspinner : WindmillSpinner):
 	if not owned_by_spinner:
-		print("tried reparent collision")
+		#print("tried reparent collision")
 		owned_by_spinner = true
 		spinner = wspinner
 		collision_shape.reparent(spinner)
 		spinner.areas.append(self)
 		spinner.can_step = true
+		spinner.movement_locker = 0.1
 		spinner.tried_step.emit()
+		#await get_tree().physics_frame
+		#await get_tree().physics_frame
+		#self.queue_free()
 		
 
 func check_area():
@@ -27,11 +31,8 @@ func check_area():
 	
 	has_checked = true
 	
-	#print("tried to check areas")
-	#print(get_overlapping_areas())
+	spinner.movement_locker = 0.1
 	
-	await get_tree().physics_frame
-	await get_tree().physics_frame
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	

@@ -46,6 +46,7 @@ centered = false
 
 [node name="BgWindy" type="Sprite2D" parent="."]
 unique_name_in_owner = true
+modulate = Color(0.772549, 1, 1, 1)
 texture_repeat = 2
 material = SubResource("ShaderMaterial_xnpk6")
 position = Vector2(0, -8)

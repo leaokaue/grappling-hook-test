@@ -5,7 +5,7 @@ signal hit
 
 var player : Worm
 
-var grappled : bool = false
+static var grappled : bool = false
 
 var frozen : bool = false
 
@@ -46,12 +46,14 @@ func _physics_process(delta: float) -> void:
 
 func _on_body_collision(body_rid : RID,body : Node,_bsp : int,lsi : int):
 	if not grappled:
+		grappled = true
 		
 		
 		if body is TileMapLayer:
 			var c := PhysicsServer2D.body_get_collision_layer(body_rid)
 			if c == 9:
 				player.destroy_grapple()
+				#print("destroing grapple - tilemaplayer")
 				return
 		
 		elif body is CollisionObject2D:
@@ -60,8 +62,15 @@ func _on_body_collision(body_rid : RID,body : Node,_bsp : int,lsi : int):
 			#print(grappled_body)
 			body_offset = self.global_position - body.global_position
 			
-			if body is AnimatableBody2D:
+			if body is AnimatableBody2D or body is StaticBody2D:
 				#self.reparent(body)
+				
+				var reparent_node := body
+				
+				#if body is StaticBody2D:
+					#while reparent_node is not AnimatableBody2D:
+						#reparent_node = reparent_node.get_parent()
+				#
 				self.call_deferred("reparent",body)
 				await get_tree().physics_frame
 				await get_tree().physics_frame
@@ -72,10 +81,11 @@ func _on_body_collision(body_rid : RID,body : Node,_bsp : int,lsi : int):
 				for s in body.get_children():
 					if s is GrappleHook:
 						i = s
-						print(i)
+						#print(i)
 						if is_instance_valid(Global.player.global_joint):
 							Global.player.global_joint.node_a = i.get_path()
-				
+			
+			
 			
 			if body.get_collision_layer_value(4):
 				#print("dying")
@@ -85,7 +95,6 @@ func _on_body_collision(body_rid : RID,body : Node,_bsp : int,lsi : int):
 		$Hit.play()
 		looks = false
 		#self.global_position = locked_position
-		grappled = true
 		frozen = true
 		set_deferred("freeze",true)
 		#self.lock_rotation = true

@@ -23,6 +23,7 @@ var track_pos_array : Array[float] = [0,0,0,0,0,0]
 
 func _ready() -> void:
 	Global.music_player = self
+	play()
 
 func change_track(track : BackgroundManager.BACKGROUNDS):
 	var next_track := get_track(track)

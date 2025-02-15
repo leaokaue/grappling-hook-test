@@ -12,6 +12,7 @@ var unlocked : bool = false
 var pressed : bool = false
 
 func _ready() -> void:
+	Global
 	button.pressed.connect(_on_button_pressed)
 	
 	if is_area_waypoint_unlocked():

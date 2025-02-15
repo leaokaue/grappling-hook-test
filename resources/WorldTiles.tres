@@ -1,13 +1,12 @@
-[gd_resource type="TileSet" load_steps=14 format=3 uid="uid://w5rst4ax56w1"]
+[gd_resource type="TileSet" load_steps=13 format=3 uid="uid://w5rst4ax56w1"]
 
 [ext_resource type="PackedScene" uid="uid://dun7nv3do60w8" path="res://scenes/windmill_block.tscn" id="1_x5mad"]
-[ext_resource type="PackedScene" uid="uid://2up45yvg4gfs" path="res://scenes/water_block.tscn" id="2_0f1op"]
 [ext_resource type="PackedScene" uid="uid://dasxlqcm51tw0" path="res://scenes/ghost_hook_block.tscn" id="2_20lv8"]
 [ext_resource type="PackedScene" uid="uid://c86ebt78ug24x" path="res://scenes/hook_block.tscn" id="2_pi43u"]
+[ext_resource type="PackedScene" uid="uid://dkeulnxpg61qj" path="res://windmill_ghost_block.tscn" id="3_1meg5"]
 [ext_resource type="PackedScene" uid="uid://bcfrt4en1wy5u" path="res://scenes/peculiar_coin.tscn" id="3_2hlfc"]
 [ext_resource type="PackedScene" uid="uid://c0ftviyipmvn" path="res://scenes/checkpoint.tscn" id="4_grroj"]
 [ext_resource type="PackedScene" uid="uid://ua8ycvs8vses" path="res://scenes/fungal_block.tscn" id="5_y37qp"]
-[ext_resource type="PackedScene" uid="uid://b4cfehc15q3l8" path="res://scenes/poison_block.tscn" id="6_ohsq3"]
 [ext_resource type="PackedScene" uid="uid://dopq4tacnt2t0" path="res://one_way_platform.tscn" id="8_47w24"]
 [ext_resource type="PackedScene" uid="uid://d381rn733wq1e" path="res://scenes/spike_block.tscn" id="8_pwwmp"]
 [ext_resource type="Texture2D" uid="uid://dnmjdk8x6ygfd" path="res://sprites/atlas/texture_atlas.png" id="12_tm5pe"]
@@ -19,11 +18,10 @@ scenes/2/scene = ExtResource("2_pi43u")
 scenes/3/scene = ExtResource("3_2hlfc")
 scenes/4/scene = ExtResource("4_grroj")
 scenes/5/scene = ExtResource("5_y37qp")
-scenes/6/scene = ExtResource("6_ohsq3")
 scenes/7/scene = ExtResource("8_47w24")
+scenes/8/scene = ExtResource("2_20lv8")
 scenes/9/scene = ExtResource("8_pwwmp")
-scenes/10/scene = ExtResource("2_20lv8")
-scenes/11/scene = ExtResource("2_0f1op")
+scenes/12/scene = ExtResource("3_1meg5")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2gabt"]
 texture = ExtResource("12_tm5pe")
@@ -38,6 +36,7 @@ texture_region_size = Vector2i(60, 56)
 3:0/0/z_index = -2
 3:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-30, -28, 30, -28, 30, 28, -30, 28)
 3:0/0/physics_layer_0/polygon_0/one_way = true
+3:0/0/physics_layer_0/polygon_0/one_way_margin = 3.0
 3:0/0/physics_layer_2/polygon_0/points = PackedVector2Array(-30, -28, 30, -28, 30, 28, -30, 28)
 4:0/0 = 0
 4:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-30, -28, 30, -28, 30, 28, -30, 28)
@@ -46,7 +45,9 @@ texture_region_size = Vector2i(60, 56)
 6:0/0 = 0
 6:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-30, -28, 30, -28, 30, 28, -30, 28)
 7:0/0 = 0
+7:0/0/physics_layer_3/polygon_0/points = PackedVector2Array(-30, 28, 30, 28, 30, -28, -30, -28)
 8:0/0 = 0
+8:0/0/physics_layer_4/polygon_0/points = PackedVector2Array(-30, -28, 30, -28, 30, 28, -30, 28)
 9:0/0 = 0
 10:0/0 = 0
 11:0/0 = 0
@@ -944,5 +945,11 @@ tile_size = Vector2i(60, 56)
 physics_layer_0/collision_layer = 1
 physics_layer_1/collision_layer = 9
 physics_layer_2/collision_layer = 4
-sources/0 = SubResource("TileSetScenesCollectionSource_3upqg")
+physics_layer_3/collision_layer = 128
+physics_layer_3/collision_mask = 0
+physics_layer_4/collision_layer = 256
+physics_layer_4/collision_mask = 0
+custom_data_layer_0/name = ""
+custom_data_layer_0/type = 0
 sources/1 = SubResource("TileSetAtlasSource_2gabt")
+sources/0 = SubResource("TileSetScenesCollectionSource_3upqg")

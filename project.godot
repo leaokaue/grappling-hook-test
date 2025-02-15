@@ -87,10 +87,13 @@ dash={
 2d_physics/layer_5="Liquid"
 2d_physics/layer_6="CrushingBlocks"
 2d_physics/layer_7="Windmill"
+2d_physics/layer_8="Water"
+2d_physics/layer_9="Poison"
 
 [physics]
 
-2d/solver/solver_iterations=24
+2d/solver/solver_iterations=32
+common/physics_interpolation=true
 
 [rendering]
 

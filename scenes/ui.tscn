@@ -1,8 +1,9 @@
-[gd_scene load_steps=21 format=3 uid="uid://bnvneh2xfqhpp"]
+[gd_scene load_steps=26 format=3 uid="uid://bnvneh2xfqhpp"]
 
 [ext_resource type="Script" path="res://scripts/rain.gd" id="1_kj4sp"]
 [ext_resource type="Script" path="res://scripts/coin_counter.gd" id="1_le5ak"]
 [ext_resource type="Texture2D" uid="uid://b2xs1j1q1scfq" path="res://sprites/nolan.jpg" id="2_4iwo5"]
+[ext_resource type="Script" path="res://scripts/vignette.gd" id="2_47kre"]
 [ext_resource type="Script" path="res://scripts/item_ui.gd" id="2_ejolm"]
 [ext_resource type="Texture2D" uid="uid://d3rf28vioo657" path="res://sprites/items/dash_boots.png" id="3_b3lae"]
 [ext_resource type="Shader" path="res://shaders/shine.gdshader" id="3_hew1h"]
@@ -76,6 +77,51 @@ shader_parameter/base_rain_speed = 0.584
 shader_parameter/additional_rain_speed = 0.567
 shader_parameter/slant = 0.141
 
+[sub_resource type="Shader" id="Shader_qachi"]
+code = "shader_type canvas_item;
+
+uniform float outerRadius : hint_range(0.0, 5.0) = 1.0;
+uniform float MainAlpha : hint_range(0.0, 1.0) = 1.0;
+
+void fragment() {
+	float x = abs(UV.x-.5)*2.0;
+	float y = abs(UV.y-.5)*2.0;
+	float v = (sqrt((x*x)+(y*y))/outerRadius);
+	COLOR = vec4(0,0,0,v*MainAlpha);
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ifdro"]
+shader = SubResource("Shader_qachi")
+shader_parameter/outerRadius = 0.25
+shader_parameter/MainAlpha = 0.0
+
+[sub_resource type="Shader" id="Shader_e7or3"]
+code = "// chromatic aberration
+//---------------------------------
+
+shader_type canvas_item;
+
+uniform vec2 r_displacement = vec2(3.0, 0.0);
+uniform vec2 g_displacement = vec2(0.0, 0.0);
+uniform vec2 b_displacement = vec2(-3.0, 0.0);
+
+uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_linear_mipmap;
+
+void fragment()
+{
+	float r = texture(SCREEN_TEXTURE, SCREEN_UV + vec2(SCREEN_PIXEL_SIZE*r_displacement), 0.0).r;
+	float g = texture(SCREEN_TEXTURE, SCREEN_UV + vec2(SCREEN_PIXEL_SIZE*g_displacement), 0.0).g;
+	float b = texture(SCREEN_TEXTURE, SCREEN_UV + vec2(SCREEN_PIXEL_SIZE*b_displacement), 0.0).b;
+	
+	COLOR = vec4(r, g, b, 1.0);
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_v04w1"]
+shader = SubResource("Shader_e7or3")
+shader_parameter/r_displacement = Vector2(0, 0)
+shader_parameter/g_displacement = Vector2(0, 0)
+shader_parameter/b_displacement = Vector2(0, 0)
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_mapsa"]
 shader = ExtResource("3_hew1h")
 shader_parameter/Line_Smoothness = 0.045
@@ -119,6 +165,32 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(1, 1, 1, 0)
 script = ExtResource("1_kj4sp")
+
+[node name="Vignette" type="ColorRect" parent="."]
+unique_name_in_owner = true
+z_index = 1
+material = SubResource("ShaderMaterial_ifdro")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -225.0
+offset_bottom = 279.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_47kre")
+
+[node name="ChromaticAberration" type="ColorRect" parent="Vignette"]
+unique_name_in_owner = true
+z_index = 1
+material = SubResource("ShaderMaterial_v04w1")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 228.0
+offset_bottom = -264.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="BlackScreen" type="ColorRect" parent="." groups=["BlackScreen"]]
 modulate = Color(1, 1, 1, 0)

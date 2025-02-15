@@ -10,12 +10,17 @@ func _ready() -> void:
 func on_body_entered(body : Node2D):
 	if body is Worm:
 		set_checkpoint(body)
+		Global.can_switch_equipments = true
 		var checkpoints := get_tree().get_nodes_in_group("Checkpoints")
 		checkpoints.erase(self)
 		for point in checkpoints:
 			if point is Checkpoint:
 				point.set_active(false)
 		set_active(true)
+
+func on_body_exited(body : Node2D):
+	if body is Worm:
+		Global.can_switch_equipments = false
 
 func set_checkpoint(player : Worm):
 	player.last_checkpoint = self.global_position

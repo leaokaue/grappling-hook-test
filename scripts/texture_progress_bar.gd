@@ -9,6 +9,9 @@ func _process(delta: float) -> void:
 	if not is_instance_valid(p):
 		return
 	
+	if Global.has_cool_drink:
+		tint_progress = Color(1.0,0.0,1.0)
+	
 	var c := p.current_hook_cooldown
 	var m := p.max_hook_cooldown
 	

@@ -1,6 +1,13 @@
 extends Node
 
 @warning_ignore("unused_signal")
+
+signal check_area_coin(area : Waypoint.WAYPOINTS)
+
+signal send_area_coin(coins : int)
+
+signal set_nightmare_effect(effect : float)
+
 signal update_coins
 
 signal fade_animation_finished
@@ -8,6 +15,8 @@ signal fade_animation_finished
 signal change_target_zoom(zoom : float)
 
 signal reset_zoom
+
+signal reset_camera_smoothing
 
 signal toggle_rain(on : bool)
 
@@ -57,6 +66,8 @@ enum EQUIPMENTS {
 }
 
 var current_equipment : EQUIPMENTS = EQUIPMENTS.None
+
+var can_switch_equipments : bool = false
 
 var can_use_waypoints : bool = false
 

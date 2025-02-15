@@ -124,8 +124,8 @@ func match_item():
 			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
 		i.HookCooldownReducer:
 			sprite.texture = cool_drink
-			i_name = "Healthy Medicine"
-			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
+			i_name = "Grape Juice"
+			i_desc = "It's been a fun climb. Take a rest and some Grape Juice. It will reduce your Grapple Hook cooldown."
 		i.GrappleRopeExtension:
 			sprite.texture = extra_rope
 			i_name = "Healthy Medicine"
@@ -146,6 +146,10 @@ func match_item():
 			sprite.texture = green_potion
 			i_name = "Healthy Medicine"
 			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
+		i.WaterDash:
+			sprite.texture = tambaqui
+			i_name = "Tambaqui"
+			i_desc = "It graces you with its presence. Press RMB to swim underwater. While swmming, press LMB to perform a Dolphin Dash"
 	
 	#sprite.texture = t
 	

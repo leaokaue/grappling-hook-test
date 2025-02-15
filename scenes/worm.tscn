@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://bacl7irhgnrr7"]
+[gd_scene load_steps=35 format=3 uid="uid://bacl7irhgnrr7"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_d3wq5"]
 [ext_resource type="Texture2D" uid="uid://bdw2ln7jh2dda" path="res://sprites/Wormchelt.png" id="2_4q2ix"]
@@ -53,6 +53,32 @@ alpha_curve = SubResource("CurveTexture_2oyaa")
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.11032, 0.179245), 0.0, 0.0, 0, 0, Vector2(1, 0.792453), 0.0, 0.0, 0, 0]
 point_count = 3
 
+[sub_resource type="Curve" id="Curve_2iwxp"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.33195, 1), 0.0, 0.0, 0, 0, Vector2(0.485477, 1), 0.0, 0.0, 0, 0, Vector2(0.730291, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_64gtm"]
+curve = SubResource("Curve_2iwxp")
+
+[sub_resource type="Curve" id="Curve_kcovs"]
+_data = [Vector2(0, 0.197802), 0.0, 0.0, 0, 0, Vector2(0.165975, 1), 0.0, 0.0, 0, 0, Vector2(0.629032, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.340659), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_ede6w"]
+curve = SubResource("Curve_kcovs")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ub7ml"]
+particle_flag_disable_z = true
+spread = 180.0
+initial_velocity_min = 107.8
+initial_velocity_max = 252.2
+gravity = Vector3(0, 98, 0)
+scale_min = 0.04
+scale_max = 0.06
+scale_curve = SubResource("CurveTexture_ede6w")
+color = Color(0.283125, 0.830678, 0.928547, 0.552941)
+alpha_curve = SubResource("CurveTexture_64gtm")
+
 [sub_resource type="Curve" id="Curve_xv285"]
 max_value = 10.0
 _data = [Vector2(0, 7.54717), 0.0, 0.0, 0, 0, Vector2(1, 0.981132), 0.0, 0.0, 0, 0]
@@ -74,9 +100,6 @@ colors = PackedColorArray(0, 0.516667, 1, 0, 0, 0.516667, 1, 0.6)
 offsets = PackedFloat32Array(0, 0.485477)
 colors = PackedColorArray(0, 0.516667, 1, 0, 0, 0.516667, 1, 0.635294)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_6ibcn"]
-size = Vector2(14, 30)
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kou4s"]
 size = Vector2(18.09, 20)
 
@@ -89,13 +112,11 @@ collision_layer = 2
 physics_material_override = SubResource("PhysicsMaterial_asclu")
 continuous_cd = 2
 contact_monitor = true
-max_contacts_reported = 1
+max_contacts_reported = 5
 script = ExtResource("1_d3wq5")
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="."]
 remote_path = NodePath("../DashCast/LineTrail2D")
-
-[node name="FishTransform" type="RemoteTransform2D" parent="."]
 
 [node name="Marker" type="Node2D" parent="."]
 unique_name_in_owner = true
@@ -177,6 +198,21 @@ script = ExtResource("2_ap5d5")
 active = false
 max_points = 80
 
+[node name="FishStuff" type="Node2D" parent="."]
+
+[node name="splash" type="GPUParticles2D" parent="FishStuff"]
+unique_name_in_owner = true
+emitting = false
+amount = 64
+process_material = SubResource("ParticleProcessMaterial_ub7ml")
+texture = ExtResource("4_74kgy")
+lifetime = 0.6
+one_shot = true
+explosiveness = 1.0
+local_coords = true
+trail_enabled = true
+trail_lifetime = 0.2
+
 [node name="FishTrails" type="Node2D" parent="."]
 position = Vector2(0, 6)
 
@@ -237,27 +273,25 @@ active = false
 max_points = 69
 max_line_deletal = 30
 
-[node name="LiquidReg" type="Area2D" parent="."]
-collision_layer = 0
-collision_mask = 16
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="LiquidReg"]
-position = Vector2(0, 5)
-shape = SubResource("RectangleShape2D_6ibcn")
-debug_color = Color(0, 0.638792, 0.373799, 0.42)
-
 [node name="RagddollCast" type="ShapeCast2D" parent="."]
 position = Vector2(0, -2)
 shape = SubResource("RectangleShape2D_kou4s")
 target_position = Vector2(0, 15)
 
-[node name="LiquidCast" type="ShapeCast2D" parent="."]
+[node name="WaterCast" type="ShapeCast2D" parent="."]
 position = Vector2(0, -2)
 shape = SubResource("RectangleShape2D_kou4s")
 target_position = Vector2(0, 15)
-collision_mask = 16
+max_results = 16
+collision_mask = 128
 collide_with_areas = true
-collide_with_bodies = false
+
+[node name="PoisonCast" type="ShapeCast2D" parent="."]
+position = Vector2(0, -2)
+shape = SubResource("RectangleShape2D_kou4s")
+target_position = Vector2(0, 15)
+collision_mask = 256
+collide_with_areas = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false

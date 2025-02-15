@@ -50,7 +50,7 @@ func is_hook_inside():
 	#print("trying to find hook")
 	
 	for i in hook_area.get_overlapping_bodies():
-		print(i)
+		#print(i)
 		if i is GrappleHook:
 			return true
 	
