@@ -32,6 +32,7 @@ position = Vector2(-1.52588e-05, 0)
 collision_layer = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="WindmillBlock/CollisionShape2D/StaticBody2D"]
+visible = false
 shape = SubResource("RectangleShape2D_abp4y")
 
 [node name="ColorRect" type="ColorRect" parent="WindmillBlock/CollisionShape2D/StaticBody2D"]
@@ -48,3 +49,78 @@ offset_bottom = 29.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.237483, 0.140152, 0.054206, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="WindmillBlock/CollisionShape2D/StaticBody2D"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -19.0
+offset_top = -18.0
+offset_right = 19.0
+offset_bottom = 18.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.129412, 0.0666667, 0.0196078, 0.215686)
+
+[node name="ColorRect3" type="ColorRect" parent="WindmillBlock/CollisionShape2D/StaticBody2D"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -31.0
+offset_top = -29.0
+offset_right = -19.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.129412, 0.0666667, 0.0196078, 0.215686)
+
+[node name="ColorRect4" type="ColorRect" parent="WindmillBlock/CollisionShape2D/StaticBody2D"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 19.0
+offset_top = -29.0
+offset_right = 31.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.129412, 0.0666667, 0.0196078, 0.215686)
+
+[node name="ColorRect5" type="ColorRect" parent="WindmillBlock/CollisionShape2D/StaticBody2D"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 19.0
+offset_top = 18.0
+offset_right = 31.0
+offset_bottom = 29.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.129412, 0.0666667, 0.0196078, 0.215686)
+
+[node name="ColorRect6" type="ColorRect" parent="WindmillBlock/CollisionShape2D/StaticBody2D"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -31.0
+offset_top = 18.0
+offset_right = -19.0
+offset_bottom = 29.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.129412, 0.0666667, 0.0196078, 0.215686)

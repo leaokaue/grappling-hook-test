@@ -43,6 +43,7 @@ shape = SubResource("RectangleShape2D_coo3j")
 disabled = true
 
 [node name="ColorRect" type="ColorRect" parent="."]
+visible = false
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -76,97 +77,9 @@ rotation = -1.57079
 shape = SubResource("RectangleShape2D_4yovh")
 disabled = true
 
-[node name="ColorRect2" type="ColorRect" parent="."]
-z_index = -2
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -180.0
-offset_top = 168.0
-offset_right = 180.0
-offset_bottom = 2520.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.237483, 0.140152, 0.054206, 1)
+[node name="Wing" type="Node2D" parent="."]
 
-[node name="ColorRect5" type="ColorRect" parent="."]
-z_index = -2
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -180.0
-offset_top = -2464.0
-offset_right = 180.0
-offset_bottom = -168.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.237483, 0.140152, 0.054206, 1)
-
-[node name="ColorRect6" type="ColorRect" parent="."]
-z_index = -2
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -540.0
-offset_top = -560.0
-offset_right = -180.0
-offset_bottom = -168.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.237483, 0.140152, 0.054206, 1)
-
-[node name="ColorRect7" type="ColorRect" parent="."]
-z_index = -2
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 180.0
-offset_top = -560.0
-offset_right = 540.0
-offset_bottom = -168.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.237483, 0.140152, 0.054206, 1)
-
-[node name="ColorRect8" type="ColorRect" parent="."]
-z_index = -2
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 180.0
-offset_top = 168.0
-offset_right = 540.0
-offset_bottom = 560.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.237483, 0.140152, 0.054206, 1)
-
-[node name="ColorRect9" type="ColorRect" parent="."]
-z_index = -2
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -540.0
-offset_top = 168.0
-offset_right = -180.0
-offset_bottom = 560.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.237483, 0.140152, 0.054206, 1)
-
-[node name="ColorRect3" type="ColorRect" parent="."]
+[node name="ColorRect3" type="ColorRect" parent="Wing"]
 z_index = -2
 anchors_preset = 8
 anchor_left = 0.5
@@ -182,18 +95,455 @@ grow_vertical = 2
 rotation = 1.57079
 color = Color(0.237483, 0.140152, 0.054206, 1)
 
-[node name="ColorRect4" type="ColorRect" parent="."]
+[node name="ColorRect10" type="ColorRect" parent="Wing"]
 z_index = -2
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 2940.0
+offset_left = -179.0
+offset_top = -113.0
+offset_right = -123.0
+offset_bottom = 2655.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 1.57079
+color = Color(0.155562, 0.0853055, 0.0252543, 0.721569)
+
+[node name="ColorRect11" type="ColorRect" parent="Wing"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -179.0
+offset_right = -123.0
+offset_bottom = 2768.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 1.57079
+color = Color(0.155562, 0.0853055, 0.0252543, 0.721569)
+
+[node name="ColorRect12" type="ColorRect" parent="Wing"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -179.0
+offset_top = 112.0
+offset_right = -123.0
+offset_bottom = 2880.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 1.57079
+color = Color(0.155562, 0.0853055, 0.0252543, 0.721569)
+
+[node name="Wing2" type="Node2D" parent="."]
+rotation = 3.14159
+
+[node name="ColorRect3" type="ColorRect" parent="Wing2"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -179.0
 offset_top = -168.0
-offset_right = 3300.0
+offset_right = 181.0
 offset_bottom = 2600.0
 grow_horizontal = 2
 grow_vertical = 2
 rotation = 1.57079
 color = Color(0.237483, 0.140152, 0.054206, 1)
+
+[node name="ColorRect10" type="ColorRect" parent="Wing2"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -179.0
+offset_top = -113.0
+offset_right = -123.0
+offset_bottom = 2655.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 1.57079
+color = Color(0.155562, 0.0853055, 0.0252543, 0.721569)
+
+[node name="ColorRect11" type="ColorRect" parent="Wing2"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -179.0
+offset_right = -123.0
+offset_bottom = 2768.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 1.57079
+color = Color(0.155562, 0.0853055, 0.0252543, 0.721569)
+
+[node name="ColorRect12" type="ColorRect" parent="Wing2"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -179.0
+offset_top = 112.0
+offset_right = -123.0
+offset_bottom = 2880.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 1.57079
+color = Color(0.155562, 0.0853055, 0.0252543, 0.721569)
+
+[node name="Wing3" type="Node2D" parent="."]
+rotation = 4.71238
+
+[node name="ColorRect3" type="ColorRect" parent="Wing3"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -179.0
+offset_top = -178.0
+offset_right = 177.0
+offset_bottom = 2590.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 1.57079
+color = Color(0.237483, 0.140152, 0.054206, 1)
+
+[node name="ColorRect10" type="ColorRect" parent="Wing3"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -179.0
+offset_top = -113.0
+offset_right = -123.0
+offset_bottom = 2655.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 1.57079
+color = Color(0.155562, 0.0853055, 0.0252543, 0.721569)
+
+[node name="ColorRect11" type="ColorRect" parent="Wing3"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -184.0
+offset_top = 60.0
+offset_right = -128.0
+offset_bottom = 2812.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 1.57079
+color = Color(0.155562, 0.0853055, 0.0252543, 0.721569)
+
+[node name="Wing4" type="Node2D" parent="."]
+rotation = 7.85397
+
+[node name="ColorRect3" type="ColorRect" parent="Wing4"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -179.0
+offset_top = -178.0
+offset_right = 177.0
+offset_bottom = 2590.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 1.57079
+color = Color(0.237483, 0.140152, 0.054206, 1)
+
+[node name="ColorRect10" type="ColorRect" parent="Wing4"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -179.0
+offset_top = -113.0
+offset_right = -123.0
+offset_bottom = 2655.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 1.57079
+color = Color(0.155562, 0.0853055, 0.0252543, 0.721569)
+
+[node name="ColorRect11" type="ColorRect" parent="Wing4"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -184.0
+offset_top = 60.0
+offset_right = -128.0
+offset_bottom = 2812.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 1.57079
+color = Color(0.155562, 0.0853055, 0.0252543, 0.721569)
+
+[node name="Block" type="Node2D" parent="."]
+
+[node name="ColorRect6" type="ColorRect" parent="Block"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -540.0
+offset_top = -560.0
+offset_right = -180.0
+offset_bottom = -168.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.237483, 0.140152, 0.054206, 1)
+
+[node name="ColorRect7" type="ColorRect" parent="Block"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -392.0
+offset_right = -180.0
+offset_bottom = -168.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.175151, 0.0984834, 0.031276, 1)
+
+[node name="ColorRect8" type="ColorRect" parent="Block"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -540.0
+offset_top = -560.0
+offset_right = -360.0
+offset_bottom = -336.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.175151, 0.0984834, 0.031276, 1)
+
+[node name="Block2" type="Node2D" parent="."]
+
+[node name="ColorRect6" type="ColorRect" parent="Block2"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -540.0
+offset_top = -560.0
+offset_right = -120.0
+offset_bottom = -112.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.237483, 0.140152, 0.054206, 1)
+
+[node name="ColorRect7" type="ColorRect" parent="Block2"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -392.0
+offset_right = -180.0
+offset_bottom = -168.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.175151, 0.0984834, 0.031276, 1)
+
+[node name="ColorRect8" type="ColorRect" parent="Block2"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -540.0
+offset_top = -560.0
+offset_right = -360.0
+offset_bottom = -336.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.175151, 0.0984834, 0.031276, 1)
+
+[node name="Block3" type="Node2D" parent="."]
+rotation = 1.57079
+
+[node name="ColorRect6" type="ColorRect" parent="Block3"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -540.0
+offset_top = -560.0
+offset_right = -120.0
+offset_bottom = -112.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.237483, 0.140152, 0.054206, 1)
+
+[node name="ColorRect7" type="ColorRect" parent="Block3"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -392.0
+offset_right = -180.0
+offset_bottom = -168.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.175151, 0.0984834, 0.031276, 1)
+
+[node name="ColorRect8" type="ColorRect" parent="Block3"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -540.0
+offset_top = -560.0
+offset_right = -360.0
+offset_bottom = -336.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.175151, 0.0984834, 0.031276, 1)
+
+[node name="Block4" type="Node2D" parent="."]
+rotation = 3.14159
+
+[node name="ColorRect6" type="ColorRect" parent="Block4"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -540.0
+offset_top = -560.0
+offset_right = -120.0
+offset_bottom = -112.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.237483, 0.140152, 0.054206, 1)
+
+[node name="ColorRect7" type="ColorRect" parent="Block4"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -392.0
+offset_right = -180.0
+offset_bottom = -168.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.175151, 0.0984834, 0.031276, 1)
+
+[node name="ColorRect8" type="ColorRect" parent="Block4"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -540.0
+offset_top = -560.0
+offset_right = -360.0
+offset_bottom = -336.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.175151, 0.0984834, 0.031276, 1)
+
+[node name="Block5" type="Node2D" parent="."]
+rotation = 4.71238
+
+[node name="ColorRect6" type="ColorRect" parent="Block5"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -540.0
+offset_top = -560.0
+offset_right = -120.0
+offset_bottom = -112.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.237483, 0.140152, 0.054206, 1)
+
+[node name="ColorRect7" type="ColorRect" parent="Block5"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -392.0
+offset_right = -180.0
+offset_bottom = -168.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.175151, 0.0984834, 0.031276, 1)
+
+[node name="ColorRect8" type="ColorRect" parent="Block5"]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -540.0
+offset_top = -560.0
+offset_right = -360.0
+offset_bottom = -336.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.175151, 0.0984834, 0.031276, 1)

@@ -293,7 +293,7 @@ func apply_tambaqui(delta : float):
 		var speed : float = 125
 		var vel_dec : float = 0.5
 		
-		drown_buildup -= delta * 0.2
+		drown_buildup -= delta * 0.5
 		
 		if is_instance_valid(last_fish_trail):
 			last_fish_trail.global_position = self.global_position
@@ -322,7 +322,7 @@ func apply_tambaqui_dash():
 		
 		var speed : float = 160
 		%splash.emitting = true
-		if drown_buildup_buffer > 0:
+		if (drown_buildup_buffer > 0) or (in_liquid):
 			speed = 330
 		
 		var dir := (get_global_mouse_position() - self.global_position).normalized()
