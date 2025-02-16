@@ -116,9 +116,15 @@ func _ready() -> void:
 	create_ui()
 	Global.teleport_to_waypoint.connect(teleport_to_waypoint)
 	Global.player = self
-	Global.get_coin_vec2_array()
 	if debug_mode:
 		last_checkpoint = global_position
+	
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	
+	Global.get_coin_vec2_array()
 
 func _process(delta: float) -> void:
 	if not can_hook:
@@ -509,7 +515,7 @@ func handle_equipment_cooldowns(delta : float):
 				tambaqui_bar += delta * 0.75
 		else:
 			if tambaqui_bar < tambaqui_max_bar:
-				tambaqui_bar += delta * 0.01
+				tambaqui_bar += delta * 0.25
 	else:
 		if tambaqui_bar > 0:
 			if in_liquid:
@@ -887,7 +893,7 @@ var is_teleporting : bool = false
 func handle_failsafes(_delta : float):
 	current_pos = self.global_position
 	
-	if ((previous_pos - current_pos).length() > 500) and (not is_teleporting):
+	if ((previous_pos - current_pos).length() > 250) and (not is_teleporting):
 		self.global_position = previous_pos
 		Global.reset_camera_smoothing.emit()
 		#self.linear_velocity *= 0
@@ -978,19 +984,32 @@ func teleport_to_waypoint(waypoint : int):
 
 func handle_coin_compass():
 	if Global.has_coin_compass:
+		
+		if not Input.is_action_just_pressed("dash"):
+			return
+		
 		%CoinCompass.show()
 		
 		
-		var shortest_pos : Vector2 = Vector2(0,0)
+		var shortest_pos := Vector2(0,0)
 		
 		for p in Global.coin_positions:
-			var pp := (shortest_pos - self.global_position).length()
+			if shortest_pos == Vector2(0,0):
+				shortest_pos = p
 			
+			var pp : float = (p - self.global_position).length()
+			
+			print("comparing pos ", pp, " and ", (p - self.global_position).length())
 			if (p - self.global_position).length() < pp:
+				print("new shortest pos is ", p)
 				shortest_pos = p 
+			#print(pp, " ", p)
 		
 		var a : float = (shortest_pos - self.global_position).angle()
 		
+		print((shortest_pos - self.global_position).length() ,"shortest pos afterwards")
+		
+		%CoinCompass.global_position = self.global_position
 		%CoinCompass.rotation = a
 		
 	else:

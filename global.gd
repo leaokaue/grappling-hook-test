@@ -229,4 +229,5 @@ func remove_collected_coins_from_scene():
 func get_coin_vec2_array():
 	for coin in get_tree().get_nodes_in_group("Coins"):
 		if coin is Node2D:
+			print(coin)
 			coin_positions.append(coin.global_position)

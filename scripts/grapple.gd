@@ -21,7 +21,8 @@ var body_offset : Vector2
 @onready var hits := %Hit
 
 func _ready() -> void:
-	$Send.play()
+	if is_instance_valid($Send):
+		$Send.play()
 	#look_at_dir()
 	self.body_shape_entered.connect(_on_body_collision)
 	#self.body_entered.connect(_on_body_collision)
@@ -92,7 +93,8 @@ func _on_body_collision(body_rid : RID,body : Node,_bsp : int,lsi : int):
 				player.destroy_grapple()
 				return
 		
-		$Hit.play()
+		if is_instance_valid($Hit):
+			$Hit.play()
 		looks = false
 		#self.global_position = locked_position
 		frozen = true
