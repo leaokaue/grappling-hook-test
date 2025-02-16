@@ -31,5 +31,5 @@ func dissapear():
 	var t := create_tween()
 	t.tween_property($ColorRect,"modulate:a",0.0,0.7)
 	$CollisionShape2D.disabled = true
-	await get_tree().create_timer(2.0,false).timeout
+	await get_tree().create_timer(5.0,false).timeout
 	self.queue_free()

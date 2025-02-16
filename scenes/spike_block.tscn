@@ -9,21 +9,25 @@ script = ExtResource("1_adf3q")
 
 [node name="Downcast" type="RayCast2D" parent="."]
 unique_name_in_owner = true
+visible = false
 target_position = Vector2(0, 36)
 collision_mask = 13
 
 [node name="Rightcast" type="RayCast2D" parent="."]
 unique_name_in_owner = true
+visible = false
 target_position = Vector2(36, 0)
 collision_mask = 13
 
 [node name="Upcast" type="RayCast2D" parent="."]
 unique_name_in_owner = true
+visible = false
 target_position = Vector2(0, -36)
 collision_mask = 13
 
 [node name="Leftcast" type="RayCast2D" parent="."]
 unique_name_in_owner = true
+visible = false
 target_position = Vector2(-36, 0)
 collision_mask = 13
 

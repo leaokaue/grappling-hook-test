@@ -51,6 +51,7 @@ func empty_leave():
 		#Global.player.can_control = true
 	
 	animate_tween()
+	control.process_mode = Node.PROCESS_MODE_DISABLED
 	t.tween_property(control,"modulate:a", 0.0,0.4)
 	#t.parallel().tween_callback(c).set_delay(0.25)
 	t.tween_callback(self.queue_free)

@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://ciege73vdwpos"]
+
+[ext_resource type="Script" path="res://scripts/coin_platform_manager.gd" id="1_xqig5"]
+[ext_resource type="PackedScene" uid="uid://c24ivy8cytnix" path="res://scenes/coin_platform.tscn" id="2_tpmw4"]
+
+[node name="CoinPlatformManager" type="Node2D" node_paths=PackedStringArray("coin_platform")]
+position = Vector2(-948.27, 3195.88)
+script = ExtResource("1_xqig5")
+coin_platform = NodePath("CoinPlatform")
+
+[node name="CoinPlatform" parent="." instance=ExtResource("2_tpmw4")]
+position = Vector2(49.6655, 173.575)
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(108.27, 105.06)
+scale = Vector2(30, 11.506)

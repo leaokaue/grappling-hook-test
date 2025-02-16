@@ -160,6 +160,7 @@ func _physics_process(delta):
 	handle_non_control(delta)
 	
 	if (direction != 0) and (not is_grappling) and (not in_liquid):
+		print("removing feefal")
 		is_freefalling = false
 	
 	if not can_control:
@@ -555,6 +556,8 @@ func set_is_freefalling(freefalling : bool):
 	if previous_freefall_state == freefalling:
 		return
 	
+	print(get_stack())
+	
 	is_freefalling = freefalling
 	
 	previous_freefall_state = is_freefalling
@@ -573,6 +576,8 @@ func set_is_freefalling(freefalling : bool):
 			last_trail.follow_player = false
 	
 	if force_freefall:
+		print("frefallforce")
+		previous_freefall_state = true
 		is_freefalling = true
 
 func set_is_tambaqui(tambaqui : bool):
@@ -915,6 +920,7 @@ func handle_failsafes(_delta : float):
 func return_to_checkpoint(scream_type : int = 0,duration_multiplier : float = 1.0):
 	can_control = false
 	is_teleporting = true
+	Global.clear_map.emit()
 	scream(scream_type)
 	destroy_grapple()
 	can_scream = false
@@ -940,8 +946,8 @@ func return_to_checkpoint(scream_type : int = 0,duration_multiplier : float = 1.
 	await  get_tree().create_timer(0.5,false).timeout
 	Global.set_fade_screen(true)
 	force_freefall = false
-	is_freefalling = false
 	await Global.fade_animation_finished
+	is_freefalling = false
 	is_teleporting = false
 	can_control = true
 
@@ -988,11 +994,11 @@ func teleport_to_waypoint(waypoint : int):
 			n.reset_smoothing()
 	
 	
+	force_freefall = false
 	await  get_tree().create_timer(1.6,false).timeout
 	Global.set_fade_screen(true)
 	await Global.fade_animation_finished
 	Global.can_use_waypoints = true
-	force_freefall = false
 	is_freefalling = false
 	is_teleporting = false
 	can_control = true

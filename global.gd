@@ -26,7 +26,7 @@ signal player_dead
 
 signal clear_map
 
-var coins : int = 0
+var coins : int = 80
 
 const max_coins : int = 100
 
