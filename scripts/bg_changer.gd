@@ -19,6 +19,8 @@ func on_body_entered(body : Node2D):
 		
 		if bg == b.Empty:
 			Global.change_target_zoom.emit(0.95)
+		elif bg == b.Space:
+			Global.change_target_zoom.emit(0.75)
 		elif bg == b.Clouds:
 			Global.change_target_zoom.emit(0.5)
 		else:
