@@ -1,0 +1,82 @@
+[gd_scene load_steps=12 format=3 uid="uid://cbkhn5g4u3fvy"]
+
+[ext_resource type="Texture2D" uid="uid://bjc774l2ouvfd" path="res://scenes/angel_coin.png" id="1_mwaoi"]
+[ext_resource type="Script" path="res://scripts/angel_coin.gd" id="1_qcmes"]
+[ext_resource type="AudioStream" uid="uid://cpctj0sirkrfx" path="res://sounds/angel_bling.mp3" id="2_ckn0l"]
+[ext_resource type="AudioStream" uid="uid://8os0xmltc8uh" path="res://sounds/angel_exist.mp3" id="3_u0lfw"]
+[ext_resource type="Texture2D" uid="uid://b2hpi4gi8412a" path="res://sprites/ball.png" id="4_2tqfn"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jbfkw"]
+size = Vector2(114, 192)
+
+[sub_resource type="Curve" id="Curve_qexnq"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.231183, 1), 0.0, 0.0, 0, 0, Vector2(0.801075, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_prwm1"]
+curve = SubResource("Curve_qexnq")
+
+[sub_resource type="Curve" id="Curve_q3vyb"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.629032, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_qr2wd"]
+curve = SubResource("Curve_q3vyb")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_yhcj6"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 35.1
+spread = 180.0
+initial_velocity_min = 148.65
+initial_velocity_max = 283.79
+gravity = Vector3(0, 98, 0)
+scale_min = 0.1
+scale_max = 0.1
+scale_curve = SubResource("CurveTexture_qr2wd")
+color = Color(1, 0.979167, 0.75, 1)
+alpha_curve = SubResource("CurveTexture_prwm1")
+
+[node name="AngelCoin" type="Node2D"]
+process_mode = 3
+position = Vector2(-960.001, -13918)
+scale = Vector2(0.355873, 0.358999)
+script = ExtResource("1_qcmes")
+location = 4
+
+[node name="Polygon2D" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Polygon2D"]
+position = Vector2(-1, -1)
+scale = Vector2(0.301514, 0.301514)
+texture = ExtResource("1_mwaoi")
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+scale = Vector2(1, 1)
+shape = SubResource("RectangleShape2D_jbfkw")
+debug_color = Color(0, 0.595, 0.7, 0)
+
+[node name="bling" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_ckn0l")
+volume_db = 10.0
+pitch_scale = 1.5
+
+[node name="exist" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_u0lfw")
+pitch_scale = 1.5
+autoplay = true
+attenuation = 4.43828
+
+[node name="collect" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 32
+process_material = SubResource("ParticleProcessMaterial_yhcj6")
+texture = ExtResource("4_2tqfn")
+lifetime = 0.4
+one_shot = true
+explosiveness = 0.9
+
+[node name="Node2D" type="Node2D" parent="."]

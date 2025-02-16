@@ -847,6 +847,10 @@ func retract(delta):
 		
 		var dir := (hook.global_position - self.global_position)
 		var speed := 1000.0
+		
+		if Global.has_rope_pulley:
+			speed = 1400
+		
 		var length := dir.length()
 		if length > 20:
 			#print("applying speed")
@@ -858,6 +862,9 @@ func check_length():
 		var length := dir.length()
 		
 		var upgraded : float = 0.0
+		
+		if Global.has_rope_extension:
+			upgraded = 200
 		
 		var max_length := 500 + upgraded
 		
