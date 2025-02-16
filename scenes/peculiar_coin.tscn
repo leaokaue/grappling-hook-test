@@ -58,6 +58,7 @@ color = Color(1, 0.916667, 0, 1)
 alpha_curve = SubResource("CurveTexture_prwm1")
 
 [node name="PeculiarCoin" type="Node2D"]
+process_mode = 3
 scale = Vector2(0.355873, 0.358999)
 script = ExtResource("3_f7kmk")
 
@@ -109,3 +110,5 @@ texture = ExtResource("5_nbceg")
 lifetime = 0.4
 one_shot = true
 explosiveness = 0.9
+
+[node name="Node2D" type="Node2D" parent="."]

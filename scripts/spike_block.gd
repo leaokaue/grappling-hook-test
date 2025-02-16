@@ -1,4 +1,4 @@
-extends StaticBody2D
+extends Node2D
 
 @export var auto_rotates : bool = true
 
@@ -27,23 +27,24 @@ func _ready() -> void:
 	
 	if downcast.is_colliding():
 		#print("downcast")
-		vsprite.hide()
+		vsprite.queue_free()
 		hsprite.show()
-		vsprite_col.disabled = true
 	elif upcast.is_colliding():
 		#print("upcast")
-		vsprite.hide()
+		vsprite.queue_free()
 		hsprite.show()
-		vsprite_col.disabled = true
 		hsprite.scale *= -1
 	elif rightcast.is_colliding():
 		#print("rightcast")
-		hsprite.hide()
+		hsprite.queue_free()
 		vsprite.show()
-		hsprite_col.disabled = true
 		vsprite.scale *= -1
 	elif leftcast.is_colliding():
 		#print("leftcast")
-		hsprite.hide()
+		hsprite.queue_free()
 		vsprite.show()
-		hsprite_col.disabled = true
+	
+	downcast.queue_free()
+	rightcast.queue_free()
+	upcast.queue_free()
+	leftcast.queue_free()

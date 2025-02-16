@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://bacl7irhgnrr7"]
+[gd_scene load_steps=49 format=3 uid="uid://bacl7irhgnrr7"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_d3wq5"]
 [ext_resource type="Texture2D" uid="uid://bdw2ln7jh2dda" path="res://sprites/Wormchelt.png" id="2_4q2ix"]
@@ -14,6 +14,7 @@
 [ext_resource type="AudioStream" uid="uid://c7cqe1v7tc6px" path="res://sounds/acid_death.mp3" id="6_oqllm"]
 [ext_resource type="Texture2D" uid="uid://dncu2ajjocxm6" path="res://sprites/water_trail_r.png" id="6_rp1c5"]
 [ext_resource type="AudioStream" uid="uid://c6lpykemf2ubq" path="res://sounds/sizzle.mp3" id="7_y18mt"]
+[ext_resource type="Texture2D" uid="uid://dvpi7nso38kqm" path="res://sprites/grapple.png" id="10_05e7a"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_asclu"]
 friction = 0.1
@@ -105,6 +106,86 @@ size = Vector2(18.09, 20)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_iawq7"]
 size = Vector2(14, 30)
+
+[sub_resource type="Curve" id="Curve_polqw"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.231183, 1), 0.0, 0.0, 0, 0, Vector2(0.801075, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_06kon"]
+curve = SubResource("Curve_polqw")
+
+[sub_resource type="Curve" id="Curve_7ay00"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.629032, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_caoxv"]
+curve = SubResource("Curve_7ay00")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_5pwg7"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 35.1
+spread = 180.0
+initial_velocity_min = 148.65
+initial_velocity_max = 283.79
+gravity = Vector3(0, 98, 0)
+scale_min = 0.1
+scale_max = 0.1
+scale_curve = SubResource("CurveTexture_caoxv")
+color = Color(0.55, 0.55, 0.55, 0.690196)
+alpha_curve = SubResource("CurveTexture_06kon")
+
+[sub_resource type="Gradient" id="Gradient_j1cwt"]
+offsets = PackedFloat32Array(0.0140845, 0.150235, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 0.450648, 0.450648, 0.450648, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_5wdke"]
+gradient = SubResource("Gradient_j1cwt")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_fxo7w"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(18.56, 1, 1)
+direction = Vector3(0, 1, 0)
+spread = 0.0
+initial_velocity_max = 25.27
+gravity = Vector3(0, 0.1, 0)
+linear_accel_min = -31.0
+linear_accel_max = -21.0
+scale_min = 0.02
+scale_max = 0.06
+color = Color(0.74902, 1, 0.894118, 1)
+color_ramp = SubResource("GradientTexture1D_5wdke")
+
+[sub_resource type="Curve" id="Curve_u5bg2"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.141079, 1), 0.0, 0.0, 0, 0, Vector2(0.775934, 1), 0.0, 0.0, 0, 0, Vector2(0.975104, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_bekho"]
+curve = SubResource("Curve_u5bg2")
+
+[sub_resource type="Gradient" id="Gradient_ved20"]
+offsets = PackedFloat32Array(0, 0.488263, 1)
+colors = PackedColorArray(1, 0, 0, 1, 1, 0.516667, 0, 1, 0.966667, 1, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_fu763"]
+gradient = SubResource("Gradient_ved20")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xw8c3"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 16.28
+direction = Vector3(0, 1, 0)
+spread = 18.806
+initial_velocity_min = 39.71
+initial_velocity_max = 79.42
+gravity = Vector3(0, 0.1, 0)
+linear_accel_min = -2.89
+linear_accel_max = -2.89
+scale_min = 0.01
+scale_max = 0.03
+color_ramp = SubResource("GradientTexture1D_fu763")
+alpha_curve = SubResource("CurveTexture_bekho")
 
 [node name="Worm" type="RigidBody2D"]
 texture_filter = 5
@@ -299,18 +380,21 @@ z_index = 1
 position = Vector2(0, 5)
 shape = SubResource("RectangleShape2D_iawq7")
 
-[node name="Polygon2D" type="Polygon2D" parent="."]
+[node name="Sprite" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="Polygon2D" type="Polygon2D" parent="Sprite"]
 clip_children = 1
 polygon = PackedVector2Array(-5, 17, -5.9054, 14.6989, -6.0514, 13.3224, -6.62324, 10.2554, -6.82031, 8.5625, -6.96094, 7.08594, -7.03906, 6.9375, -7.19531, 7.02344, -7.22656, 6.60156, -7.38281, 6.58594, -7.35156, 5.88281, -7.4375, 5.61719, -7.35752, 5.08255, -7.66722, 4.61062, -7.49219, 3.61719, -7.50781, 2.89063, -7.79688, 1.25, -7.78906, 0.53125, -8.09901, 0.671875, -7.77344, 0.179688, -8, 0.148438, -7.62707, -0.507968, -8.14326, -0.49322, -8.00076, -0.764683, -8.13942, -0.853312, -6.98319, -1.91757, -7.89856, -2.43701, -7.81094, -2.6665, -7.01595, -2.58566, -7.47119, -3.15239, -6.45851, -3.09664, -6.93233, -3.98855, -6.42134, -3.76557, -5.89177, -3.68196, -6, -4, -6.96442, -5.53008, -6.76599, -5.74091, -5.93509, -4.82319, -5.68706, -6.75784, -5.67466, -8.32044, -5.48863, -8.44446, -5.33981, -8.13442, -5.35221, -8.55607, -5.42662, -10.4783, -4.95313, -9.75, -4.45845, -10.7542, -3.96875, -9.73438, -3.38432, -10.8481, -3.23438, -10.3672, -2.99219, -10.0313, -2.6439, -10.6708, -2.53125, -10.3359, -2.28906, -9.96094, -2.05991, -10.3892, -1.79688, -10.0078, -1.47592, -10.4414, -1.125, -9.75, -0.641642, -10.4101, -0.375, -9.78125, -0.00550699, -10.3997, 0.304688, -9.85156, 0.734912, -10.4101, 1.04688, -9.47656, 1.42319, -10.1598, 1.51563, -9.41406, 1.84375, -8.46094, 2.20532, -10.0034, 2.61719, -9.25781, 3.05002, -9.96168, 3.26563, -9.19531, 3.68616, -9.71139, 3.82031, -8.9375, 4.51001, -9.51325, 4.67188, -8.375, 4.98971, -8.78326, 5.19531, -7.61719, 5.49028, -8.03242, 5.55469, -5.79688, 5.75781, -5.58594, 5.78125, -6.22656, 5.86719, -6.25, 5.98438, -6.10156, 6.12478, -5.10664, 6.03373, -4.6183, 6.0089, -4.26238, 7.68914, -3.72437, 6.99387, -3.58366, 7.39945, -3.14498, 7.1263, -3.06221, 7.36435, -2.61777, 7.06215, -2.61777, 7.52202, -1.88199, 7.90305, -1.3827, 7.50888, -1.33015, 7.85049, -1.01481, 7.50888, -0.935977, 7.60085, -0.515529, 7.79793, -0.252749, 7.61399, 0.0888653, 7.86363, 0.640704, 7.61399, 0.995456, 7.67968, 1.4159, 7.54829, 1.7838, 7.53515, 2.70353, 7.52201, 3.49187, 7.81107, 3.99115, 7.56143, 4.12254, 7.61399, 4.49043, 7.58771, 5.05541, 7.40376, 5.54155, 7.4826, 5.88317, 7.23296, 6.09339, 7, 8, 7.57257, 10.8561, 7.79354, 13.2647, 8.1029, 14.8557, 9, 18, -5, 18)
 
-[node name="Sprite2D" type="Sprite2D" parent="Polygon2D"]
+[node name="Sprite2D" type="Sprite2D" parent="Sprite/Polygon2D"]
 unique_name_in_owner = true
 texture_filter = 6
 scale = Vector2(0.0284502, 0.0284502)
 texture = ExtResource("2_4q2ix")
 metadata/_edit_lock_ = true
 
-[node name="Polygon2D2" type="Polygon2D" parent="."]
+[node name="Polygon2D2" type="Polygon2D" parent="Sprite"]
 position = Vector2(-1, -2)
 color = Color(0.22, 0.17534, 0.0924, 1)
 polygon = PackedVector2Array(-7, 17, -11, 19, -9, 22, 12, 22, 14, 19, 7, 15, 4, 17, -1, 18, -3, 16)
@@ -321,34 +405,6 @@ z_index = 1
 points = PackedVector2Array(0, 0, 0, 0)
 width = 3.0
 default_color = Color(0.408329, 0.408329, 0.408329, 1)
-
-[node name="scream" type="AudioStreamPlayer2D" parent="."]
-unique_name_in_owner = true
-stream = ExtResource("3_p5reh")
-volume_db = -10.0
-pitch_scale = 1.2
-
-[node name="scream2" type="AudioStreamPlayer2D" parent="."]
-unique_name_in_owner = true
-stream = ExtResource("4_qltkw")
-volume_db = -10.0
-
-[node name="scream3" type="AudioStreamPlayer2D" parent="."]
-unique_name_in_owner = true
-stream = ExtResource("5_lw7l2")
-volume_db = 15.0
-pitch_scale = 1.2
-
-[node name="scream4" type="AudioStreamPlayer2D" parent="."]
-unique_name_in_owner = true
-stream = ExtResource("6_oqllm")
-volume_db = -5.0
-
-[node name="sizzle" type="AudioStreamPlayer2D" parent="."]
-unique_name_in_owner = true
-stream = ExtResource("7_y18mt")
-volume_db = 5.0
-pitch_scale = 1.1
 
 [node name="poison" type="TextureProgressBar" parent="."]
 unique_name_in_owner = true
@@ -370,3 +426,84 @@ pivot_offset = Vector2(256, 32)
 step = 0.0
 texture_under = ExtResource("4_lc4xj")
 texture_progress = ExtResource("5_qtas3")
+
+[node name="CoinCompass" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+modulate = Color(1.2, 1.16, 0, 1)
+z_index = 10
+position = Vector2(1, 0)
+scale = Vector2(0.137159, 0.137159)
+texture = ExtResource("10_05e7a")
+offset = Vector2(200, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="CoinCompass"]
+modulate = Color(2, 2, 1, 1)
+show_behind_parent = true
+position = Vector2(1, -3.72012)
+scale = Vector2(0.998987, 0.998987)
+texture = ExtResource("10_05e7a")
+offset = Vector2(200, 0)
+
+[node name="Sounds" type="Node2D" parent="."]
+
+[node name="scream" type="AudioStreamPlayer2D" parent="Sounds"]
+unique_name_in_owner = true
+stream = ExtResource("3_p5reh")
+volume_db = -10.0
+pitch_scale = 1.2
+
+[node name="scream2" type="AudioStreamPlayer2D" parent="Sounds"]
+unique_name_in_owner = true
+stream = ExtResource("4_qltkw")
+volume_db = -10.0
+
+[node name="scream3" type="AudioStreamPlayer2D" parent="Sounds"]
+unique_name_in_owner = true
+stream = ExtResource("5_lw7l2")
+volume_db = 15.0
+pitch_scale = 1.2
+
+[node name="scream4" type="AudioStreamPlayer2D" parent="Sounds"]
+unique_name_in_owner = true
+stream = ExtResource("6_oqllm")
+volume_db = -5.0
+
+[node name="sizzle" type="AudioStreamPlayer2D" parent="Sounds"]
+unique_name_in_owner = true
+stream = ExtResource("7_y18mt")
+volume_db = 5.0
+pitch_scale = 1.1
+
+[node name="Particles" type="Node2D" parent="."]
+
+[node name="explode" type="GPUParticles2D" parent="Particles"]
+unique_name_in_owner = true
+scale = Vector2(0.404192, 0.404192)
+emitting = false
+amount = 32
+process_material = SubResource("ParticleProcessMaterial_5pwg7")
+texture = ExtResource("4_74kgy")
+lifetime = 0.4
+one_shot = true
+explosiveness = 0.9
+
+[node name="hover" type="GPUParticles2D" parent="Particles"]
+unique_name_in_owner = true
+position = Vector2(0, 21.3816)
+emitting = false
+amount = 128
+process_material = SubResource("ParticleProcessMaterial_fxo7w")
+texture = ExtResource("4_74kgy")
+lifetime = 4.0
+
+[node name="jetpack" type="GPUParticles2D" parent="Particles"]
+unique_name_in_owner = true
+z_index = -1
+position = Vector2(0, 24.21)
+emitting = false
+amount = 1024
+process_material = SubResource("ParticleProcessMaterial_xw8c3")
+texture = ExtResource("4_74kgy")
+lifetime = 0.7
+trail_enabled = true
+trail_lifetime = 0.1

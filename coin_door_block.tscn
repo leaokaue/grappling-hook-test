@@ -1,0 +1,80 @@
+[gd_scene load_steps=10 format=3 uid="uid://cql5w4tob5yji"]
+
+[ext_resource type="Script" path="res://scripts/coin_door_block.gd" id="1_vumiy"]
+[ext_resource type="Texture2D" uid="uid://b2hpi4gi8412a" path="res://sprites/ball.png" id="2_4klo7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dtxcp"]
+size = Vector2(289, 272)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_nwwnt"]
+radius = 633.049
+
+[sub_resource type="Curve" id="Curve_hauar"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.231183, 1), 0.0, 0.0, 0, 0, Vector2(0.801075, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_jhafk"]
+curve = SubResource("Curve_hauar")
+
+[sub_resource type="Curve" id="Curve_0a7n5"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.629032, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_44xof"]
+curve = SubResource("Curve_0a7n5")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_6wera"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(60, 56, 1)
+spread = 180.0
+initial_velocity_min = 14.44
+initial_velocity_max = 34.06
+gravity = Vector3(0, 0, 0)
+scale_min = 0.1
+scale_max = 0.1
+scale_curve = SubResource("CurveTexture_44xof")
+color = Color(1, 0.860042, 0.14007, 1)
+alpha_curve = SubResource("CurveTexture_jhafk")
+
+[node name="CoinDoorBlock" type="StaticBody2D"]
+z_index = -1
+scale = Vector2(0.20541, 0.20541)
+script = ExtResource("1_vumiy")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -151.0
+offset_top = -141.0
+offset_right = 151.0
+offset_bottom = 142.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.831384, 0.712766, 0, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(1.52588e-05, 0)
+shape = SubResource("RectangleShape2D_dtxcp")
+debug_color = Color(0.13, 0.3765, 1, 0)
+
+[node name="PlayerDetector" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerDetector"]
+visible = false
+shape = SubResource("CircleShape2D_nwwnt")
+
+[node name="collect" type="GPUParticles2D" parent="."]
+scale = Vector2(2.05239, 2.05239)
+emitting = false
+amount = 256
+process_material = SubResource("ParticleProcessMaterial_6wera")
+texture = ExtResource("2_4klo7")
+lifetime = 2.5
+one_shot = true
+explosiveness = 0.5

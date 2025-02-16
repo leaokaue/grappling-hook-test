@@ -2,9 +2,9 @@ extends Node
 
 @warning_ignore("unused_signal")
 
-signal check_area_coin(area : Waypoint.WAYPOINTS)
+signal request_coins
 
-signal send_area_coin(coins : int)
+signal send_coins(location : Waypoint.WAYPOINTS)
 
 signal set_nightmare_effect(effect : float)
 
@@ -30,12 +30,18 @@ var coins : int = 0
 
 const max_coins : int = 100
 
+var coin_positions : PackedVector2Array
+
+var collected_coin_position : PackedVector2Array
+
 var seen_map : Dictionary = {
 	"Spawn" : true,
 	"Bog" : true,
 	"Windmill" : false,
 	"Spike" : false,
 	"Space" : false,
+	"Spike2" : false,
+	"Empty" : false
 	 
 }
 
@@ -45,6 +51,8 @@ var waypoints_unlocked : Dictionary = {
 	"Windmill" : false,
 	"Spike" : false,
 	"Space" : false,
+	"Empty" : false,
+	"Spike2" : false
 	 
 }
 
@@ -202,3 +210,23 @@ func animate_tween():
 	if t:
 		t.kill()
 	t = create_tween()
+
+func remove_coin_from_array(pos : Vector2):
+	if coin_positions.has(pos):
+		var i := Global.coin_positions.find(pos)
+		coin_positions.remove_at(i)
+		collected_coin_position.append(pos)
+
+func remove_collected_coins_from_scene():
+	if not collected_coin_position.size() > 0:
+		return
+	
+	for coin in get_tree().get_nodes_in_group("Coins"):
+		if coin is Node2D:
+			if collected_coin_position.has(coin.global_position):
+				coin.queue_free()
+
+func get_coin_vec2_array():
+	for coin in get_tree().get_nodes_in_group("Coins"):
+		if coin is Node2D:
+			coin_positions.append(coin.global_position)

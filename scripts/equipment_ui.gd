@@ -30,6 +30,14 @@ var currently_pressed : bool = false
 
 func _ready() -> void:
 	get_label()
+	
+	if not has_item():
+		get_parent().hide()
+	
+	if not Global.can_switch_equipments:
+		disabled = true
+		self.modulate *= 0.6
+		return
 	mouse_entered.connect(on_mouse_enter)
 	mouse_exited.connect(on_mouse_exit)
 	button_down.connect(on_clicked)
@@ -75,3 +83,28 @@ func get_label():
 	for c in get_parent().get_children():
 		if c is Label:
 			label = c
+
+func has_item() -> bool:
+	var a := Global.EQUIPMENTS
+	match object:
+		a.DashBoots:
+			if Global.has_dash_boots:
+				return true
+			else:
+				return false
+		a.Tambaqui:
+			if Global.has_tambaqui:
+				return true
+			else:
+				return false
+		a.HoverStone:
+			if Global.has_hover_stone:
+				return true
+			else:
+				return false
+		a.Jetpack:
+			if Global.has_jetpack:
+				return true
+			else:
+				return false
+	return false

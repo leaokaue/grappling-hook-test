@@ -63,7 +63,7 @@ func get_track(track : BackgroundManager.BACKGROUNDS) -> Dictionary:
 		3:
 			return {
 				"stream" : spike_track,
-				"max_db" : -20
+				"max_db" : -22
 			}
 		4:
 			return {

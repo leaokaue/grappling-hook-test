@@ -81,6 +81,16 @@ position = Vector2(0, -112)
 metadata/_edit_lock_ = true
 metadata/_edit_group_ = true
 
+[node name="Label" type="Label" parent="Obelisk"]
+visible = false
+z_index = 1
+offset_left = -32.0
+offset_top = 19.0
+offset_right = 32.0
+offset_bottom = 54.0
+theme_override_font_sizes/font_size = 25
+text = "[TAB]"
+
 [node name="ColorRect" type="ColorRect" parent="Obelisk"]
 anchors_preset = 8
 anchor_left = 0.5

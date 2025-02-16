@@ -7,7 +7,8 @@ enum WAYPOINTS {
 	Windmill,
 	Spike,
 	Space,
-	Empty
+	Empty,
+	Spike2
 }
 
 @export var waypoint : WAYPOINTS
@@ -26,6 +27,7 @@ func _ready() -> void:
 func _on_player_enter(body : Node2D):
 	if body is Worm:
 		Global.can_use_waypoints = true
+		$Obelisk/Label.show()
 		
 		if not is_unlocked():
 			unlock()
@@ -37,6 +39,7 @@ func _on_player_enter(body : Node2D):
 func _on_player_exit(body : Node2D):
 	if body is Worm:
 		Global.can_use_waypoints = false
+		$Obelisk/Label.hide()
 		set_particles(false)
 
 func is_unlocked() -> bool:

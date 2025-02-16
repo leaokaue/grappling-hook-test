@@ -23,7 +23,7 @@ static var label_text : String
 
 #@export var blocker : Panel
 
-@onready var item_array : Array[SGGateItem] = [dash_boots,tambaqui]#tambaqui,hover_stone,jetpack]
+@onready var item_array : Array[SGGateItem] = [dash_boots,tambaqui,hover_stone,jetpack]
 
 var holding_object : bool = false
 

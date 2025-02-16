@@ -34,7 +34,7 @@ func _on_button_pressed():
 
 func _process(delta: float) -> void:
 	if is_area_waypoint_unlocked():
-		if Global.can_use_waypoints:
+		if Global.can_use_waypoints or Global.has_guiding_light:
 			button.disabled = false
 		else:
 			button.disabled = true

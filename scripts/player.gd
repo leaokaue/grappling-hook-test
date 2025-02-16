@@ -6,6 +6,10 @@ signal emit_dash_cooldown(cooldown : float)
 
 signal emit_fish_cooldown(cooldown : float)
 
+signal emit_hover_cooldown(cooldown : float)
+
+signal emit_jetpack_cooldown(cooldown : float)
+
 var last_checkpoint : Vector2
 
 @export var debug_mode : bool = false
@@ -43,6 +47,20 @@ const tambaqui_max_bar : float = 7.0
 
 var last_fish_trail : Node2D
 
+var hover_position : float = 0.0
+
+var is_hovering : bool = false
+
+var hover_bar : float = 4.0
+
+const max_hover_bar : float = 4.0
+
+var is_jetpacking : bool = false
+
+var jetpack_bar : float = 2.5
+
+const max_jetpack_bar : float = 2.5
+
 #LIQUIDS
 
 var drown_buildup_buffer : float = 0.0
@@ -56,6 +74,8 @@ var max_drown_buildup : float = 2.5
 var in_liquid : bool = false
 
 #var can_jump : bool = true
+
+var can_cancel_jump : bool = true
 
 var is_freefalling : bool = false : set = set_is_freefalling
 
@@ -96,6 +116,7 @@ func _ready() -> void:
 	create_ui()
 	Global.teleport_to_waypoint.connect(teleport_to_waypoint)
 	Global.player = self
+	Global.get_coin_vec2_array()
 	if debug_mode:
 		last_checkpoint = global_position
 
@@ -144,6 +165,17 @@ func _physics_process(delta):
 		else:
 			destroy_grapple()
 	
+	if Input.is_action_pressed("dash"): #and Input.is_action_pressed("stop"):
+		if Global.current_equipment == Global.EQUIPMENTS.HoverStone:
+			if not is_hovering:
+				if hover_bar > 1.0:
+					is_hovering = true
+	else:
+		if Global.current_equipment == Global.EQUIPMENTS.HoverStone:
+			if is_hovering:
+				is_hovering = false
+	
+	apply_hoverstone(delta)
 	
 	if Input.is_action_just_pressed("retract"):
 		if Global.current_equipment == Global.EQUIPMENTS.Tambaqui:
@@ -181,6 +213,9 @@ func _physics_process(delta):
 		m_bonus = 1.35
 	# UPGRADE /////////////////////////////////////////////////////////////
 	
+	if is_hovering:
+		m_bonus += 0.40
+	
 	if direction != 0:
 		if (not is_freefalling) or (in_liquid):
 			force.x = (MOVE_SPEED * m_bonus) * direction
@@ -217,7 +252,14 @@ func _physics_process(delta):
 					force.y = (JUMP_FORCE * j_bonus)* 0.8
 					destroy_grapple()
 		elif _on_floor(): 
-			force.y = (JUMP_FORCE * j_bonus) 
+			force.y = (JUMP_FORCE * j_bonus)
+	
+	if Input.is_action_just_released("jump"):
+		if linear_velocity.y < 0:
+			if can_cancel_jump:
+				can_cancel_jump = false
+				linear_velocity.y *= 0.5
+		
 	
 	if Input.is_action_just_pressed("stop"):
 		if _on_floor():
@@ -226,10 +268,12 @@ func _physics_process(delta):
 	
 	_set_animation(direction)
 	
+	#print(force)
+	
 	apply_central_impulse(force)
 
 func apply_dash():
-	print(dash_direction)
+	#print(dash_direction)
 	
 	%LineTrail2D.set_point_position(0,Vector2(0,0))
 	
@@ -312,6 +356,19 @@ func apply_tambaqui(delta : float):
 		linear_velocity *= vel_dec * delta
 		apply_central_impulse(dir * speed)
 
+func apply_hoverstone(_delta : float):
+	if is_hovering:
+		%hover.emitting = true
+		#linear_velocity.y = lerp(linear_velocity.y,0.0,1.5)
+		linear_velocity.y = 0.0
+		#print(linear_velocity.y)
+		apply_central_impulse(25 * Vector2.UP)
+	else:
+		%hover.emitting = false
+
+func apply_jetpack(delta : float):
+	pass
+
 func apply_tambaqui_dash():
 	if is_tambaqui:
 		if tambaqui_bar < 1.2:
@@ -320,7 +377,7 @@ func apply_tambaqui_dash():
 		tambaqui_bar -= 1.2
 		is_freefalling = true
 		
-		var speed : float = 160
+		var speed : float = 220
 		%splash.emitting = true
 		if (drown_buildup_buffer > 0) or (in_liquid):
 			speed = 330
@@ -386,6 +443,8 @@ func handle_dashcast():
 func handle_non_control(delta : float):
 	check_length()
 	
+	handle_coin_compass()
+	
 	handle_dashcast()
 	
 	handle_failsafes(delta)
@@ -414,7 +473,7 @@ func handle_non_control(delta : float):
 	
 	check_length()
 	
-	if (not is_grappling) and (not _on_floor()) and (not in_liquid) and (not is_tambaqui):
+	if (not is_grappling) and (not _on_floor()) and (not in_liquid) and (not is_tambaqui) and (not is_hovering):
 		var t : float = 1
 		if is_freefalling:
 			t = 1.5
@@ -463,6 +522,23 @@ func handle_equipment_cooldowns(delta : float):
 	tambaqui_bar = clampf(tambaqui_bar,0.0,tambaqui_max_bar)
 	
 	emit_fish_cooldown.emit(tambaqui_bar)
+	
+	if not is_hovering:
+		if  not is_grappling:
+			if hover_bar < max_hover_bar:
+				hover_bar += delta * 0.35
+		#elif is_grappling:
+			#if hover_bar < max_hover_bar:
+				#hover_bar += delta * 0.1 
+	else:
+		if hover_bar > 0:
+			hover_bar -= delta * 0.55
+		else:
+			is_hovering = false
+	
+	hover_bar = clampf(hover_bar,0.0,max_hover_bar)
+	
+	emit_hover_cooldown.emit(hover_bar)
 
 func set_is_freefalling(freefalling : bool):
 	if previous_freefall_state == freefalling:
@@ -534,9 +610,11 @@ func _on_floor():
 	
 	if is_freefalling:
 		if $RagddollCast.is_colliding():
+			can_cancel_jump = true
 			return true
 	else:
 		if ray_cast_2d.is_colliding():
+			can_cancel_jump = true
 			return true
 
 func instantiate_map():
@@ -667,12 +745,12 @@ func handle_liquids(delta : float):
 	
 	drown_buildup = clampf(drown_buildup,0,max_drown_buildup)
 
-func handle_liquid_gravity(delta : float,in_water : bool,in_poison : bool):
-	var gravity : float = 1.0
-	var damp : float = 0.0
+func handle_liquid_gravity(_delta : float,in_water : bool,in_poison : bool):
+	var _gravity : float = 1.0
+	var _damp : float = 0.0
 	
 	if in_poison:
-		gravity *= 0.2
+		_gravity *= 0.2
 		linear_damp = 12
 	elif in_water:
 		linear_damp = 2
@@ -774,6 +852,10 @@ func check_length():
 func impulse_to_grapple():
 	var dir := (hook.global_position - self.global_position)
 	var speed := 500.0
+	
+	if Global.has_boost_latch:
+		speed = 700
+	
 	apply_central_impulse(dir.normalized() * speed)
 
 func create_ui():
@@ -789,6 +871,7 @@ func scream(scream_type : int = 0):
 			%scream.play()
 		1:
 			%scream2.play()
+			explode_animation()
 		2:
 			%scream3.play()
 		3:
@@ -801,7 +884,7 @@ var is_teleporting : bool = false
 
 @onready var current_pos : Vector2 = self.global_position
 
-func handle_failsafes(delta : float):
+func handle_failsafes(_delta : float):
 	current_pos = self.global_position
 	
 	if ((previous_pos - current_pos).length() > 500) and (not is_teleporting):
@@ -835,11 +918,30 @@ func return_to_checkpoint(scream_type : int = 0,duration_multiplier : float = 1.
 		if n is Camera2D:
 			n.reset_smoothing()
 	
+	unexplode_animation()
+	
 	await  get_tree().create_timer(0.5,false).timeout
 	Global.set_fade_screen(true)
 	await Global.fade_animation_finished
 	is_teleporting = false
 	can_control = true
+
+var exploded : bool = false
+
+func explode_animation():
+	if not exploded:
+		exploded = true
+		%explode.emitting = true
+		%Sprite.hide()
+		#print("exploding")
+		self.set_deferred("freeze",true)
+
+func unexplode_animation():
+	if exploded:
+		#print("not exploding")
+		exploded = false
+		%Sprite.show()
+		self.set_deferred("freeze",false)
 
 func teleport_to_waypoint(waypoint : int):
 	var waypoint_pos : Vector2 = Global.waypoint_position[Waypoint.WAYPOINTS.keys()[waypoint]]
@@ -858,6 +960,7 @@ func teleport_to_waypoint(waypoint : int):
 	await  get_tree().create_timer(1.0).timeout
 	linear_velocity *= 0
 	self.global_position = waypoint_pos
+	unexplode_animation()
 	self.rotation = 0
 	drown_buildup = 0.0
 	
@@ -865,9 +968,30 @@ func teleport_to_waypoint(waypoint : int):
 		if n is Camera2D:
 			n.reset_smoothing()
 	
+	
 	await  get_tree().create_timer(1.6,false).timeout
 	Global.set_fade_screen(true)
 	await Global.fade_animation_finished
 	Global.can_use_waypoints = true
 	is_teleporting = false
 	can_control = true
+
+func handle_coin_compass():
+	if Global.has_coin_compass:
+		%CoinCompass.show()
+		
+		
+		var shortest_pos : Vector2 = Vector2(0,0)
+		
+		for p in Global.coin_positions:
+			var pp := (shortest_pos - self.global_position).length()
+			
+			if (p - self.global_position).length() < pp:
+				shortest_pos = p 
+		
+		var a : float = (shortest_pos - self.global_position).angle()
+		
+		%CoinCompass.rotation = a
+		
+	else:
+		%CoinCompass.hide()

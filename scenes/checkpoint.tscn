@@ -13,14 +13,14 @@ light_mode = 1
 _data = [Vector2(0.0967742, 0.054945), 0.0, 0.0, 0, 0, Vector2(0.129032, 1), 0.0, 0.0, 0, 0, Vector2(0.225806, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 4
 
-[sub_resource type="CurveTexture" id="CurveTexture_5a3bk"]
+[sub_resource type="CurveTexture" id="CurveTexture_damij"]
 curve = SubResource("Curve_ptdjk")
 
 [sub_resource type="Curve" id="Curve_b7c4s"]
 _data = [Vector2(0.569892, 1), 0.0, 0.0, 0, 0]
 point_count = 1
 
-[sub_resource type="CurveTexture" id="CurveTexture_xduey"]
+[sub_resource type="CurveTexture" id="CurveTexture_yaf0h"]
 curve = SubResource("Curve_b7c4s")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_818x5"]
@@ -38,14 +38,14 @@ gravity = Vector3(0, 0, 0)
 scale_min = 0.05
 scale_max = 0.08
 color = Color(0.288, 0.54, 0, 1)
-alpha_curve = SubResource("CurveTexture_5a3bk")
-emission_curve = SubResource("CurveTexture_xduey")
+alpha_curve = SubResource("CurveTexture_damij")
+emission_curve = SubResource("CurveTexture_yaf0h")
 
 [sub_resource type="Curve" id="Curve_dgnlm"]
 _data = [Vector2(0.0967742, 0.054945), 0.0, 0.0, 0, 0, Vector2(0.129032, 1), 0.0, 0.0, 0, 0, Vector2(0.225806, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 4
 
-[sub_resource type="CurveTexture" id="CurveTexture_uy8u4"]
+[sub_resource type="CurveTexture" id="CurveTexture_hcgs8"]
 curve = SubResource("Curve_dgnlm")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_hgbiq"]
@@ -63,7 +63,7 @@ gravity = Vector3(0, 0, 0)
 scale_min = 0.08
 scale_max = 0.12
 color = Color(0.48, 0.9, 0, 1)
-alpha_curve = SubResource("CurveTexture_uy8u4")
+alpha_curve = SubResource("CurveTexture_hcgs8")
 
 [node name="Checkpoint" type="Area2D" groups=["Checkpoints"]]
 collision_mask = 2

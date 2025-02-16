@@ -17,8 +17,13 @@ var is_collected : bool = false
 var t : Tween
 
 func _ready() -> void:
+	self.add_to_group("Coins")
 	area.body_entered.connect(area_on_body_entered)
 	self.body_entered.connect(self_on_body_entered)
+	Global.request_coins.connect(send_coin_type)
+
+func send_coin_type():
+	Global.send_coins.emit(1)
 
 
 func area_on_body_entered(body : Node2D):
@@ -44,9 +49,15 @@ func collect():
 		#$Line2D.hide()
 		$collect.emitting = true
 		$bling.play()
+		Global.remove_coin_from_array(self.global_position)
 		
 		await get_tree().create_timer(3.0,false).timeout
 		self.queue_free()
+
+func remove_self_from_coin_list():
+	if Global.coin_positions.has(self.global_position):
+		var i := Global.coin_positions.find(self.global_position)
+		Global.coin_positions.remove_at(i)
 
 func _process(delta: float) -> void:
 	pass

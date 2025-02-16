@@ -30,7 +30,7 @@ gradient = SubResource("Gradient_d7h6m")
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sr8hx"]
 size = Vector2(179.839, 192)
 
-[sub_resource type="Shader" id="Shader_br371"]
+[sub_resource type="Shader" id="Shader_fn5l1"]
 code = "// Attach to a ColorRect in front of texture/background
 
 shader_type canvas_item;
@@ -75,7 +75,7 @@ void fragment() {
 }"
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_677j6"]
-shader = SubResource("Shader_br371")
+shader = SubResource("Shader_fn5l1")
 shader_parameter/frequency = 10.0
 shader_parameter/amplitude = 0.9
 shader_parameter/ripple_rate = 5.0
@@ -86,14 +86,14 @@ shader_parameter/wave_frequency = 4.0
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.231183, 1), 0.0, 0.0, 0, 0, Vector2(0.801075, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 4
 
-[sub_resource type="CurveTexture" id="CurveTexture_wy8pl"]
+[sub_resource type="CurveTexture" id="CurveTexture_ulxob"]
 curve = SubResource("Curve_qexnq")
 
 [sub_resource type="Curve" id="Curve_q3vyb"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.629032, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 3
 
-[sub_resource type="CurveTexture" id="CurveTexture_2pxek"]
+[sub_resource type="CurveTexture" id="CurveTexture_kpb70"]
 curve = SubResource("Curve_q3vyb")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_yhcpg"]
@@ -106,9 +106,9 @@ initial_velocity_max = 283.79
 gravity = Vector3(0, 98, 0)
 scale_min = 0.1
 scale_max = 0.1
-scale_curve = SubResource("CurveTexture_2pxek")
+scale_curve = SubResource("CurveTexture_kpb70")
 color = Color(1, 0.916667, 0, 1)
-alpha_curve = SubResource("CurveTexture_wy8pl")
+alpha_curve = SubResource("CurveTexture_ulxob")
 
 [node name="ConfusedCoin" type="Node2D"]
 scale = Vector2(0.355873, 0.358999)

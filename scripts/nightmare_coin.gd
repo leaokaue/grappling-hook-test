@@ -13,8 +13,14 @@ var min_scale_collected : float = 0.0
 var fake_dist : float = 100
 
 func _ready() -> void:
+	self.add_to_group("Coins")
+	#print(AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Music")))
+	Global.request_coins.connect(send_coin_type)
 	area.body_entered.connect(on_body_entered)
 	tween()
+
+func send_coin_type():
+	Global.send_coins.emit(3)
 
 func _physics_process(delta: float) -> void:
 	if get_length_to_player(delta) > 1000:
@@ -35,9 +41,17 @@ func collect():
 		#$Line2D.hide()
 		$collect.emitting = true
 		$bling.play()
-		
+		Global.remove_coin_from_array(self.global_position)
+		%aura.emitting = false
+		%exist.stop()
+		%exist2.stop()
 		await get_tree().create_timer(5.0,false).timeout
 		self.queue_free()
+
+func remove_self_from_coin_list():
+	if Global.coin_positions.has(self.global_position):
+		var i := Global.coin_positions.find(self.global_position)
+		Global.coin_positions.remove_at(i)
 
 func tween():
 	var t := create_tween()
@@ -66,8 +80,8 @@ func handle_confusion(delta : float):
 	var min_ripple : int = 1
 	var max_ripple : int = 1
 	
-	var min_music_bus_db : float = -15.0
-	var max_music_bus_db : float = -25.0
+	var min_music_bus_db : float =  0.0
+	var max_music_bus_db : float = -40.0
 	
 	var l := get_length_to_player(delta)
 	
@@ -107,11 +121,11 @@ func handle_confusion(delta : float):
 	Global.player.apply_central_force(to * -force)
 	Global.set_nightmare_effect.emit(effect)
 	%exist.volume_db = sound_db
-	%exist.volume_db = sound_db
+	%exist2.volume_db = sound_db
 	%exist2.pitch_scale = pitch
 	#Engine.time_scale = time_scale
 	
-	
+	print(AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Music")))
 	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Music"),music_db)
 	
 	var m : ShaderMaterial = %Confusion.material
@@ -119,10 +133,12 @@ func handle_confusion(delta : float):
 	m.set_shader_parameter("ripple_rate",ripple)
 	
 
+
+
 func get_length_to_player(delta : float) -> float:
 	if not is_collected:
 		var length := (self.global_position - Global.player.global_position).length()
 		return length
 	else:
-		fake_dist += delta * 250
+		fake_dist += delta * 350
 		return fake_dist

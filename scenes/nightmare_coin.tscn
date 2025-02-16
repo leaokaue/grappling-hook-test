@@ -1,9 +1,9 @@
-[gd_scene load_steps=19 format=3 uid="uid://cgr82nin8tx0k"]
+[gd_scene load_steps=25 format=3 uid="uid://cgr82nin8tx0k"]
 
 [ext_resource type="Script" path="res://scripts/nightmare_coin.gd" id="1_vreuo"]
 [ext_resource type="Texture2D" uid="uid://umjm64f76xqr" path="res://scenes/nightmare_coin.png" id="2_6kbxp"]
 [ext_resource type="Shader" path="res://shaders/shine.gdshader" id="3_jv1id"]
-[ext_resource type="AudioStream" uid="uid://dqrncoravva2h" path="res://sounds/confused_bling.mp3" id="4_3r5ju"]
+[ext_resource type="AudioStream" uid="uid://cr2uyiph8cb5s" path="res://sounds/nightmare_bling.mp3" id="4_qb6n7"]
 [ext_resource type="AudioStream" uid="uid://djd5ucsxlxigf" path="res://sounds/nightmare_scream.mp3" id="5_0b6ju"]
 [ext_resource type="Texture2D" uid="uid://b2hpi4gi8412a" path="res://sprites/ball.png" id="6_b2lxp"]
 [ext_resource type="AudioStream" uid="uid://dbo6qkomkgfa4" path="res://sounds/nightmare_scream2.mp3" id="6_t2l8f"]
@@ -23,7 +23,7 @@ shader_parameter/Alpha = 1.0
 
 [sub_resource type="Gradient" id="Gradient_d7h6m"]
 offsets = PackedFloat32Array(1)
-colors = PackedColorArray(1, 1, 1, 1)
+colors = PackedColorArray(1, 0, 0, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_rialx"]
 gradient = SubResource("Gradient_d7h6m")
@@ -111,6 +111,41 @@ scale_curve = SubResource("CurveTexture_ef8yb")
 color = Color(0.968627, 0, 0, 1)
 alpha_curve = SubResource("CurveTexture_esav7")
 
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_6m3je"]
+light_mode = 1
+
+[sub_resource type="Curve" id="Curve_xxqiq"]
+_data = [Vector2(0.0967742, 0.054945), 0.0, 0.0, 0, 0, Vector2(0.129032, 1), 0.0, 0.0, 0, 0, Vector2(0.225806, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_d6amk"]
+curve = SubResource("Curve_xxqiq")
+
+[sub_resource type="Curve" id="Curve_6lyfq"]
+_data = [Vector2(0.569892, 1), 0.0, 0.0, 0, 0]
+point_count = 1
+
+[sub_resource type="CurveTexture" id="CurveTexture_wm5mh"]
+curve = SubResource("Curve_6lyfq")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_8ft3w"]
+particle_flag_disable_z = true
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 1.0
+emission_ring_radius = 200.0
+emission_ring_inner_radius = 190.0
+orbit_velocity_min = 0.126
+orbit_velocity_max = 0.288
+radial_velocity_min = -198.2
+radial_velocity_max = -171.17
+gravity = Vector3(0, 0, 0)
+scale_min = 0.05
+scale_max = 0.08
+color = Color(0.262089, 2.61711e-07, 9.62615e-08, 1)
+alpha_curve = SubResource("CurveTexture_d6amk")
+emission_curve = SubResource("CurveTexture_wm5mh")
+
 [node name="NightmareCoin" type="Node2D"]
 scale = Vector2(0.355873, 0.358999)
 script = ExtResource("1_vreuo")
@@ -152,9 +187,8 @@ scale = Vector2(5.5, 5.5)
 pivot_offset = Vector2(110, 110)
 
 [node name="bling" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("4_3r5ju")
-volume_db = -10.0
-pitch_scale = 0.78
+stream = ExtResource("4_qb6n7")
+volume_db = -1.0
 
 [node name="exist" type="AudioStreamPlayer2D" parent="."]
 unique_name_in_owner = true
@@ -177,3 +211,15 @@ texture = ExtResource("6_b2lxp")
 lifetime = 0.6
 one_shot = true
 explosiveness = 0.9
+
+[node name="aura" type="GPUParticles2D" parent="."]
+unique_name_in_owner = true
+material = SubResource("CanvasItemMaterial_6m3je")
+scale = Vector2(1.6759, 1.6759)
+amount = 36
+process_material = SubResource("ParticleProcessMaterial_8ft3w")
+texture = ExtResource("6_b2lxp")
+visibility_rect = Rect2(-200, -200, 400, 400)
+local_coords = true
+trail_enabled = true
+trail_lifetime = 0.39

@@ -3,11 +3,15 @@ class_name MapUI
 
 @onready var control := %Control
 
+var open_tab : int = 0
+
 var t : Tween
 
 var exiting : bool = false
 
 func _ready() -> void:
+	%TabContainer.current_tab = open_tab
+	Global.request_coins.emit()
 	Global.player_dead.connect(emergency_leave)
 	Global.clear_map.connect(empty_leave)
 	Global.player.can_control = false

@@ -87,7 +87,7 @@ func match_item():
 	var i := ITEMS
 	var t := sprite
 	
-	print(current_item)
+	#print(current_item)
 	
 	match current_item:
 		i.HookThrowBoost:

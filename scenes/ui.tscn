@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://bnvneh2xfqhpp"]
+[gd_scene load_steps=28 format=3 uid="uid://bnvneh2xfqhpp"]
 
 [ext_resource type="Script" path="res://scripts/rain.gd" id="1_kj4sp"]
 [ext_resource type="Script" path="res://scripts/coin_counter.gd" id="1_le5ak"]
@@ -16,6 +16,8 @@
 [ext_resource type="Texture2D" uid="uid://dvpi7nso38kqm" path="res://sprites/grapple.png" id="6_wlgv8"]
 [ext_resource type="Texture2D" uid="uid://tqrrxtnsyvkn" path="res://sprites/items/tambaqui.png" id="7_bcy86"]
 [ext_resource type="Texture2D" uid="uid://dvd0js1533ixy" path="res://sprites/uibg2.png" id="9_sky3p"]
+[ext_resource type="Texture2D" uid="uid://os1xgfw72sd1" path="res://sprites/items/mysticalstone.png" id="9_wfct7"]
+[ext_resource type="Texture2D" uid="uid://c73ucvu5ijqjw" path="res://sprites/items/jetpack.png" id="10_388ll"]
 
 [sub_resource type="Shader" id="Shader_sjp6m"]
 code = "// Rain and Snow shader by Brian Smith (steampunkdemon.itch.io)
@@ -304,7 +306,7 @@ max_value = 7.52
 step = 0.0
 value = 7.0
 nine_patch_stretch = true
-stretch_margin_left = 410
+stretch_margin_left = 305
 stretch_margin_top = 45
 stretch_margin_right = 101
 stretch_margin_bottom = 19
@@ -314,6 +316,68 @@ texture_progress = ExtResource("4_1rntb")
 tint_under = Color(0.0523644, 0.00370765, 0.0561955, 1)
 tint_over = Color(0.309804, 0.333333, 0.14902, 1)
 tint_progress = Color(0, 0.693641, 0.387423, 1)
+
+[node name="HoverUI" type="HBoxContainer" parent="Node2DUI/Items/VBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="TextureRect" type="TextureRect" parent="Node2DUI/Items/VBoxContainer/HoverUI"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("9_wfct7")
+expand_mode = 1
+
+[node name="HoverBar" type="TextureProgressBar" parent="Node2DUI/Items/VBoxContainer/HoverUI"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+max_value = 4.435
+step = 0.0
+value = 4.0
+nine_patch_stretch = true
+stretch_margin_left = 55
+stretch_margin_top = 45
+stretch_margin_right = 261
+stretch_margin_bottom = 19
+texture_under = ExtResource("4_1rntb")
+texture_over = ExtResource("5_cap3f")
+texture_progress = ExtResource("4_1rntb")
+tint_under = Color(0.356863, 0.635294, 0.513726, 1)
+tint_over = Color(0.427451, 0.709804, 0.588235, 1)
+tint_progress = Color(0.74902, 1, 0.894118, 1)
+
+[node name="JetpackUI" type="HBoxContainer" parent="Node2DUI/Items/VBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="TextureRect" type="TextureRect" parent="Node2DUI/Items/VBoxContainer/JetpackUI"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("10_388ll")
+expand_mode = 1
+
+[node name="JetpackBar" type="TextureProgressBar" parent="Node2DUI/Items/VBoxContainer/JetpackUI"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+max_value = 7.52
+step = 0.0
+value = 4.475
+nine_patch_stretch = true
+stretch_margin_left = 410
+stretch_margin_top = 45
+stretch_margin_right = 101
+stretch_margin_bottom = 19
+texture_under = ExtResource("4_1rntb")
+texture_over = ExtResource("5_cap3f")
+texture_progress = ExtResource("4_1rntb")
+tint_under = Color(0, 0, 0, 1)
+tint_over = Color(1, 0.901961, 0, 1)
+tint_progress = Color(1, 0.517647, 0, 1)
 
 [node name="CoinCounter" type="Node2D" parent="Node2DUI"]
 position = Vector2(-26, -18)

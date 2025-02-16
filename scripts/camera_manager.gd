@@ -17,9 +17,11 @@ func _physics_process(delta: float) -> void:
 		self.zoom = self.zoom.lerp(target_zoom,delta * 0.3)
 
 func signal_reset_smoothing():
+	print(get_stack())
 	reset_smoothing()
 
 func reset_zoom():
+	print(get_stack())
 	target_zoom = init_zoom
 
 func set_zoom_target(target : float):
