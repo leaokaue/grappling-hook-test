@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=4 uid="uid://btnsveko6fru8"]
+[gd_scene load_steps=39 format=4 uid="uid://btnsveko6fru8"]
 
 [ext_resource type="AudioStream" uid="uid://bvucbfr6ngdu2" path="res://sounds/Flying Beagle [ ezmp3.cc ].mp3" id="1_f5gul"]
 [ext_resource type="Texture2D" uid="uid://dghutenmpp3mc" path="res://sprites/bg.jpg" id="1_kku2a"]
@@ -26,6 +26,7 @@
 [ext_resource type="PackedScene" uid="uid://cno3ft0j5rb82" path="res://scenes/entombed_coin.tscn" id="17_p15cw"]
 [ext_resource type="PackedScene" uid="uid://cgr82nin8tx0k" path="res://scenes/nightmare_coin.tscn" id="19_w8gmv"]
 [ext_resource type="TileSet" uid="uid://dhn3s7evfpuvn" path="res://resources/BGTiles.tres" id="21_3ashg"]
+[ext_resource type="PackedScene" uid="uid://chuilgkwye2tv" path="res://scenes/black_hole.tscn" id="21_lecj5"]
 [ext_resource type="PackedScene" uid="uid://pdmey8k4km8h" path="res://scenes/big_spinner.tscn" id="22_hquin"]
 [ext_resource type="PackedScene" uid="uid://b6b10pnth34j6" path="res://scenes/windmill_spinner_block.tscn" id="22_uxeyo"]
 [ext_resource type="PackedScene" uid="uid://c2juum3jx4enk" path="res://scenes/confused_coin.tscn" id="24_ld6p1"]
@@ -1022,7 +1023,7 @@ empty_track = ExtResource("8_c5a5t")
 position = Vector2(-780, 448)
 
 [node name="Worm" parent="SpawnPos" instance=ExtResource("3_pgxup")]
-position = Vector2(-540, -11256)
+position = Vector2(-2580, -14000)
 debug_mode = true
 
 [node name="Camera2D" type="Camera2D" parent="SpawnPos/Worm"]
@@ -1203,6 +1204,9 @@ script = ExtResource("15_npp85")
 position = Vector2(23760, 2016)
 shape = SubResource("RectangleShape2D_km4ar")
 debug_color = Color(0.94052, 0, 0.00465848, 0.42)
+
+[node name="BlackHole" parent="SpawnIsland" instance=ExtResource("21_lecj5")]
+position = Vector2(900, 392)
 
 [node name="WeepingBogs" type="Node2D" parent="."]
 

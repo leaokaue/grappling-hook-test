@@ -89,12 +89,18 @@ func handle_confusion(delta : float):
 	var min_player_range : float = 10
 	
 	var min_force : float = 100
-	var max_force : float = 1550
+	var max_force : float = 300
 	
 	l = clampf(l,min_player_range,max_player_range)
 	
 	
 	var mod : float = ((l / max_player_range) -1) * -1
+	
+	if get_length_to_player(delta) < 275:
+		Global.player.force_freefall = true
+		Global.player.is_freefalling = true
+	else:
+		Global.player.force_freefall = false
 	
 	#print(l)
 	#print(mod)

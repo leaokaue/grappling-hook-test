@@ -1,7 +1,7 @@
 extends Area2D
 class_name DeathBarrier
 
-@export_range(0,3) var scream_type : int = 0
+@export_range(0,4) var scream_type : int = 0
 
 
 func _ready() -> void:

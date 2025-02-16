@@ -77,6 +77,8 @@ var in_liquid : bool = false
 
 var can_cancel_jump : bool = true
 
+var force_freefall : bool = false
+
 var is_freefalling : bool = false : set = set_is_freefalling
 
 #HOOK / FREEFALL
@@ -231,7 +233,10 @@ func _physics_process(delta):
 				#linear_velocity.x = move_toward(linear_velocity.x,MAX_SPEED * direction, delta * 3)
 				#print(linear_velocity.x)
 	else:
-		physics_material_override.friction = 1.0
+		if not force_freefall:
+			physics_material_override.friction = 1.0
+		else:
+			physics_material_override.friction = 0.1
 	
 	if in_liquid:
 		var v_direction := Input.get_axis("up", "stop")
@@ -566,6 +571,9 @@ func set_is_freefalling(freefalling : bool):
 			#print("killed  line")
 			last_trail.fading_away = true
 			last_trail.follow_player = false
+	
+	if force_freefall:
+		is_freefalling = true
 
 func set_is_tambaqui(tambaqui : bool):
 	if previous_tambaqui_state == tambaqui:
@@ -876,12 +884,15 @@ func scream(scream_type : int = 0):
 		0:
 			%scream.play()
 		1:
-			%scream2.play()
+			%scream2.play(0.15)
 			explode_animation()
 		2:
 			%scream3.play()
 		3:
 			%scream4.play()
+		4:
+			%scream5.play()
+			explode_animation()
 	
 
 var is_teleporting : bool = false
@@ -928,6 +939,8 @@ func return_to_checkpoint(scream_type : int = 0,duration_multiplier : float = 1.
 	
 	await  get_tree().create_timer(0.5,false).timeout
 	Global.set_fade_screen(true)
+	force_freefall = false
+	is_freefalling = false
 	await Global.fade_animation_finished
 	is_teleporting = false
 	can_control = true
@@ -979,38 +992,38 @@ func teleport_to_waypoint(waypoint : int):
 	Global.set_fade_screen(true)
 	await Global.fade_animation_finished
 	Global.can_use_waypoints = true
+	force_freefall = false
+	is_freefalling = false
 	is_teleporting = false
 	can_control = true
 
 func handle_coin_compass():
 	if Global.has_coin_compass:
 		
-		if not Input.is_action_just_pressed("dash"):
-			return
+		#if not Input.is_action_just_pressed("dash"):
+			#return
 		
 		%CoinCompass.show()
 		
 		
-		var shortest_pos := Vector2(0,0)
+		var shortest_pos := Global.coin_positions[0]
 		
 		for p in Global.coin_positions:
-			if shortest_pos == Vector2(0,0):
-				shortest_pos = p
 			
-			var pp : float = (p - self.global_position).length()
+			var pp : float = (shortest_pos - self.global_position).length()
 			
-			print("comparing pos ", pp, " and ", (p - self.global_position).length())
+			#print("comparing pos ", pp, " and ", (p - self.global_position).length())
 			if (p - self.global_position).length() < pp:
-				print("new shortest pos is ", p)
+				#print("new shortest pos is ", p)
 				shortest_pos = p 
 			#print(pp, " ", p)
 		
 		var a : float = (shortest_pos - self.global_position).angle()
 		
-		print((shortest_pos - self.global_position).length() ,"shortest pos afterwards")
+		#print((shortest_pos) ,"shortest pos afterwards")
 		
 		%CoinCompass.global_position = self.global_position
-		%CoinCompass.rotation = a
+		%CoinCompass.rotation = (a - self.global_rotation)
 		
 	else:
 		%CoinCompass.hide()

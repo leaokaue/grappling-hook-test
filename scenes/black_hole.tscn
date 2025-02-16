@@ -1,8 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://chuilgkwye2tv"]
+[gd_scene load_steps=12 format=3 uid="uid://chuilgkwye2tv"]
 
+[ext_resource type="Script" path="res://scripts/black_hole.gd" id="1_4khpt"]
 [ext_resource type="Texture2D" uid="uid://dndpg641kb131" path="res://sprites/bh0.png" id="1_ur7i3"]
 [ext_resource type="Texture2D" uid="uid://ijcwy6c2cbn0" path="res://sprites/bh1.png" id="2_vlcn6"]
 [ext_resource type="Texture2D" uid="uid://1tr5gtcj58bc" path="res://sprites/bh2.png" id="3_l2qm7"]
+[ext_resource type="Script" path="res://scripts/death_barrier.gd" id="4_reeco"]
+[ext_resource type="AudioStream" uid="uid://c78a164onwmcd" path="res://sounds/blackhole_exist.mp3" id="5_ubed7"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_c3yl4"]
 animations = [{
@@ -76,7 +79,14 @@ shader_parameter/wave_amplitude = 0.069
 shader_parameter/wave_frequency = 15.0
 shader_parameter/player_distance = 5.79
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_entrg"]
+radius = 745.123
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_yjfdo"]
+radius = 110.81
+
 [node name="BlackHole" type="Node2D"]
+script = ExtResource("1_4khpt")
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="."]
 z_index = 10
@@ -92,5 +102,38 @@ offset_left = -110.0
 offset_top = -110.0
 offset_right = 110.0
 offset_bottom = 110.0
-scale = Vector2(3.86908, 3.86908)
+scale = Vector2(3.78675, 3.78675)
 pivot_offset = Vector2(110, 110)
+
+[node name="Area2D" type="Area2D" parent="."]
+unique_name_in_owner = true
+collision_mask = 7
+gravity_space_override = 1
+gravity_point = true
+gravity_point_unit_distance = 758.0
+gravity_point_center = Vector2(0, 0)
+gravity_direction = Vector2(0, 0)
+gravity = 300.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_entrg")
+debug_color = Color(0, 0.595, 0.7, 0)
+
+[node name="DeathBarrier" type="Area2D" parent="."]
+collision_mask = 3
+script = ExtResource("4_reeco")
+scream_type = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DeathBarrier"]
+z_index = 10
+shape = SubResource("CircleShape2D_yjfdo")
+debug_color = Color(0.7, 0, 0, 0.419608)
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_ubed7")
+volume_db = -10.0
+pitch_scale = 0.6
+autoplay = true
+max_distance = 1500.0
+attenuation = 0.707107
+panning_strength = 3.0
