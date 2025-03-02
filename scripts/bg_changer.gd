@@ -17,10 +17,13 @@ func on_body_entered(body : Node2D):
 		else:
 			Global.toggle_rain.emit(false)
 		
+		if bg == b.Night:
+			Global.set_area_seen(6)
+		
 		if bg == b.Empty:
 			Global.change_target_zoom.emit(0.95)
 		elif bg == b.Space:
-			Global.change_target_zoom.emit(0.4)
+			Global.change_target_zoom.emit(0.7)
 		elif bg == b.Clouds:
 			Global.change_target_zoom.emit(0.5)
 		else:

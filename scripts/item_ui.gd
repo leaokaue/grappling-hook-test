@@ -6,7 +6,7 @@ extends Control
 
 @onready var hover_bar : TextureProgressBar = %HoverBar
 
-@onready var jetpack_bar : TextureProgressBar = %HoverBar
+@onready var jetpack_bar : TextureProgressBar = %JetpackBar
 
 func _ready() -> void:
 	Global.player.emit_dash_cooldown.connect(update_dash)

@@ -67,6 +67,7 @@ func _physics_process(delta: float) -> void:
 
 func collect():
 	Global.unlock_item(current_item,true)
+	Global.items_collected += 1
 	instantiate_ui()
 	$blamo.play()
 	$Area2D/CollisionShape2D.set_deferred("disabled",true)
@@ -96,56 +97,56 @@ func match_item():
 			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
 		i.JumpBoost:
 			sprite.texture = roids2
-			i_name = "Healthy Medicine"
-			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
+			i_name = "Pretty Healthy Medicine"
+			i_desc = "The Power of Medicine increases the power of your Jump!!"
 		i.SpeedBoost:
 			sprite.texture = roids3
-			i_name = "Healthy Medicine"
-			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
+			i_name = "Incredibly Healthy Medicine!"
+			i_desc = "The Power of Medicine increases your Movement Speed!"
 		i.CoinCompass:
 			sprite.texture = compass
-			i_name = "Healthy Medicine"
-			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
+			i_name = "Coin Compass"
+			i_desc = "The Coin Compass allows you to find all earthly coins!"
 		i.CoinTracker:
 			sprite.texture = tracker
-			i_name = "Healthy Medicine"
-			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
+			i_name = "Coin Tracker"
+			i_desc = "The Tracker allows you to see how many Coins are left on the map!"
 		i.FastTravel:
 			sprite.texture =  guiding_light
-			i_name = "Healthy Medicine"
-			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
+			i_name = "Guiding Light"
+			i_desc = "The Light guides you, allowing you to travel with Waypoints at any time!"
 		i.DashBoots:
 			sprite.texture = dash_boots
 			i_name = "Warp Boots"
 			i_desc = "They can't shoot an atom! Press Shift to warp forwards. Small chance of being teleported into the void."
 		i.JetPack:
 			sprite.texture = jet_pack
-			i_name = "Healthy Medicine"
-			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
+			i_name = "Jetpack"
+			i_desc = "Allows flight. Press Space again mid-air to activate."
 		i.HookCooldownReducer:
 			sprite.texture = cool_drink
 			i_name = "Grape Juice"
 			i_desc = "It's been a fun climb. Take a rest and some Grape Juice. It will reduce your Grapple Hook cooldown."
 		i.GrappleRopeExtension:
 			sprite.texture = extra_rope
-			i_name = "Healthy Medicine"
-			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
+			i_name = "Extra Rope"
+			i_desc = "So much rope! Increases the length of your grapple hook!"
 		i.RetractBoost:
 			sprite.texture = motorized_pulley
-			i_name = "Healthy Medicine"
-			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
+			i_name = "Motorized Pulley"
+			i_desc = "The Pulley allows you to retract your grappling hook faster!"
 		i.LatchJumpBoost:
 			sprite.texture = titanium_glove
-			i_name = "Healthy Medicine"
-			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
+			i_name = "Titanium Glove"
+			i_desc = "Fits perfectly for a worm! Increases your latch strength when you land your Grapple."
 		i.HoverStone:
 			sprite.texture = hover_stone
-			i_name = "Healthy Medicine"
-			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
+			i_name = "Hover Stone"
+			i_desc = "It whispers to you, allowing temporary hovering mid-air! Press Shift to hover."
 		i.PoisonResist:
 			sprite.texture = green_potion
-			i_name = "Healthy Medicine"
-			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
+			i_name = "Green Potion"
+			i_desc = "Why did you drink that? Allows you to resist acid...."
 		i.WaterDash:
 			sprite.texture = tambaqui
 			i_name = "Tambaqui"

@@ -26,13 +26,73 @@ signal player_dead
 
 signal clear_map
 
-var coins : int = 80
+var player : Worm
 
-const max_coins : int = 100
+var background : BackgroundManager
+
+var music_player : MusicManager
+
+var t : Tween
+
+var waypoint_position : Dictionary = {
+	"Spawn" : Vector2(),
+	"Bog" : Vector2(),
+	"Windmill" : Vector2(),
+	"Spike" : Vector2(),
+	"Spike2" : Vector2(),
+	"Space" : Vector2(),
+	 
+}
+
+enum EQUIPMENTS {
+	None,
+	DashBoots,
+	Tambaqui,
+	HoverStone,
+	Jetpack
+}
 
 var coin_positions : PackedVector2Array
 
+const SAVE_PATH : String = "user://peculiarcoins_save.grapple"
+
+const BASE_SAVE_PATH : String = "user://BASECOINS_SAVE.grapple"
+
+const max_coins : int = 100
+
+#region Save Variables
+
+var start_save : int = 69420
+
+var coins : int = 0
+
 var collected_coin_position : PackedVector2Array
+
+var last_pos_x : float = 0
+
+var last_pos_y : float = 0
+
+var timer_visible : bool = false
+
+var time_elapsed : float = 0.0
+
+var items_collected : int = 0
+
+var deaths : int = 0
+
+var hook_jumps : int = 0
+
+var hooks_thrown : int = 0
+
+var hooks_hit : int = 0
+
+var luck_generated : bool = false
+
+var luck : int = 0
+
+var gumption : int = 0
+
+var ignore_gumption : bool = false
 
 var seen_map : Dictionary = {
 	"Spawn" : true,
@@ -51,26 +111,9 @@ var waypoints_unlocked : Dictionary = {
 	"Windmill" : false,
 	"Spike" : false,
 	"Space" : false,
+	"Spike2" : false,
 	"Empty" : false,
-	"Spike2" : false
 	 
-}
-
-var waypoint_position : Dictionary = {
-	"Spawn" : Vector2(),
-	"Bog" : Vector2(),
-	"Windmill" : Vector2(),
-	"Spike" : Vector2(),
-	"Space" : Vector2(),
-	 
-}
-
-enum EQUIPMENTS {
-	None,
-	DashBoots,
-	Tambaqui,
-	HoverStone,
-	Jetpack
 }
 
 var current_equipment : EQUIPMENTS = EQUIPMENTS.None
@@ -127,14 +170,15 @@ var has_guiding_light : bool = false
 #water dash
 var has_tambaqui : bool = false
 
-var player : Worm
+var game_active : bool = true
 
-var background : BackgroundManager
+var initializing_game : bool = true
 
-var music_player : MusicManager
+var grounded_jumps : int = 0
+#endregion
 
-var t : Tween
-
+func _ready() -> void:
+	save_base_vars()
 
 func _process(_delta: float) -> void:
 	pass
@@ -231,3 +275,93 @@ func get_coin_vec2_array():
 		if coin is Node2D:
 			print(coin)
 			coin_positions.append(coin.global_position)
+
+func save_all():
+	save_self_vars()
+
+func load_all():
+	if FileAccess.file_exists(SAVE_PATH):
+		load_self_vars()
+	else:
+		save_all()
+		load_self_vars()
+
+func save_self_vars():
+	var file = FileAccess.open(SAVE_PATH,FileAccess.WRITE)
+	
+	var saving : bool = false
+	
+	for property in self.get_property_list():
+		
+		print("saving")
+		print(property.hint," ", property.type, " ", property.name, " ",property.usage)
+		
+		if property.usage == PROPERTY_USAGE_SCRIPT_VARIABLE:
+			var var_name : String = property.name
+			var sel_var = get(var_name)
+			file.store_var(sel_var)
+			
+	file.close()
+
+func generate_luck():
+	if not luck_generated:
+		luck_generated = true
+		luck = randi_range(1,100)
+
+func load_self_vars():
+	
+	
+	var file = FileAccess.open(SAVE_PATH,FileAccess.READ)
+	for property in self.get_property_list():
+		if property.usage == PROPERTY_USAGE_SCRIPT_VARIABLE:
+			var var_name : String = property.name
+			var loaded_var = file.get_var()
+			print(property.hint," ", property.type, " ", property.name)
+			print("loaded var is ",loaded_var)
+			
+			if loaded_var is Array:
+				var v = get(var_name)
+				if v is Array:
+					v.append_array(loaded_var)
+				print(loaded_var.size(), " size")
+			elif loaded_var is PackedVector2Array:
+				var v = get(var_name)
+				if v is PackedVector2Array:
+					v.append_array(loaded_var)
+				print(loaded_var.size(), " size")
+			else:
+				set(var_name,loaded_var)
+	file.close()
+
+func save_base_vars():
+	var file = FileAccess.open(BASE_SAVE_PATH,FileAccess.WRITE)
+	for property in self.get_property_list():
+		print(property.hint," ", property.type, " ", property.name, " ",property.usage)
+		if property.usage == PROPERTY_USAGE_SCRIPT_VARIABLE:
+			var var_name : String = property.name
+			var sel_var = get(var_name)
+			print(sel_var)
+			file.store_var(sel_var)
+	file.close()
+
+func load_base_vars():
+	var file = FileAccess.open(BASE_SAVE_PATH,FileAccess.READ)
+	for property in self.get_property_list():
+		if property.usage == PROPERTY_USAGE_SCRIPT_VARIABLE:
+			var var_name : String = property.name
+			var loaded_var = file.get_var()
+			print(property.hint," ", property.type, " ", property.name)
+			print("loaded var is ",loaded_var)
+			if loaded_var is Array:
+				var v = get(var_name)
+				if v is Array:
+					v.append_array(loaded_var)
+				print(loaded_var.size(), " size")
+			elif loaded_var is PackedVector2Array:
+				var v = get(var_name)
+				if v is PackedVector2Array:
+					v.append_array(loaded_var)
+				print(loaded_var.size(), " size")
+			else:
+				set(var_name,loaded_var)
+	file.close()

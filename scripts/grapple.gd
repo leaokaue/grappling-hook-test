@@ -49,7 +49,6 @@ func _on_body_collision(body_rid : RID,body : Node,_bsp : int,lsi : int):
 	if not grappled:
 		grappled = true
 		
-		
 		if body is TileMapLayer:
 			var c := PhysicsServer2D.body_get_collision_layer(body_rid)
 			if c == 9:
@@ -100,6 +99,7 @@ func _on_body_collision(body_rid : RID,body : Node,_bsp : int,lsi : int):
 		frozen = true
 		set_deferred("freeze",true)
 		#self.lock_rotation = true
+		Global.hooks_hit += 1
 		hit.emit()
 		#self.call_deferred("reparent",body)
 

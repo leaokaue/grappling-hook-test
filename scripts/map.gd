@@ -24,7 +24,7 @@ func _ready() -> void:
 		#exit()
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("map"):
+	if event.is_action_pressed("map") or event.is_action_pressed("menu"):
 		if not exiting:
 			exit()
 

@@ -4,4 +4,4 @@ extends AnimatableBody2D
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
-	self.rotation_degrees += spin_speed
+	self.rotation_degrees += spin_speed * delta

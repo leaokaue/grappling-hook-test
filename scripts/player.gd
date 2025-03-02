@@ -57,9 +57,9 @@ const max_hover_bar : float = 4.0
 
 var is_jetpacking : bool = false
 
-var jetpack_bar : float = 2.5
+var jetpack_bar : float = 2.0
 
-const max_jetpack_bar : float = 2.5
+const max_jetpack_bar : float = 2.0
 
 #LIQUIDS
 
@@ -114,21 +114,42 @@ const gr := preload("res://scenes/grapple.tscn")
 
 const map := preload("res://scenes/map.tscn")
 
+var gump_timer : float = 40.0
+
 func _ready() -> void:
 	create_ui()
 	Global.teleport_to_waypoint.connect(teleport_to_waypoint)
 	Global.player = self
+	
 	if debug_mode:
 		last_checkpoint = global_position
 	
+	self.global_position.x = Global.last_pos_x
+	self.global_position.y = Global.last_pos_y
+	
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	
+	Global.set_fade_screen(true)
+	Global.generate_luck()
+	
 	Global.get_coin_vec2_array()
+	Global.remove_collected_coins_from_scene()
 
 func _process(delta: float) -> void:
+	
+	if not Global.ignore_gumption:
+		if gump_timer > 0:
+			gump_timer -= delta
+		else:
+			gump_timer = randf_range(70,200)
+			Global.gumption = randi_range(1,100)
+	
+	if Global.game_active:
+		Global.time_elapsed += delta
+	
 	if not can_hook:
 		
 		var m : float = 1.0
@@ -250,6 +271,9 @@ func _physics_process(delta):
 	if Input.is_action_just_pressed("map"):
 		instantiate_map()
 	
+	if Input.is_action_just_pressed("menu"):
+		instantiate_map(2)
+	
 	# UPGRADE /////////////////////////////////////////////////////////////
 	var j_bonus : float = 1.0
 	
@@ -258,16 +282,27 @@ func _physics_process(delta):
 	# UPGRADE /////////////////////////////////////////////////////////////
 	
 	if Input.is_action_just_pressed("jump"):
+		
+		if Global.current_equipment == Global.EQUIPMENTS.Jetpack:
+			if (not is_jetpacking) and (not _on_floor()) and (jetpack_bar > 0):
+				is_jetpacking = true
+		
 		if is_grappling:
 			if is_instance_valid(hook):
 				if hook.grappled:
 					force.y = (JUMP_FORCE * j_bonus)* 0.8
+					Global.hook_jumps += 1
 					destroy_grapple()
 		elif _on_floor(): 
 			force.y = (JUMP_FORCE * j_bonus)
+			Global.grounded_jumps += 1
+	
+	apply_jetpack(delta)
 	
 	if Input.is_action_just_released("jump"):
-		if linear_velocity.y < 0:
+		if is_jetpacking:
+			is_jetpacking = false
+		elif linear_velocity.y < 0:
 			if can_cancel_jump:
 				can_cancel_jump = false
 				linear_velocity.y *= 0.5
@@ -379,7 +414,14 @@ func apply_hoverstone(_delta : float):
 		%hover.emitting = false
 
 func apply_jetpack(delta : float):
-	pass
+	if is_jetpacking:
+		%jetpack.emitting = true
+		#linear_velocity.y = lerp(linear_velocity.y,0.0,1.5)
+		#linear_velocity.y = 0.0
+		#print(linear_velocity.y)
+		apply_central_force(1400 * Vector2.UP)
+	else:
+		%jetpack.emitting = false
 
 func apply_tambaqui_dash():
 	if is_tambaqui:
@@ -485,7 +527,7 @@ func handle_non_control(delta : float):
 	
 	check_length()
 	
-	if (not is_grappling) and (not _on_floor()) and (not in_liquid) and (not is_tambaqui) and (not is_hovering):
+	if (not is_grappling) and (not _on_floor()) and (not in_liquid) and (not is_tambaqui) and (not is_hovering) and (not is_jetpacking):
 		var t : float = 1
 		if is_freefalling:
 			t = 1.5
@@ -551,6 +593,19 @@ func handle_equipment_cooldowns(delta : float):
 	hover_bar = clampf(hover_bar,0.0,max_hover_bar)
 	
 	emit_hover_cooldown.emit(hover_bar)
+	
+	if not is_jetpacking:
+		if _on_floor():
+			jetpack_bar = move_toward(jetpack_bar,max_jetpack_bar, delta * 10)
+	else:
+		if jetpack_bar > 0:
+			jetpack_bar -= delta * 1.0
+		else:
+			is_jetpacking = false
+	
+	jetpack_bar = clampf(jetpack_bar,0.0,max_jetpack_bar)
+	
+	emit_jetpack_cooldown.emit(jetpack_bar)
 
 func set_is_freefalling(freefalling : bool):
 	if previous_freefall_state == freefalling:
@@ -636,9 +691,9 @@ func _on_floor():
 			can_cancel_jump = true
 			return true
 
-func instantiate_map():
+func instantiate_map(tab : int = 0):
 	var m := map.instantiate()
-	
+	m.open_tab = tab
 	get_tree().current_scene.add_child(m)
 	#can_control = false
 
@@ -671,6 +726,8 @@ func grapple():
 	hook = g
 	
 	get_tree().current_scene.add_child(g)
+	
+	Global.hooks_thrown += 1
 
 func destroy_grapple():
 	if is_instance_valid(hook):
@@ -928,6 +985,7 @@ func return_to_checkpoint(scream_type : int = 0,duration_multiplier : float = 1.
 	can_control = false
 	is_teleporting = true
 	Global.clear_map.emit()
+	Global.deaths += 1
 	scream(scream_type)
 	destroy_grapple()
 	can_scream = false
@@ -1011,7 +1069,7 @@ func teleport_to_waypoint(waypoint : int):
 	can_control = true
 
 func handle_coin_compass():
-	if Global.has_coin_compass:
+	if (Global.has_coin_compass) and (Global.coin_positions.size() > 0):
 		
 		#if not Input.is_action_just_pressed("dash"):
 			#return

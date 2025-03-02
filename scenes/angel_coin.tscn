@@ -55,7 +55,6 @@ texture = ExtResource("1_mwaoi")
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_jbfkw")
 debug_color = Color(0, 0.595, 0.7, 0)
 

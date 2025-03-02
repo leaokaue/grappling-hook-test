@@ -7,7 +7,7 @@
 [ext_resource type="Script" path="res://scripts/death_barrier.gd" id="4_reeco"]
 [ext_resource type="AudioStream" uid="uid://c78a164onwmcd" path="res://sounds/blackhole_exist.mp3" id="5_ubed7"]
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_c3yl4"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_ggvwc"]
 animations = [{
 "frames": [{
 "duration": 1.0,
@@ -24,7 +24,7 @@ animations = [{
 "speed": 18.0
 }]
 
-[sub_resource type="Shader" id="Shader_yffbm"]
+[sub_resource type="Shader" id="Shader_q1s23"]
 code = "// Attach to a ColorRect in front of texture/background
 
 shader_type canvas_item;
@@ -70,8 +70,8 @@ void fragment() {
 
 }"
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_qg5lw"]
-shader = SubResource("Shader_yffbm")
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4jf5e"]
+shader = SubResource("Shader_q1s23")
 shader_parameter/frequency = 4.0
 shader_parameter/amplitude = 1.9
 shader_parameter/ripple_rate = 0.0
@@ -82,7 +82,7 @@ shader_parameter/player_distance = 5.79
 [sub_resource type="CircleShape2D" id="CircleShape2D_entrg"]
 radius = 412.691
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_yjfdo"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_lnr7c"]
 radius = 110.81
 
 [node name="BlackHole" type="Node2D"]
@@ -91,13 +91,13 @@ script = ExtResource("1_4khpt")
 [node name="Sprite2D" type="AnimatedSprite2D" parent="."]
 z_index = 10
 scale = Vector2(0.291886, 0.291886)
-sprite_frames = SubResource("SpriteFrames_c3yl4")
+sprite_frames = SubResource("SpriteFrames_ggvwc")
 autoplay = "default"
 frame_progress = 0.135531
 
 [node name="Confusion" type="ColorRect" parent="."]
 unique_name_in_owner = true
-material = SubResource("ShaderMaterial_qg5lw")
+material = SubResource("ShaderMaterial_4jf5e")
 offset_left = -110.0
 offset_top = -110.0
 offset_right = 110.0
@@ -126,7 +126,7 @@ scream_type = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DeathBarrier"]
 z_index = 10
-shape = SubResource("CircleShape2D_yjfdo")
+shape = SubResource("CircleShape2D_lnr7c")
 debug_color = Color(0.7, 0, 0, 0.419608)
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
