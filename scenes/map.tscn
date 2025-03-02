@@ -565,7 +565,7 @@ text = "Drag and drop equipment into the center node"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Menu" type="Control" parent="Control/TabContainer" node_paths=PackedStringArray("map", "speedrun", "completion", "deaths", "notcoins", "gjumps", "hjumps", "thrown", "accuracy", "luck", "gump", "ignore_gump")]
+[node name="Menu" type="Control" parent="Control/TabContainer" node_paths=PackedStringArray("map", "speedrun", "completion", "deaths", "notcoins", "gjumps", "hjumps", "thrown", "accuracy", "luck", "gump", "ignore_gump", "jump_cancel")]
 layout_mode = 2
 script = ExtResource("11_p61y7")
 map = NodePath("../../..")
@@ -580,6 +580,7 @@ accuracy = NodePath("MarginContainer/HBoxContainer/Panel/MarginContainer/VBoxCon
 luck = NodePath("MarginContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/hbox6/luckvalue")
 gump = NodePath("MarginContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/hbox7/gumptionvalue")
 ignore_gump = NodePath("MarginContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/gump")
+jump_cancel = NodePath("MarginContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/jumpcancel")
 metadata/_tab_index = 2
 
 [node name="MapSprite" type="Control" parent="Control/TabContainer/Menu"]
@@ -616,9 +617,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 200
-theme_override_constants/margin_top = 100
+theme_override_constants/margin_top = 90
 theme_override_constants/margin_right = 200
-theme_override_constants/margin_bottom = 100
+theme_override_constants/margin_bottom = 90
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Control/TabContainer/Menu/MarginContainer"]
 layout_mode = 2
@@ -681,6 +682,17 @@ alignment = 1
 layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_nn5lp")
 text = "Speedrun Timer"
+
+[node name="jumpcancel" type="CheckBox" parent="Control/TabContainer/Menu/MarginContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_nn5lp")
+button_pressed = true
+text = "Jump Cancelling"
+
+[node name="gump" type="CheckBox" parent="Control/TabContainer/Menu/MarginContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_nn5lp")
+text = "Ignore Gumption"
 
 [node name="hbox8" type="HBoxContainer" parent="Control/TabContainer/Menu/MarginContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -840,8 +852,3 @@ theme_override_icons/updown = SubResource("ImageTexture_vbfsm")
 value = 20.0
 alignment = 1
 editable = false
-
-[node name="gump" type="CheckBox" parent="Control/TabContainer/Menu/MarginContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
-layout_mode = 2
-theme_override_styles/focus = SubResource("StyleBoxEmpty_nn5lp")
-text = "Ignore Gumption"

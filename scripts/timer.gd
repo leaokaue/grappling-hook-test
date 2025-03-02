@@ -28,6 +28,6 @@ func get_time_format(time : float) -> String:
 	var seconds : int = (t / 1000) % 60
 	var miliseconds : int = (t) % 1000
 
-	var display_time : String = ("%02d" % hours) + (":%02d" % minutes) + (":%02d" % seconds) + (":%03d" % miliseconds)
+	var display_time : String = ("%02d" % hours) + (":%02d" % minutes) + (":%02d" % seconds) + (".%03d" % miliseconds)
 	
 	return display_time

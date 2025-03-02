@@ -197,7 +197,6 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="BlackScreen" type="ColorRect" parent="." groups=["BlackScreen"]]
-modulate = Color(1, 1, 1, 0)
 z_index = 100
 anchors_preset = 15
 anchor_right = 1.0
@@ -506,12 +505,14 @@ offset_left = -409.199
 offset_top = 68.9333
 offset_right = -4.19949
 offset_bottom = 134.933
+theme_override_font_sizes/font_size = 40
+text = "00:00:00:000"
 horizontal_alignment = 2
 
 [node name="Sprite2D" type="Sprite2D" parent="Node2DUI/Timer"]
 modulate = Color(1, 1, 1, 0.415686)
 z_index = -1
-position = Vector2(-89.4666, 104.133)
+position = Vector2(163.559, 91.1777)
 rotation = 0.855337
 scale = Vector2(0.581408, 0.581408)
 texture = ExtResource("4_m8224")
@@ -519,7 +520,7 @@ texture = ExtResource("4_m8224")
 [node name="Sprite2D2" type="Sprite2D" parent="Node2DUI/Timer"]
 modulate = Color(1, 1, 1, 0.415686)
 z_index = -1
-position = Vector2(-262.533, 127.6)
+position = Vector2(-9.5076, 114.644)
 rotation = 0.907893
 scale = Vector2(0.581408, 0.581408)
 texture = ExtResource("4_m8224")
@@ -527,7 +528,7 @@ texture = ExtResource("4_m8224")
 [node name="Sprite2D3" type="Sprite2D" parent="Node2DUI/Timer"]
 modulate = Color(1, 1, 1, 0.415686)
 z_index = -1
-position = Vector2(-156.933, 107.067)
+position = Vector2(96.0923, 94.1111)
 rotation = 3.92699
 scale = Vector2(0.581408, 0.581408)
 texture = ExtResource("4_m8224")
@@ -535,7 +536,7 @@ texture = ExtResource("4_m8224")
 [node name="Sprite2D4" type="Sprite2D" parent="Node2DUI/Timer"]
 modulate = Color(1, 1, 1, 0.415686)
 z_index = -1
-position = Vector2(-334.4, 132)
+position = Vector2(-81.3741, 119.044)
 rotation = 0.785397
 scale = Vector2(0.581408, 0.581408)
 texture = ExtResource("4_m8224")

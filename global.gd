@@ -175,6 +175,8 @@ var game_active : bool = true
 var initializing_game : bool = true
 
 var grounded_jumps : int = 0
+
+var cancelling_jump_enabled : bool = true
 #endregion
 
 func _ready() -> void:

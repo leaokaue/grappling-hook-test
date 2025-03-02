@@ -304,8 +304,9 @@ func _physics_process(delta):
 			is_jetpacking = false
 		elif linear_velocity.y < 0:
 			if can_cancel_jump:
-				can_cancel_jump = false
-				linear_velocity.y *= 0.5
+				if Global.cancelling_jump_enabled:
+					can_cancel_jump = false
+					linear_velocity.y *= 0.5
 		
 	
 	if Input.is_action_just_pressed("stop"):

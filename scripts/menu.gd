@@ -24,8 +24,11 @@ extends Control
 
 @export var ignore_gump : CheckBox
 
+@export var jump_cancel : CheckBox
+
 func _ready() -> void:
 	speedrun.set_pressed_no_signal(Global.timer_visible)
+	jump_cancel.set_pressed_no_signal(Global.cancelling_jump_enabled)
 	deaths.value = Global.deaths
 	notcoins.value = 100 - Global.coins
 	completion.value = get_completion()
@@ -42,6 +45,7 @@ func _ready() -> void:
 	
 	speedrun.toggled.connect(on_timer_pressed)
 	ignore_gump.toggled.connect(on_gump_pressed)
+	jump_cancel.toggled.connect(on_jump_cancel_pressed)
 	
 	%Resume.pressed.connect(on_resume_pressed)
 	%Save.pressed.connect(on_save_pressed)
@@ -90,3 +94,6 @@ func on_timer_pressed(pressed : bool):
 
 func on_gump_pressed(pressed : bool):
 	Global.ignore_gumption = pressed
+
+func on_jump_cancel_pressed(pressed : bool):
+	Global.cancelling_jump_enabled = pressed
