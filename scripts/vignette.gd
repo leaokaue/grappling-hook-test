@@ -3,13 +3,21 @@ extends ColorRect
 @export_range(0.0,1.0) var effect : float = 0.0
 
 func _ready() -> void:
-	Global.set_nightmare_effect.connect(set_effect) 
+	Global.begin_ending.connect(begin_ending)
+	Global.set_nightmare_effect.connect(set_effect)
+	%BlackScreen.modulate.a = 1.0 
 
 func set_effect(eff : float):
 	effect = eff
 
 func _physics_process(delta: float) -> void:
 	set_shaders(effect)
+
+func begin_ending():
+	var t := create_tween()
+	
+	t.tween_interval(1.5)
+	t.tween_property(self,"effect",0.6,1.0)
 
 func set_shaders(f : float):
 	var v := self

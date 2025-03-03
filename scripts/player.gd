@@ -10,8 +10,6 @@ signal emit_hover_cooldown(cooldown : float)
 
 signal emit_jetpack_cooldown(cooldown : float)
 
-var last_checkpoint : Vector2
-
 @export var debug_mode : bool = false
 
 @onready var animated_sprite_2d = %Sprite2D
@@ -121,24 +119,38 @@ func _ready() -> void:
 	Global.teleport_to_waypoint.connect(teleport_to_waypoint)
 	Global.player = self
 	
-	if debug_mode:
-		last_checkpoint = global_position
+	#if debug_mode:
+		#Global.last_checkpoint_x = global_position.x
+		#Global.last_checkpoint_y = global_position.y
 	
-	self.global_position.x = Global.last_pos_x
-	self.global_position.y = Global.last_pos_y
+	print(Global.last_pos_x,Global.last_pos_y,"Positions!")
+	
+	if not Global.ended:
+		self.global_position.x = Global.last_pos_x
+		self.global_position.y = Global.last_pos_y
+	else:
+		self.global_position.x = Global.last_checkpoint_x
+		self.global_position.y = Global.last_checkpoint_y
+	Global.reset_camera_smoothing.emit()
 	
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	await get_tree().physics_frame
-	
 	Global.set_fade_screen(true)
 	Global.generate_luck()
 	
 	Global.get_coin_vec2_array()
 	Global.remove_collected_coins_from_scene()
 
+	#print(self.global_position.x,"pos x before ",Global.last_pos_x)
+	#print(self.global_position.x,"pos x after ",Global.last_pos_x)
+	is_teleporting = false
+
 func _process(delta: float) -> void:
+	
+	if ending:
+		return
 	
 	if not Global.ignore_gumption:
 		if gump_timer > 0:
@@ -162,9 +174,14 @@ func _process(delta: float) -> void:
 			can_hook = true
 
 func _physics_process(delta):
+	
+	handle_ending(delta)
+	
+	if ending:
+		return
+	
 	var direction : float = Input.get_axis("left", "right")
 	var force = Vector2.ZERO
-	
 	
 	if is_freefalling:
 		if linear_velocity.x > 1:
@@ -181,7 +198,7 @@ func _physics_process(delta):
 	handle_non_control(delta)
 	
 	if (direction != 0) and (not is_grappling) and (not in_liquid):
-		print("removing feefal")
+		#print("removing feefal")
 		is_freefalling = false
 	
 	if not can_control:
@@ -612,7 +629,7 @@ func set_is_freefalling(freefalling : bool):
 	if previous_freefall_state == freefalling:
 		return
 	
-	print(get_stack())
+	#print(get_stack())
 	
 	is_freefalling = freefalling
 	
@@ -632,7 +649,7 @@ func set_is_freefalling(freefalling : bool):
 			last_trail.follow_player = false
 	
 	if force_freefall:
-		print("frefallforce")
+		#print("frefallforce")
 		previous_freefall_state = true
 		is_freefalling = true
 
@@ -965,24 +982,32 @@ func scream(scream_type : int = 0):
 			explode_animation()
 	
 
-var is_teleporting : bool = false
+var is_teleporting : bool = true
 
 @onready var previous_pos : Vector2 = self.global_position
 
 @onready var current_pos : Vector2 = self.global_position
 
 func handle_failsafes(_delta : float):
-	current_pos = self.global_position
+	if ending:
+		return
 	
+	current_pos = self.global_position
+	#print(is_teleporting)
 	if ((previous_pos - current_pos).length() > 250) and (not is_teleporting):
 		self.global_position = previous_pos
 		Global.reset_camera_smoothing.emit()
 		#self.linear_velocity *= 0
-		
+		#print(is_teleporting)
+		print("failsafe activating")
 	
 	previous_pos = self.global_position
 
 func return_to_checkpoint(scream_type : int = 0,duration_multiplier : float = 1.0):
+	
+	if ending:
+		return
+	
 	can_control = false
 	is_teleporting = true
 	Global.clear_map.emit()
@@ -999,7 +1024,7 @@ func return_to_checkpoint(scream_type : int = 0,duration_multiplier : float = 1.
 	await Global.fade_animation_finished
 	await  get_tree().create_timer(1.4 * duration_multiplier,false).timeout
 	linear_velocity *= 0
-	self.global_position = last_checkpoint
+	set_pos_to_checkpoint()
 	self.rotation = 0
 	drown_buildup = 0.0
 	
@@ -1035,6 +1060,10 @@ func unexplode_animation():
 		self.set_deferred("freeze",false)
 
 func teleport_to_waypoint(waypoint : int):
+	
+	if ending:
+		return
+	
 	var waypoint_pos : Vector2 = Global.waypoint_position[Waypoint.WAYPOINTS.keys()[waypoint]]
 	
 	Global.clear_map.emit()
@@ -1069,6 +1098,9 @@ func teleport_to_waypoint(waypoint : int):
 	is_teleporting = false
 	can_control = true
 
+func set_pos_to_checkpoint():
+	self.global_position = Vector2(Global.last_checkpoint_x,Global.last_checkpoint_y)
+
 func handle_coin_compass():
 	if (Global.has_coin_compass) and (Global.coin_positions.size() > 0):
 		
@@ -1099,3 +1131,54 @@ func handle_coin_compass():
 		
 	else:
 		%CoinCompass.hide()
+
+var teleport_time : float = 1.9
+
+var ending : bool = false
+
+@export var teleport_bottom_right : Node2D
+@export var teleport_top_left : Node2D
+
+func start_ending():
+	ending = true
+	
+	%end.play()
+	$CollisionShape2D.disabled = true
+	self.gravity_scale = 0.0
+	self.linear_velocity = Vector2()
+	
+	Global.player_dead.emit()
+	
+	for n in get_children():
+		if n is Camera2D:
+			n.position_smoothing_enabled = false
+
+func handle_ending(delta : float):
+	
+	if Global.coins >= Global.max_coins:
+		if not Global.ended:
+			Global.ended = true
+			start_ending()
+			destroy_grapple()
+			Global.begin_ending.emit()
+	
+	if ending:
+		if teleport_time > 0:
+			teleport_time -= delta
+		else:
+			teleport_time = 0.2
+			%teleport.pitch_scale = randf_range(0.9,1.1)
+			%teleport.play()
+			teleport_randomly()
+
+func teleport_randomly():
+	
+	var br := teleport_bottom_right.global_position
+	var tl := teleport_top_left.global_position
+	
+	var pos := Vector2(
+		randf_range(tl.x,br.x),
+		randf_range(br.y,tl.y)
+	)
+	self.linear_velocity = Vector2()
+	self.global_position = pos

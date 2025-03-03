@@ -53,6 +53,10 @@ func _physics_process(delta: float) -> void:
 	if not clockwise:
 		c = -1
 	
+	if movement_locker > 0:
+		movement_locker -= delta
+		return
+	
 	if is_spinner:
 		if is_instance_valid(notifier):
 			if not notifier.is_on_screen():

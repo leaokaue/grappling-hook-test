@@ -39,6 +39,7 @@ func collect():
 		sprite.hide()
 		Global.update_coins.emit()
 		#$Line2D.hide()
+		show_coin_name_text()
 		$collect.emitting = true
 		$bling.play()
 		Global.remove_coin_from_array(self.global_position)
@@ -47,6 +48,10 @@ func collect():
 		%exist2.stop()
 		await get_tree().create_timer(5.0,false).timeout
 		self.queue_free()
+
+func show_coin_name_text():
+	var n := "Obtained Nightmare Coin.."
+	Global.create_screen_text.emit(n)
 
 func remove_self_from_coin_list():
 	if Global.coin_positions.has(self.global_position):

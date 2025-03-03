@@ -55,6 +55,8 @@ enum ITEMS {
 
 func _ready() -> void:
 	match_item()
+	if is_item_owned():
+		self.queue_free()
 	area.body_entered.connect(on_body_entered)
 	tween()
 
@@ -153,7 +155,91 @@ func match_item():
 			i_desc = "It graces you with its presence. Press RMB to swim underwater. While swmming, press LMB to perform a Dolphin Dash"
 	
 	#sprite.texture = t
+
+func is_item_owned() -> bool:
+	var i := ITEMS
+	var t := sprite
+	var g := Global
+	#print(current_item)
 	
+	match current_item:
+		i.HookThrowBoost:
+			if Global.has_steroids_1:
+				return true
+			else:
+				return false
+		i.JumpBoost:
+			if Global.has_steroids_2:
+				return true
+			else:
+				return false
+		i.SpeedBoost:
+			if Global.has_steroids_3:
+				return true
+			else:
+				return false
+		i.CoinCompass:
+			if Global.has_coin_compass:
+				return true
+			else:
+				return false
+		i.CoinTracker:
+			if Global.has_coin_tracker:
+				return true
+			else:
+				return false
+		i.FastTravel:
+			if Global.has_guiding_light:
+				return true
+			else:
+				return false
+		i.DashBoots:
+			if Global.has_dash_boots:
+				return true
+			else:
+				return false
+		i.JetPack:
+			if Global.has_jetpack:
+				return true
+			else:
+				return false
+		i.HookCooldownReducer:
+			if Global.has_cool_drink:
+				return true
+			else:
+				return false
+		i.GrappleRopeExtension:
+			if Global.has_rope_extension:
+				return true
+			else:
+				return false
+		i.RetractBoost:
+			if Global.has_rope_pulley:
+				return true
+			else:
+				return false
+		i.LatchJumpBoost:
+			if Global.has_boost_latch:
+				return true
+			else:
+				return false
+		i.HoverStone:
+			if Global.has_hover_stone:
+				return true
+			else:
+				return false
+		i.PoisonResist:
+			if Global.has_poison_resist:
+				return true
+			else:
+				return false
+		i.WaterDash:
+			if Global.has_tambaqui:
+				return true
+			else:
+				return false
+	
+	return true
 
 func tween():
 	var t := create_tween()

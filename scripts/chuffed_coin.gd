@@ -23,6 +23,7 @@ func collect():
 	if not is_collected:
 		is_collected = true
 		Global.coins += 1
+		show_coin_name_text()
 		sprite.hide()
 		Global.update_coins.emit()
 		#$Line2D.hide()
@@ -37,6 +38,10 @@ func remove_self_from_coin_list():
 	if Global.coin_positions.has(self.global_position):
 		var i := Global.coin_positions.find(self.global_position)
 		Global.coin_positions.remove_at(i)
+
+func show_coin_name_text():
+	var n := "Obtained Chuffed Coin!"
+	Global.create_screen_text.emit(n)
 
 func tween():
 	var t := create_tween()

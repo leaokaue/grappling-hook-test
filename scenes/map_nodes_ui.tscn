@@ -161,7 +161,7 @@ offset_left = -44.0
 offset_top = -42.0
 offset_right = 50.0
 offset_bottom = 50.0
-color = Color(0.379095, 0.193826, 0, 1)
+color = Color(0.156863, 0.168627, 0.254902, 1)
 
 [node name="Travel" type="Button" parent="Control/WeepingBogs"]
 layout_mode = 0
@@ -233,7 +233,7 @@ offset_left = -44.0
 offset_top = -42.0
 offset_right = 50.0
 offset_bottom = 50.0
-color = Color(0.379095, 0.193826, 0, 1)
+color = Color(0.357929, 0.907797, 1, 1)
 
 [node name="Travel" type="Button" parent="Control/WindmillianRecluse"]
 layout_mode = 0
@@ -343,7 +343,7 @@ offset_left = -44.0
 offset_top = -42.0
 offset_right = 50.0
 offset_bottom = 50.0
-color = Color(0.379095, 0.193826, 0, 1)
+color = Color(0.345098, 0.431373, 0.482353, 1)
 
 [node name="Travel" type="Button" parent="Control/SpikeZone"]
 layout_mode = 0
@@ -416,7 +416,7 @@ offset_left = -44.0
 offset_top = -42.0
 offset_right = 50.0
 offset_bottom = 50.0
-color = Color(0.379095, 0.193826, 0, 1)
+color = Color(0.180392, 0, 0.364706, 1)
 
 [node name="Travel" type="Button" parent="Control/BlackHoleDistrict"]
 layout_mode = 0

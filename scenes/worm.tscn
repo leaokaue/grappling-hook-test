@@ -1,4 +1,4 @@
-[gd_scene load_steps=50 format=3 uid="uid://bacl7irhgnrr7"]
+[gd_scene load_steps=52 format=3 uid="uid://bacl7irhgnrr7"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_d3wq5"]
 [ext_resource type="Texture2D" uid="uid://bdw2ln7jh2dda" path="res://sprites/Wormchelt.png" id="2_4q2ix"]
@@ -16,6 +16,8 @@
 [ext_resource type="AudioStream" uid="uid://c6lpykemf2ubq" path="res://sounds/sizzle.mp3" id="7_y18mt"]
 [ext_resource type="Texture2D" uid="uid://dvpi7nso38kqm" path="res://sprites/grapple.png" id="10_05e7a"]
 [ext_resource type="AudioStream" uid="uid://bag3rolas4rt8" path="res://sounds/spike_death_horrible1.mp3" id="12_v1x21"]
+[ext_resource type="AudioStream" uid="uid://bsqt7r1q128u0" path="res://sounds/Roar_0.wav" id="17_ta3fn"]
+[ext_resource type="AudioStream" uid="uid://d2i68rnqh3jrr" path="res://sounds/deep_metal_hit_1.mp3" id="18_7dfor"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_asclu"]
 friction = 0.1
@@ -479,6 +481,17 @@ unique_name_in_owner = true
 stream = ExtResource("7_y18mt")
 volume_db = 5.0
 pitch_scale = 1.1
+
+[node name="end" type="AudioStreamPlayer2D" parent="Sounds"]
+unique_name_in_owner = true
+stream = ExtResource("17_ta3fn")
+volume_db = 24.0
+pitch_scale = 0.1
+
+[node name="teleport" type="AudioStreamPlayer2D" parent="Sounds"]
+unique_name_in_owner = true
+stream = ExtResource("18_7dfor")
+volume_db = 15.0
 
 [node name="Particles" type="Node2D" parent="."]
 

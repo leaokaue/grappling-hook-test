@@ -6,7 +6,7 @@ extends RigidBody2D
 @export var tex_broken : Texture
 @export var tex_coin : Texture
 
-var break_stage : int = 0
+var break_stage : int = 1
 
 var broken : bool = false
 
@@ -45,6 +45,7 @@ func collect():
 		is_collected = true
 		Global.coins += 1
 		sprite.hide()
+		show_coin_name_text()
 		Global.update_coins.emit()
 		#$Line2D.hide()
 		$collect.emitting = true
@@ -53,6 +54,10 @@ func collect():
 		
 		await get_tree().create_timer(3.0,false).timeout
 		self.queue_free()
+
+func show_coin_name_text():
+	var n := "Obtained Entombed Coin!"
+	Global.create_screen_text.emit(n)
 
 func remove_self_from_coin_list():
 	if Global.coin_positions.has(self.global_position):

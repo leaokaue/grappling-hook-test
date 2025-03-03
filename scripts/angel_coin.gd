@@ -9,7 +9,7 @@ extends Node2D
 var is_collected : bool = false
 
 func _ready() -> void:
-	#self.add_to_group("Coins")
+	self.add_to_group("Coins")
 	Global.request_coins.connect(send_coin_type)
 	area.body_entered.connect(on_body_entered)
 	tween()
@@ -37,6 +37,10 @@ func collect():
 		
 		await get_tree().create_timer(3.0,false).timeout
 		self.queue_free()
+
+func show_coin_name_text():
+	var n := "Obtained Angel Coin!"
+	Global.create_screen_text.emit(n)
 
 func tween():
 	var t := create_tween()

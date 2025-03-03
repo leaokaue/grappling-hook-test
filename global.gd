@@ -12,6 +12,10 @@ signal update_coins
 
 signal fade_animation_finished
 
+signal create_screen_text(text : String)
+
+signal show_map_name_intro(mname : String, desc : String)
+
 signal change_target_zoom(zoom : float)
 
 signal reset_zoom
@@ -25,6 +29,8 @@ signal teleport_to_waypoint(waypoint : int)
 signal player_dead
 
 signal clear_map
+
+signal begin_ending 
 
 var player : Worm
 
@@ -68,9 +74,9 @@ var coins : int = 0
 
 var collected_coin_position : PackedVector2Array
 
-var last_pos_x : float = 0
+var last_pos_x : float = -780
 
-var last_pos_y : float = 0
+var last_pos_y : float = 448
 
 var timer_visible : bool = false
 
@@ -95,8 +101,8 @@ var gumption : int = 0
 var ignore_gumption : bool = false
 
 var seen_map : Dictionary = {
-	"Spawn" : true,
-	"Bog" : true,
+	"Spawn" : false,
+	"Bog" : false,
 	"Windmill" : false,
 	"Spike" : false,
 	"Space" : false,
@@ -106,7 +112,7 @@ var seen_map : Dictionary = {
 }
 
 var waypoints_unlocked : Dictionary = {
-	"Spawn" : true,
+	"Spawn" : false,
 	"Bog" : false,
 	"Windmill" : false,
 	"Spike" : false,
@@ -177,6 +183,12 @@ var initializing_game : bool = true
 var grounded_jumps : int = 0
 
 var cancelling_jump_enabled : bool = true
+
+var last_checkpoint_x : float = 0.0
+
+var last_checkpoint_y : float = 0.0
+
+var ended : bool = false
 #endregion
 
 func _ready() -> void:
@@ -241,7 +253,47 @@ func unlock_item(item : Item.ITEMS, unlock : bool):
 			has_poison_resist = unlock
 
 func set_area_seen(area : int):
-	seen_map[Waypoint.WAYPOINTS.keys()[area]] = true
+	if not seen_map[Waypoint.WAYPOINTS.keys()[area]]:
+		seen_map[Waypoint.WAYPOINTS.keys()[area]] = true
+		
+		var shows : bool = false
+		var mname : String
+		var mdesc : String
+		
+		match area:
+			0: #Spawn Island
+				shows = true
+				mname = "Spawn Island"
+				mdesc = "Welcome to Aleksander Wormchelt's Quest for The Peculiar Coins"
+			1: #Weeping Bogs
+				shows = true
+				mname = "Weeping Bogs"
+				mdesc = "This... is Fungus."
+			2: #Windmillian Recluse
+				shows = true
+				mname = "Windmillian Recluse"
+				mdesc = "Enjoy the windy breeze."
+			3: #Really Dangerous Spike Zone
+				shows = true
+				var c := (max_coins - coins)
+				mname = "Dangerous Spike Zone"
+				mdesc = "This Really Dangerous Spike Zone is dangerous, watch out. Don't ragequit now. %02d coins left."
+				mdesc %= c
+			4: #Black Hole District
+				shows = true
+				mname = "Black Hole District"
+				mdesc = "Wormchelt’s Big Day Out With The Big Black Holes: Herald of Armageddon"
+		
+		if shows:
+			show_map_name_intro.emit(mname,mdesc)
+		
+		#Spawn,
+		#Bog,
+		#Windmill,
+		#Spike,
+		#Space,
+		#Empty,
+		#Spike2
 
 func set_background(bg : BackgroundManager.BACKGROUNDS):
 	background.set_current_background(bg)
@@ -261,7 +313,8 @@ func remove_coin_from_array(pos : Vector2):
 	if coin_positions.has(pos):
 		var i := Global.coin_positions.find(pos)
 		coin_positions.remove_at(i)
-		collected_coin_position.append(pos)
+		if not collected_coin_position.has(pos):
+			collected_coin_position.append(pos)
 
 func remove_collected_coins_from_scene():
 	if not collected_coin_position.size() > 0:
@@ -275,8 +328,9 @@ func remove_collected_coins_from_scene():
 func get_coin_vec2_array():
 	for coin in get_tree().get_nodes_in_group("Coins"):
 		if coin is Node2D:
-			print(coin)
-			coin_positions.append(coin.global_position)
+			#print(coin)
+			if not coin_positions.has(coin.global_position):
+				coin_positions.append(coin.global_position)
 
 func save_all():
 	save_self_vars()
@@ -294,9 +348,9 @@ func save_self_vars():
 	var saving : bool = false
 	
 	for property in self.get_property_list():
-		
-		print("saving")
-		print(property.hint," ", property.type, " ", property.name, " ",property.usage)
+		#
+		#print("saving")
+		#print(property.hint," ", property.type, " ", property.name, " ",property.usage)
 		
 		if property.usage == PROPERTY_USAGE_SCRIPT_VARIABLE:
 			var var_name : String = property.name
@@ -318,19 +372,21 @@ func load_self_vars():
 		if property.usage == PROPERTY_USAGE_SCRIPT_VARIABLE:
 			var var_name : String = property.name
 			var loaded_var = file.get_var()
-			print(property.hint," ", property.type, " ", property.name)
-			print("loaded var is ",loaded_var)
+			#print(property.hint," ", property.type, " ", property.name)
+			#print("loaded var is ",loaded_var)
 			
 			if loaded_var is Array:
 				var v = get(var_name)
 				if v is Array:
+					v.clear()
 					v.append_array(loaded_var)
-				print(loaded_var.size(), " size")
+				#print(loaded_var.size(), " size")
 			elif loaded_var is PackedVector2Array:
 				var v = get(var_name)
 				if v is PackedVector2Array:
+					v.clear()
 					v.append_array(loaded_var)
-				print(loaded_var.size(), " size")
+				#print(loaded_var.size(), " size")
 			else:
 				set(var_name,loaded_var)
 	file.close()
@@ -338,11 +394,11 @@ func load_self_vars():
 func save_base_vars():
 	var file = FileAccess.open(BASE_SAVE_PATH,FileAccess.WRITE)
 	for property in self.get_property_list():
-		print(property.hint," ", property.type, " ", property.name, " ",property.usage)
+		#print(property.hint," ", property.type, " ", property.name, " ",property.usage)
 		if property.usage == PROPERTY_USAGE_SCRIPT_VARIABLE:
 			var var_name : String = property.name
 			var sel_var = get(var_name)
-			print(sel_var)
+			#print(sel_var)
 			file.store_var(sel_var)
 	file.close()
 
@@ -352,18 +408,20 @@ func load_base_vars():
 		if property.usage == PROPERTY_USAGE_SCRIPT_VARIABLE:
 			var var_name : String = property.name
 			var loaded_var = file.get_var()
-			print(property.hint," ", property.type, " ", property.name)
-			print("loaded var is ",loaded_var)
+			#print(property.hint," ", property.type, " ", property.name)
+			#print("loaded var is ",loaded_var)
 			if loaded_var is Array:
 				var v = get(var_name)
 				if v is Array:
+					v.clear()
 					v.append_array(loaded_var)
-				print(loaded_var.size(), " size")
+				#print(loaded_var.size(), " size")
 			elif loaded_var is PackedVector2Array:
 				var v = get(var_name)
 				if v is PackedVector2Array:
+					v.clear()
 					v.append_array(loaded_var)
-				print(loaded_var.size(), " size")
+				#print(loaded_var.size(), " size")
 			else:
 				set(var_name,loaded_var)
 	file.close()

@@ -23,8 +23,9 @@ func on_body_exited(body : Node2D):
 	if body is Worm:
 		Global.can_switch_equipments = false
 
-func set_checkpoint(player : Worm):
-	player.last_checkpoint = self.global_position
+func set_checkpoint(_player : Worm):
+	Global.last_checkpoint_x = self.global_position.x
+	Global.last_checkpoint_y = self.global_position.y
 
 func set_active(act : bool):
 	active = act

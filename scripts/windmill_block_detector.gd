@@ -17,7 +17,7 @@ func try_reparent_collision(wspinner : WindmillSpinner):
 		collision_shape.reparent(spinner)
 		spinner.areas.append(self)
 		spinner.can_step = true
-		spinner.movement_locker = 0.1
+		spinner.movement_locker = 1.0
 		spinner.tried_step.emit()
 		#await get_tree().physics_frame
 		#await get_tree().physics_frame
@@ -31,10 +31,12 @@ func check_area():
 	
 	has_checked = true
 	
-	spinner.movement_locker = 0.1
+	spinner.movement_locker = 1.0
 	
 	await get_tree().physics_frame
 	await get_tree().physics_frame
+	#await get_tree().physics_frame
+	#await get_tree().physics_frame
 	
 	for a in get_overlapping_areas():
 		if a is WindmillDetector:

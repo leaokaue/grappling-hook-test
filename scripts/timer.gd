@@ -24,7 +24,7 @@ func get_time_format(time : float) -> String:
 	var t : int = (snappedf(time,0.001) * 1000)
 	
 	var hours : int = (t / 60 / 60 / 1000)
-	var minutes : int = (t / 60 / 1000)
+	var minutes : int = (t / 60 / 1000) % 60
 	var seconds : int = (t / 1000) % 60
 	var miliseconds : int = (t) % 1000
 

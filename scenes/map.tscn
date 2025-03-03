@@ -565,7 +565,7 @@ text = "Drag and drop equipment into the center node"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Menu" type="Control" parent="Control/TabContainer" node_paths=PackedStringArray("map", "speedrun", "completion", "deaths", "notcoins", "gjumps", "hjumps", "thrown", "accuracy", "luck", "gump", "ignore_gump", "jump_cancel")]
+[node name="Menu" type="Control" parent="Control/TabContainer" node_paths=PackedStringArray("map", "speedrun", "completion", "deaths", "notcoins", "gjumps", "hjumps", "thrown", "accuracy", "luck", "gump", "ignore_gump", "jump_cancel", "time")]
 layout_mode = 2
 script = ExtResource("11_p61y7")
 map = NodePath("../../..")
@@ -581,6 +581,7 @@ luck = NodePath("MarginContainer/HBoxContainer/Panel/MarginContainer/VBoxContain
 gump = NodePath("MarginContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/hbox7/gumptionvalue")
 ignore_gump = NodePath("MarginContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/gump")
 jump_cancel = NodePath("MarginContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/jumpcancel")
+time = NodePath("MarginContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/hbox10/timelabel")
 metadata/_tab_index = 2
 
 [node name="MapSprite" type="Control" parent="Control/TabContainer/Menu"]
@@ -617,9 +618,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 200
-theme_override_constants/margin_top = 90
+theme_override_constants/margin_top = 70
 theme_override_constants/margin_right = 200
-theme_override_constants/margin_bottom = 90
+theme_override_constants/margin_bottom = 60
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Control/TabContainer/Menu/MarginContainer"]
 layout_mode = 2
@@ -629,33 +630,38 @@ layout_mode = 2
 
 [node name="Resume" type="Button" parent="Control/TabContainer/Menu/MarginContainer/HBoxContainer/Buttons"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 69.345)
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_vertical = 6
 text = "Resume"
 
 [node name="Save" type="Button" parent="Control/TabContainer/Menu/MarginContainer/HBoxContainer/Buttons"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 69.345)
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_vertical = 6
 text = "Save Game"
 
 [node name="Checkpoint" type="Button" parent="Control/TabContainer/Menu/MarginContainer/HBoxContainer/Buttons"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 69.345)
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_vertical = 6
 text = "Return to Checkpoint"
 
 [node name="Menu" type="Button" parent="Control/TabContainer/Menu/MarginContainer/HBoxContainer/Buttons"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 69.345)
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_vertical = 6
 text = "Return to Title"
 
 [node name="Quit" type="Button" parent="Control/TabContainer/Menu/MarginContainer/HBoxContainer/Buttons"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 69.345)
 layout_mode = 2
-size_flags_vertical = 3
-text = "Leave Game"
+size_flags_vertical = 6
+text = "Exit to Desktop"
 
 [node name="Panel" type="Panel" parent="Control/TabContainer/Menu/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(390, 0)
@@ -693,6 +699,32 @@ text = "Jump Cancelling"
 layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_nn5lp")
 text = "Ignore Gumption"
+
+[node name="hbox10" type="HBoxContainer" parent="Control/TabContainer/Menu/MarginContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="time" type="Label" parent="Control/TabContainer/Menu/MarginContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/hbox10"]
+layout_mode = 2
+size_flags_vertical = 1
+text = "Playtime:"
+vertical_alignment = 1
+
+[node name="timelabel" type="Label" parent="Control/TabContainer/Menu/MarginContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/hbox10"]
+custom_minimum_size = Vector2(101.045, 27.765)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.550133, 0.535904, 0.507442, 1)
+text = "00h30m20s"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Panel" type="Panel" parent="Control/TabContainer/Menu/MarginContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/hbox10/timelabel"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="hbox8" type="HBoxContainer" parent="Control/TabContainer/Menu/MarginContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2

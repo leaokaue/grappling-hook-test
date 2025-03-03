@@ -1,5 +1,7 @@
-[gd_scene load_steps=30 format=3 uid="uid://bnvneh2xfqhpp"]
+[gd_scene load_steps=32 format=3 uid="uid://bnvneh2xfqhpp"]
 
+[ext_resource type="Script" path="res://scripts/screen_text_notifier.gd" id="1_28r26"]
+[ext_resource type="Script" path="res://scripts/map_intro.gd" id="1_jwpll"]
 [ext_resource type="Script" path="res://scripts/rain.gd" id="1_kj4sp"]
 [ext_resource type="Script" path="res://scripts/coin_counter.gd" id="1_le5ak"]
 [ext_resource type="Texture2D" uid="uid://b2xs1j1q1scfq" path="res://sprites/nolan.jpg" id="2_4iwo5"]
@@ -149,15 +151,102 @@ gradient = SubResource("Gradient_dxa4k")
 [node name="UI" type="CanvasLayer"]
 layer = 15
 
-[node name="Label" type="Label" parent="."]
-unique_name_in_owner = true
-offset_left = 982.0
-offset_top = 1.0
-offset_right = 1151.0
-offset_bottom = 70.0
-theme_override_font_sizes/font_size = 20
-text = "FPS: 40"
-horizontal_alignment = 2
+[node name="Control" type="Control" parent="." node_paths=PackedStringArray("color", "win", "age", "completion", "time", "input")]
+visible = false
+z_index = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("19_vkxe7")
+color = NodePath("ColorRect")
+win = NodePath("win")
+age = NodePath("age")
+completion = NodePath("age3")
+time = NodePath("age2")
+input = NodePath("p")
+
+[node name="ColorRect" type="ColorRect" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="win" type="Label" parent="Control"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -158.5
+offset_top = -218.0
+offset_right = 158.5
+offset_bottom = -106.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 80
+text = "you win"
+horizontal_alignment = 1
+
+[node name="p" type="Label" parent="Control"]
+layout_mode = 0
+offset_left = 342.0
+offset_top = 528.0
+offset_right = 1451.0
+offset_bottom = 638.0
+scale = Vector2(0.390183, 0.390183)
+theme_override_font_sizes/font_size = 80
+text = "Awaiting final user input..."
+horizontal_alignment = 1
+
+[node name="age" type="Label" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -5.905
+offset_bottom = -5.90503
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 26
+text = "You have ushered in the Age of Aquarius.
+The land shall be bathed in fire and the seas in benthic acid.
+The vast of night will swallow our bodies and fertilize the new world."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="age2" type="Label" parent="Control"]
+layout_mode = 0
+offset_left = 211.0
+offset_top = 303.0
+offset_right = 2094.0
+offset_bottom = 978.0
+scale = Vector2(0.363254, 0.363254)
+theme_override_font_sizes/font_size = 80
+text = "Final Time :"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="age3" type="Label" parent="Control"]
+layout_mode = 0
+offset_left = 211.0
+offset_top = 360.0
+offset_right = 2094.0
+offset_bottom = 1035.0
+scale = Vector2(0.363254, 0.363254)
+theme_override_font_sizes/font_size = 80
+text = "Completion :"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
 
 [node name="Rain" type="ColorRect" parent="."]
 modulate = Color(1, 1, 1, 0)
@@ -197,6 +286,8 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="BlackScreen" type="ColorRect" parent="." groups=["BlackScreen"]]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
 z_index = 100
 anchors_preset = 15
 anchor_right = 1.0
@@ -204,6 +295,135 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
+
+[node name="MapIntro" type="Control" parent="." node_paths=PackedStringArray("title", "description")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_jwpll")
+title = NodePath("Panel/VBoxContainer/MarginContainer2/Label")
+description = NodePath("Panel/VBoxContainer/MarginContainer/Label2")
+
+[node name="Panel" type="Panel" parent="MapIntro"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -246.0
+offset_top = -64.0
+offset_right = 246.0
+offset_bottom = 64.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MapIntro/Panel"]
+layout_mode = 2
+offset_right = 492.0
+offset_bottom = 128.0
+
+[node name="MarginContainer2" type="MarginContainer" parent="MapIntro/Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = 4
+
+[node name="Label" type="Label" parent="MapIntro/Panel/VBoxContainer/MarginContainer2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 45
+text = "Spawn Island"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="MapIntro/Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = -100
+theme_override_constants/margin_top = -10
+theme_override_constants/margin_right = -100
+
+[node name="Label2" type="Label" parent="MapIntro/Panel/VBoxContainer/MarginContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 13
+text = "Welcome to Aleksander Wormchelt's Quest for The Peculiar Coins"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MapIntro"]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 400
+theme_override_constants/margin_top = 260
+theme_override_constants/margin_right = 260
+theme_override_constants/margin_bottom = 260
+
+[node name="SpecialText" type="Control" parent="." node_paths=PackedStringArray("sample_label", "vbox")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_28r26")
+sample_label = NodePath("VBoxContainer/SampleLabel")
+vbox = NodePath("VBoxContainer")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SpecialText"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 40.0
+grow_horizontal = 2
+
+[node name="SampleLabel" type="Label" parent="SpecialText/VBoxContainer"]
+visible = false
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_font_sizes/font_size = 23
+text = "Obtained Chuffed Coin!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="SpecialText/VBoxContainer/SampleLabel"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = -5
+theme_override_constants/margin_top = -5
+theme_override_constants/margin_right = -5
+theme_override_constants/margin_bottom = -5
+
+[node name="Panel" type="Panel" parent="SpecialText/VBoxContainer/SampleLabel/MarginContainer"]
+show_behind_parent = true
+layout_mode = 2
+
+[node name="Label" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = 982.0
+offset_top = 1.0
+offset_right = 1151.0
+offset_bottom = 70.0
+theme_override_font_sizes/font_size = 20
+text = "FPS: 40"
+horizontal_alignment = 2
 
 [node name="Node2DUI" type="Node2D" parent="."]
 scale = Vector2(0.681819, 0.681819)
@@ -540,68 +760,3 @@ position = Vector2(-81.3741, 119.044)
 rotation = 0.785397
 scale = Vector2(0.581408, 0.581408)
 texture = ExtResource("4_m8224")
-
-[node name="Control" type="Control" parent="."]
-visible = false
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("19_vkxe7")
-
-[node name="ColorRect" type="ColorRect" parent="Control"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0, 0, 0, 1)
-
-[node name="win" type="Label" parent="Control"]
-layout_mode = 0
-offset_left = 412.0
-offset_top = 92.0
-offset_right = 714.0
-offset_bottom = 202.0
-theme_override_font_sizes/font_size = 80
-text = "you win"
-
-[node name="p" type="Label" parent="Control"]
-layout_mode = 0
-offset_left = 342.0
-offset_top = 528.0
-offset_right = 1451.0
-offset_bottom = 638.0
-scale = Vector2(0.390183, 0.390183)
-theme_override_font_sizes/font_size = 80
-text = "press anything to obliterate"
-
-[node name="age" type="Label" parent="Control"]
-layout_mode = 0
-offset_left = 211.0
-offset_top = 198.0
-offset_right = 2094.0
-offset_bottom = 873.0
-scale = Vector2(0.363254, 0.363254)
-theme_override_font_sizes/font_size = 80
-text = "you have ushered in the Age of Aquarius. the land shall be bathed in fire and the seas in benthic acid. The vast of night will swallow our bodies and fertilize the new world."
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 3
-
-[node name="age2" type="Label" parent="Control"]
-layout_mode = 0
-offset_left = 211.0
-offset_top = 338.0
-offset_right = 2094.0
-offset_bottom = 1013.0
-scale = Vector2(0.363254, 0.363254)
-theme_override_font_sizes/font_size = 80
-text = "time
-"
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 3
