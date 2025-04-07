@@ -20,7 +20,8 @@ func _ready() -> void:
 	tween()
 
 func send_coin_type():
-	Global.send_coins.emit(3)
+	if not is_collected:
+		Global.send_coins.emit(3)
 
 func _physics_process(delta: float) -> void:
 	if get_length_to_player(delta) > 1000:

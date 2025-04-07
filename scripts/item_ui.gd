@@ -34,6 +34,8 @@ func update_bar_visibility():
 	
 	dash_bar.get_parent().hide()
 	tambaqui_bar.get_parent().hide()
+	jetpack_bar.get_parent().hide()
+	hover_bar.get_parent().hide()
 	self.show()
 	
 	match Global.current_equipment:

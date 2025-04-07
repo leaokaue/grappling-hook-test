@@ -19,7 +19,8 @@ func _ready() -> void:
 	tween()
 
 func send_coin_type():
-	Global.send_coins.emit(2)
+	if not is_collected:
+		Global.send_coins.emit(2)
 
 func _physics_process(delta: float) -> void:
 	sprite.rotation_degrees += 40 * delta

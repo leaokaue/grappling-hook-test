@@ -28,6 +28,8 @@ extends Control
 
 @export var time : Label
 
+@export var fullscreen : CheckBox
+
 func _ready() -> void:
 	speedrun.set_pressed_no_signal(Global.timer_visible)
 	jump_cancel.set_pressed_no_signal(Global.cancelling_jump_enabled)
@@ -45,10 +47,12 @@ func _ready() -> void:
 	gump.value = Global.gumption
 	time.text = get_time_format(Global.time_elapsed)
 	ignore_gump.set_pressed_no_signal(Global.ignore_gumption)
+	fullscreen.set_pressed_no_signal(is_game_fullscreen())
 	
 	speedrun.toggled.connect(on_timer_pressed)
 	ignore_gump.toggled.connect(on_gump_pressed)
 	jump_cancel.toggled.connect(on_jump_cancel_pressed)
+	fullscreen.toggled.connect(on_fullscreen_pressed)
 	
 	%Resume.pressed.connect(on_resume_pressed)
 	%Save.pressed.connect(on_save_pressed)
@@ -59,6 +63,12 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	pass
 
+func is_game_fullscreen() -> bool:
+	if DisplayServer.window_get_mode() != DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN:
+		return false
+	else:
+		return true
+
 func _exit_tree() -> void:
 	set_last_player_pos()
 
@@ -66,7 +76,21 @@ func on_resume_pressed():
 	if not map.exiting:
 		map.exit()
 
+var t : Tween
+
 func on_save_pressed():
+	
+	
+	if t:
+		t.kill()
+	t = create_tween()
+	
+	var l := %Saved
+	
+	t.tween_property(l,"modulate:a",1.0,0.1)
+	t.tween_interval(0.4)
+	t.tween_property(l,"modulate:a",0.0,0.1)
+	
 	Global.save_all()
 
 func on_menu_pressed():
@@ -88,6 +112,9 @@ func on_timer_pressed(pressed : bool):
 
 func on_gump_pressed(pressed : bool):
 	Global.ignore_gumption = pressed
+
+func on_fullscreen_pressed(pressed : bool):
+	Global.set_fullscreen(pressed)
 
 func on_jump_cancel_pressed(pressed : bool):
 	Global.cancelling_jump_enabled = pressed
@@ -120,7 +147,7 @@ func get_completion() -> float:
 	
 	var coins := (60.0) * (Global.coins / 100.0)
 	
-	var items := (40.0) * (Global.items_collected / 15.0)
+	var items := (40.0) * (Global.items_collected / 16.0)
 	
 	complete += coins + items
 	

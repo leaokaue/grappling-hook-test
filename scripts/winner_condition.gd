@@ -79,7 +79,7 @@ func get_completion() -> float:
 	
 	var coins := (60.0) * (Global.coins / 100.0)
 	
-	var items := (40.0) * (Global.items_collected / 15.0)
+	var items := (40.0) * (Global.items_collected / 16.0)
 	
 	complete += coins + items
 	

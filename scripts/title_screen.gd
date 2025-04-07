@@ -50,6 +50,14 @@ func play_game():
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
 
 func clear_save():
+	var t : Tween = create_tween()
+	
+	var l := %Cleared
+	
+	t.tween_property(l,"modulate:a",1.0,0.1)
+	t.tween_interval(0.8)
+	t.tween_property(l,"modulate:a",0.0,0.5)
+	
 	if FileAccess.file_exists("user://peculiarcoins_save.grapple"):
 		Global.save_all()
 

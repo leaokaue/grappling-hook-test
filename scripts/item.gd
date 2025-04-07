@@ -31,6 +31,7 @@ var property_name : StringName = ""
 @export var green_potion : Texture
 @export var motorized_pulley : Texture
 @export var titanium_glove : Texture
+@export var trash : Texture
 
 var i_desc : String
 var i_name : String
@@ -51,11 +52,16 @@ enum ITEMS {
 	PoisonResist,
 	RetractBoost,
 	LatchJumpBoost,
+	Trash
 }
 
 func _ready() -> void:
+	
+	#if Engine.is_editor_hint():
+		#return
+	
 	match_item()
-	if is_item_owned():
+	if is_item_owned(current_item):
 		self.queue_free()
 	area.body_entered.connect(on_body_entered)
 	tween()
@@ -88,153 +94,164 @@ func instantiate_ui():
 
 func match_item():
 	var i := ITEMS
-	var t := sprite
+	var s := %Item
+	var t := s
 	
 	#print(current_item)
 	
 	match current_item:
 		i.HookThrowBoost:
-			sprite.texture = roids1
+			s.texture = roids1
 			i_name = "Healthy Medicine"
 			i_desc = "The Power of Medicine increases the strength of your Grapple Throw!"
 		i.JumpBoost:
-			sprite.texture = roids2
+			s.texture = roids2
 			i_name = "Pretty Healthy Medicine"
 			i_desc = "The Power of Medicine increases the power of your Jump!!"
 		i.SpeedBoost:
-			sprite.texture = roids3
+			s.texture = roids3
 			i_name = "Incredibly Healthy Medicine!"
 			i_desc = "The Power of Medicine increases your Movement Speed!"
 		i.CoinCompass:
-			sprite.texture = compass
+			s.texture = compass
 			i_name = "Coin Compass"
 			i_desc = "The Coin Compass allows you to find all earthly coins!"
 		i.CoinTracker:
-			sprite.texture = tracker
+			s.texture = tracker
 			i_name = "Coin Tracker"
 			i_desc = "The Tracker allows you to see how many Coins are left on the map!"
 		i.FastTravel:
-			sprite.texture =  guiding_light
+			s.texture =  guiding_light
 			i_name = "Guiding Light"
 			i_desc = "The Light guides you, allowing you to travel with Waypoints at any time!"
 		i.DashBoots:
-			sprite.texture = dash_boots
+			s.texture = dash_boots
 			i_name = "Warp Boots"
-			i_desc = "They can't shoot an atom! Press Shift to warp forwards. Small chance of being teleported into the void."
+			i_desc = "They can't shoot an atom! Press Shift to warp forwards. Small chance of being teleported into the void. Must be equipped first."
 		i.JetPack:
-			sprite.texture = jet_pack
+			s.texture = jet_pack
 			i_name = "Jetpack"
-			i_desc = "Allows flight. Press Space again mid-air to activate."
+			i_desc = "Allows flight. Press Space again mid-air to activate. Must be equipped first."
 		i.HookCooldownReducer:
-			sprite.texture = cool_drink
+			s.texture = cool_drink
 			i_name = "Grape Juice"
 			i_desc = "It's been a fun climb. Take a rest and some Grape Juice. It will reduce your Grapple Hook cooldown."
 		i.GrappleRopeExtension:
-			sprite.texture = extra_rope
+			s.texture = extra_rope
 			i_name = "Extra Rope"
 			i_desc = "So much rope! Increases the length of your grapple hook!"
 		i.RetractBoost:
-			sprite.texture = motorized_pulley
+			s.texture = motorized_pulley
 			i_name = "Motorized Pulley"
 			i_desc = "The Pulley allows you to retract your grappling hook faster!"
 		i.LatchJumpBoost:
-			sprite.texture = titanium_glove
+			s.texture = titanium_glove
 			i_name = "Titanium Glove"
 			i_desc = "Fits perfectly for a worm! Increases your latch strength when you land your Grapple."
 		i.HoverStone:
-			sprite.texture = hover_stone
+			s.texture = hover_stone
 			i_name = "Hover Stone"
-			i_desc = "It whispers to you, allowing temporary hovering mid-air! Press Shift to hover."
+			i_desc = "It whispers to you, allowing temporary hovering mid-air! Press Shift to hover. Must be equipped first."
 		i.PoisonResist:
-			sprite.texture = green_potion
+			s.texture = green_potion
 			i_name = "Green Potion"
 			i_desc = "Why did you drink that? Allows you to resist acid...."
 		i.WaterDash:
-			sprite.texture = tambaqui
+			s.texture = tambaqui
 			i_name = "Tambaqui"
-			i_desc = "It graces you with its presence. Press RMB to swim underwater. While swmming, press LMB to perform a Dolphin Dash"
-	
+			i_desc = "It graces you with its presence.
+			 Press RMB to swim underwater.
+			 While swmming, press LMB to perform a Dolphin Dash
+			 Must be equipped first."
+		i.Trash:
+			s.texture = trash
+			i_name = "Trash Bag"
+			i_desc = "Wow! This is worthless! If only you could scrap this."
 	#sprite.texture = t
 
-func is_item_owned() -> bool:
+static func is_item_owned(item : Item.ITEMS) -> bool:
 	var i := ITEMS
-	var t := sprite
 	var g := Global
 	#print(current_item)
 	
-	match current_item:
+	match item:
 		i.HookThrowBoost:
-			if Global.has_steroids_1:
+			if Global.has_steroids_1 and not Global.steroids_1_scrapped:
 				return true
 			else:
 				return false
 		i.JumpBoost:
-			if Global.has_steroids_2:
+			if Global.has_steroids_2 and not Global.steroids_2_scrapped:
 				return true
 			else:
 				return false
 		i.SpeedBoost:
-			if Global.has_steroids_3:
+			if Global.has_steroids_3 and not Global.steroids_3_scrapped:
 				return true
 			else:
 				return false
 		i.CoinCompass:
-			if Global.has_coin_compass:
+			if Global.has_coin_compass and not Global.coin_compass_scrapped:
 				return true
 			else:
 				return false
 		i.CoinTracker:
-			if Global.has_coin_tracker:
+			if Global.has_coin_tracker and not Global.coin_tracker_scrapped:
 				return true
 			else:
 				return false
 		i.FastTravel:
-			if Global.has_guiding_light:
+			if Global.has_guiding_light and not Global.guiding_light_scrapped:
 				return true
 			else:
 				return false
 		i.DashBoots:
-			if Global.has_dash_boots:
+			if Global.has_dash_boots and not Global.dash_boots_scrapped:
 				return true
 			else:
 				return false
 		i.JetPack:
-			if Global.has_jetpack:
+			if Global.has_jetpack and not Global.jetpack_scrapped:
 				return true
 			else:
 				return false
 		i.HookCooldownReducer:
-			if Global.has_cool_drink:
+			if Global.has_cool_drink and not Global.cool_drink_scrapped:
 				return true
 			else:
 				return false
 		i.GrappleRopeExtension:
-			if Global.has_rope_extension:
+			if Global.has_rope_extension and not Global.rope_extension_scrapped:
 				return true
 			else:
 				return false
 		i.RetractBoost:
-			if Global.has_rope_pulley:
+			if Global.has_rope_pulley and not Global.rope_pulley_scrapped:
 				return true
 			else:
 				return false
 		i.LatchJumpBoost:
-			if Global.has_boost_latch:
+			if Global.has_boost_latch and not Global.boost_latch_scrapped:
 				return true
 			else:
 				return false
 		i.HoverStone:
-			if Global.has_hover_stone:
+			if Global.has_hover_stone and not Global.hover_stone_scrapped:
 				return true
 			else:
 				return false
 		i.PoisonResist:
-			if Global.has_poison_resist:
+			if Global.has_poison_resist and not Global.poison_resist_scrapped:
 				return true
 			else:
 				return false
 		i.WaterDash:
-			if Global.has_tambaqui:
+			if Global.has_tambaqui and not Global.tambaqui_scrapped:
+				return true
+			else:
+				return false
+		i.Trash:
+			if Global.has_trash_bag and not Global.trash_bag_scrapped:
 				return true
 			else:
 				return false

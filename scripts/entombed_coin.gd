@@ -6,7 +6,7 @@ extends RigidBody2D
 @export var tex_broken : Texture
 @export var tex_coin : Texture
 
-var break_stage : int = 1
+var break_stage : int = 0
 
 var broken : bool = false
 
@@ -23,7 +23,8 @@ func _ready() -> void:
 	Global.request_coins.connect(send_coin_type)
 
 func send_coin_type():
-	Global.send_coins.emit(1)
+	if not is_collected:
+		Global.send_coins.emit(1)
 
 
 func area_on_body_entered(body : Node2D):
@@ -73,7 +74,7 @@ func check_velocity(body : Worm):
 	if not body.is_freefalling:
 		return
 	
-	if body.linear_velocity.length() > 700:
+	if body.linear_velocity.length() > 650:
 		return true
 	else:
 		return false
@@ -116,7 +117,7 @@ func knockback_body(body : Worm):
 	#body.physics_material_override.absorbent = true
 	#print(dir)
 	#print(dir.angle())
-	body.apply_central_impulse(dir * 15700)
+	body.apply_central_impulse(dir * 12700)
 	await get_tree().create_timer(3.2,false).timeout
 	body.physics_material_override.bounce = 0.0
 	body.can_control = true

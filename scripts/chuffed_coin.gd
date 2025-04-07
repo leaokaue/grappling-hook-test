@@ -13,7 +13,8 @@ func _ready() -> void:
 	tween()
 
 func send_coin_type():
-	Global.send_coins.emit(0)
+	if not is_collected:
+		Global.send_coins.emit(0)
 
 func on_body_entered(body : Node2D):
 	if body is Worm:

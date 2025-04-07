@@ -27,6 +27,7 @@ func _ready() -> void:
 func _on_player_enter(body : Node2D):
 	if body is Worm:
 		Global.can_use_waypoints = true
+		Global.can_switch_equipments = true
 		$Obelisk/Label.show()
 		
 		if not is_unlocked():
@@ -39,6 +40,7 @@ func _on_player_enter(body : Node2D):
 func _on_player_exit(body : Node2D):
 	if body is Worm:
 		Global.can_use_waypoints = false
+		Global.can_switch_equipments = false
 		$Obelisk/Label.hide()
 		set_particles(false)
 

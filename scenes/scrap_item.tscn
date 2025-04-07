@@ -1,0 +1,77 @@
+[gd_scene load_steps=19 format=3 uid="uid://5p38i62bslmq"]
+
+[ext_resource type="Texture2D" uid="uid://d3rf28vioo657" path="res://sprites/items/dash_boots.png" id="1_05ots"]
+[ext_resource type="Texture2D" uid="uid://dvd0js1533ixy" path="res://sprites/uibg2.png" id="2_byq0v"]
+[ext_resource type="Script" path="res://scripts/scrap_item.gd" id="2_pwhii"]
+[ext_resource type="Texture2D" uid="uid://bkjmyd763rtes" path="res://sprites/items/roids1.png" id="3_4nl7d"]
+[ext_resource type="Texture2D" uid="uid://1as48kyf0dye" path="res://sprites/items/roids2.png" id="4_06hmj"]
+[ext_resource type="Texture2D" uid="uid://bj2i37p53w81n" path="res://sprites/items/roids3.png" id="5_qbvba"]
+[ext_resource type="Texture2D" uid="uid://b158x0wlun1ij" path="res://sprites/items/compass.png" id="6_y68gt"]
+[ext_resource type="Texture2D" uid="uid://dy7ejsrn8hqud" path="res://sprites/items/tracker.png" id="7_iwt4v"]
+[ext_resource type="Texture2D" uid="uid://os1xgfw72sd1" path="res://sprites/items/mysticalstone.png" id="8_toh2b"]
+[ext_resource type="Texture2D" uid="uid://bmn5npkkcr4nw" path="res://sprites/items/guiding_light.png" id="9_brav3"]
+[ext_resource type="Texture2D" uid="uid://c73ucvu5ijqjw" path="res://sprites/items/jetpack.png" id="10_76olg"]
+[ext_resource type="Texture2D" uid="uid://c33b345lvodx2" path="res://sprites/items/suco_de_uva.png" id="11_lqtq6"]
+[ext_resource type="Texture2D" uid="uid://tqrrxtnsyvkn" path="res://sprites/items/tambaqui.png" id="12_r882o"]
+[ext_resource type="Texture2D" uid="uid://dekd78yg2tjc3" path="res://sprites/items/extra_rope.png" id="13_tqaog"]
+[ext_resource type="Texture2D" uid="uid://br5uosaexkx5t" path="res://sprites/items/potion.png" id="14_f18tk"]
+[ext_resource type="Texture2D" uid="uid://bmjqpp7tvmini" path="res://sprites/items/motorized_pulley.png" id="15_nujpg"]
+[ext_resource type="Texture2D" uid="uid://dfix4u1febds1" path="res://sprites/items/titanium_glove.png" id="16_yrg4c"]
+[ext_resource type="Texture2D" uid="uid://kjtwj4om081x" path="res://sprites/items/trashbag.png" id="17_pbhxt"]
+
+[node name="ScrapItem" type="TextureButton"]
+visible = false
+custom_minimum_size = Vector2(110, 110)
+size_flags_horizontal = 4
+texture_normal = ExtResource("3_4nl7d")
+ignore_texture_size = true
+stretch_mode = 5
+script = ExtResource("2_pwhii")
+item_name = "Healthy Medicine"
+roids1 = ExtResource("3_4nl7d")
+roids2 = ExtResource("4_06hmj")
+roids3 = ExtResource("5_qbvba")
+compass = ExtResource("6_y68gt")
+tracker = ExtResource("7_iwt4v")
+hover_stone = ExtResource("8_toh2b")
+guiding_light = ExtResource("9_brav3")
+dash_boots = ExtResource("1_05ots")
+jet_pack = ExtResource("10_76olg")
+cool_drink = ExtResource("11_lqtq6")
+tambaqui = ExtResource("12_r882o")
+extra_rope = ExtResource("13_tqaog")
+green_potion = ExtResource("14_f18tk")
+motorized_pulley = ExtResource("15_nujpg")
+titanium_glove = ExtResource("16_yrg4c")
+trash = ExtResource("17_pbhxt")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+unique_name_in_owner = true
+modulate = Color(0, 0, 0, 1)
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_byq0v")
+expand_mode = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Healthy Medicine"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3

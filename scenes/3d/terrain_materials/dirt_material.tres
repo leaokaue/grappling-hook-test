@@ -1,0 +1,16 @@
+[gd_resource type="StandardMaterial3D" load_steps=3 format=3 uid="uid://2y6ydbo0wb5f"]
+
+[ext_resource type="Texture2D" uid="uid://biebu4jcctust" path="res://sprites/textures/NewDirt.png" id="1_3c5c1"]
+[ext_resource type="Texture2D" uid="uid://5fjpl3khxyop" path="res://sprites/textures/NewDirtNormal.png" id="2_h46ps"]
+
+[resource]
+albedo_texture = ExtResource("1_3c5c1")
+roughness = 0.73
+normal_enabled = true
+normal_scale = 10.0
+normal_texture = ExtResource("2_h46ps")
+clearcoat = 0.31
+clearcoat_roughness = 1.0
+clearcoat_texture = ExtResource("2_h46ps")
+uv1_scale = Vector3(30, 30, 30)
+uv1_triplanar_sharpness = 1.86607

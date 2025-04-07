@@ -3,8 +3,8 @@
 [ext_resource type="Script" path="res://scripts/checkpoint.gd" id="1_odvvk"]
 [ext_resource type="Texture2D" uid="uid://b2hpi4gi8412a" path="res://sprites/ball.png" id="2_440ko"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ujt3p"]
-size = Vector2(120, 112)
+[sub_resource type="CircleShape2D" id="CircleShape2D_41faq"]
+radius = 140.0
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_adpof"]
 light_mode = 1
@@ -13,14 +13,14 @@ light_mode = 1
 _data = [Vector2(0.0967742, 0.054945), 0.0, 0.0, 0, 0, Vector2(0.129032, 1), 0.0, 0.0, 0, 0, Vector2(0.225806, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 4
 
-[sub_resource type="CurveTexture" id="CurveTexture_damij"]
+[sub_resource type="CurveTexture" id="CurveTexture_1pepl"]
 curve = SubResource("Curve_ptdjk")
 
 [sub_resource type="Curve" id="Curve_b7c4s"]
 _data = [Vector2(0.569892, 1), 0.0, 0.0, 0, 0]
 point_count = 1
 
-[sub_resource type="CurveTexture" id="CurveTexture_yaf0h"]
+[sub_resource type="CurveTexture" id="CurveTexture_8vdg1"]
 curve = SubResource("Curve_b7c4s")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_818x5"]
@@ -38,14 +38,14 @@ gravity = Vector3(0, 0, 0)
 scale_min = 0.05
 scale_max = 0.08
 color = Color(0.288, 0.54, 0, 1)
-alpha_curve = SubResource("CurveTexture_damij")
-emission_curve = SubResource("CurveTexture_yaf0h")
+alpha_curve = SubResource("CurveTexture_1pepl")
+emission_curve = SubResource("CurveTexture_8vdg1")
 
 [sub_resource type="Curve" id="Curve_dgnlm"]
 _data = [Vector2(0.0967742, 0.054945), 0.0, 0.0, 0, 0, Vector2(0.129032, 1), 0.0, 0.0, 0, 0, Vector2(0.225806, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 4
 
-[sub_resource type="CurveTexture" id="CurveTexture_hcgs8"]
+[sub_resource type="CurveTexture" id="CurveTexture_ov6in"]
 curve = SubResource("Curve_dgnlm")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_hgbiq"]
@@ -63,7 +63,7 @@ gravity = Vector3(0, 0, 0)
 scale_min = 0.08
 scale_max = 0.12
 color = Color(0.48, 0.9, 0, 1)
-alpha_curve = SubResource("CurveTexture_hcgs8")
+alpha_curve = SubResource("CurveTexture_ov6in")
 
 [node name="Checkpoint" type="Area2D" groups=["Checkpoints"]]
 collision_mask = 2
@@ -71,7 +71,7 @@ script = ExtResource("1_odvvk")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false
-shape = SubResource("RectangleShape2D_ujt3p")
+shape = SubResource("CircleShape2D_41faq")
 
 [node name="Obelisk" type="Node2D" parent="."]
 unique_name_in_owner = true

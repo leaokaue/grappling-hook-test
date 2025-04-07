@@ -12,6 +12,8 @@ signal emit_jetpack_cooldown(cooldown : float)
 
 @export var debug_mode : bool = false
 
+@export var noclip : bool = false : set = set_noclip
+
 @onready var animated_sprite_2d = %Sprite2D
 @onready var ray_cast_2d = $RayCast2D
 
@@ -142,6 +144,7 @@ func _ready() -> void:
 	
 	Global.get_coin_vec2_array()
 	Global.remove_collected_coins_from_scene()
+	
 
 	#print(self.global_position.x,"pos x before ",Global.last_pos_x)
 	#print(self.global_position.x,"pos x after ",Global.last_pos_x)
@@ -202,6 +205,23 @@ func _physics_process(delta):
 		is_freefalling = false
 	
 	if not can_control:
+		return
+	
+	if Input.is_action_just_pressed("noclip"):
+		if debug_mode:
+			noclip = !noclip
+	
+	if noclip:
+		
+		var hdir : float = Input.get_axis("left","right")
+		var vdir : float = Input.get_axis("up","stop")
+		
+		if hdir != 0:
+			global_position.x += 550 * delta * hdir
+		
+		if vdir != 0:
+			global_position.y += 550 * delta * vdir
+		
 		return
 	
 	if Input.is_action_just_pressed("grapple"):
@@ -581,7 +601,7 @@ func handle_equipment_cooldowns(delta : float):
 				tambaqui_bar += delta * 0.75
 		else:
 			if tambaqui_bar < tambaqui_max_bar:
-				tambaqui_bar += delta * 0.25
+				tambaqui_bar -= delta * 0.01
 	else:
 		if tambaqui_bar > 0:
 			if in_liquid:
@@ -598,13 +618,13 @@ func handle_equipment_cooldowns(delta : float):
 	if not is_hovering:
 		if  not is_grappling:
 			if hover_bar < max_hover_bar:
-				hover_bar += delta * 0.35
+				hover_bar += delta * 0.55
 		#elif is_grappling:
 			#if hover_bar < max_hover_bar:
 				#hover_bar += delta * 0.1 
 	else:
 		if hover_bar > 0:
-			hover_bar -= delta * 0.55
+			hover_bar -= delta * 1.75
 		else:
 			is_hovering = false
 	
@@ -1110,7 +1130,9 @@ func handle_coin_compass():
 		%CoinCompass.show()
 		
 		
-		var shortest_pos := Global.coin_positions[0]
+		var i : int = 0
+		
+		var shortest_pos := Global.coin_positions[i]
 		
 		for p in Global.coin_positions:
 			
@@ -1170,6 +1192,19 @@ func handle_ending(delta : float):
 			%teleport.pitch_scale = randf_range(0.9,1.1)
 			%teleport.play()
 			teleport_randomly()
+
+func set_noclip(enabled : bool):
+	
+	var s_c := func(x : bool):
+		$CollisionShape2D.disabled = x
+		self.freeze = x
+	
+	if enabled:
+		s_c.call_deferred(true)
+	else:
+		s_c.call_deferred(false)
+	
+	noclip = enabled
 
 func teleport_randomly():
 	

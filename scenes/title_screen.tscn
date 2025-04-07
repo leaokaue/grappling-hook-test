@@ -75,10 +75,9 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -117.5
-offset_top = -81.0
-offset_right = 117.5
-offset_bottom = 19.0
+offset_left = -140.5
+offset_top = -126.0
+offset_right = 140.5
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -94,7 +93,7 @@ text = "PLAY GAME"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_s7b0h")
-text = "Timer Active"
+text = "Timer Active [ New Game Only ]"
 
 [node name="Panel" type="Panel" parent="CanvasLayer/Control/VBoxContainer/CheckBox"]
 show_behind_parent = true
@@ -113,10 +112,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -229.0
-offset_top = 61.0
-offset_right = 229.0
-offset_bottom = 295.0
+offset_left = -228.0
+offset_top = 5.0
+offset_right = 230.0
+offset_bottom = 317.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -137,11 +136,18 @@ layout_mode = 2
 
 [node name="Label4" type="Label" parent="CanvasLayer/Control/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 11
 text = "Controls"
 
 [node name="Label5" type="Label" parent="CanvasLayer/Control/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Left Click - Shoot Grapple"
+
+[node name="Label14" type="Label" parent="CanvasLayer/Control/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "Shooting your Grapple instantly puts you into Freefall.
+You cannot move while grappled. Moving during Freefall cancels freefall."
 
 [node name="Label6" type="Label" parent="CanvasLayer/Control/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -149,23 +155,50 @@ text = "Left Click (Grappled) - Ungrapple"
 
 [node name="Label9" type="Label" parent="CanvasLayer/Control/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 9
 text = "While Grappled, you can Jump out of it"
 
 [node name="Label11" type="Label" parent="CanvasLayer/Control/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Right Click - Retract Grapple"
+text = "Right Click (Grappled) - Retract Grapple"
 
 [node name="Label7" type="Label" parent="CanvasLayer/Control/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "A/D - Move Left and Right"
 
+[node name="Label12" type="Label" parent="CanvasLayer/Control/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "Moving like this cancels your horizontal momentum while in freefall.
+Don't hold the movement keys during freefall to retain your horizontal momentum."
+
 [node name="Label8" type="Label" parent="CanvasLayer/Control/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Space - Jump"
 
+[node name="Label13" type="Label" parent="CanvasLayer/Control/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "Hold to jump higher. (When Jump Cancelling enabled)
+Vertical momentum is kept on a Grapple Jump."
+
 [node name="Label10" type="Label" parent="CanvasLayer/Control/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Tab - Map"
+text = "Tab - Map / Equipment / Menu"
+
+[node name="Cleared" type="Label" parent="CanvasLayer/Control"]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+z_index = 1
+layout_mode = 2
+offset_left = 1054.0
+offset_top = 592.0
+offset_right = 1148.0
+offset_bottom = 614.333
+theme_override_font_sizes/font_size = 11
+text = "Cleared!"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Control"]
 layout_mode = 1
@@ -209,12 +242,29 @@ theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="ClearSave" type="Button" parent="CanvasLayer/Control/MarginContainer2"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control/MarginContainer2"]
+layout_mode = 2
+
+[node name="Version" type="Label" parent="CanvasLayer/Control/MarginContainer2/VBoxContainer"]
+layout_mode = 2
+text = "v1.0.6"
+
+[node name="ClearSave" type="Button" parent="CanvasLayer/Control/MarginContainer2/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 9
 theme_override_styles/focus = SubResource("StyleBoxEmpty_bypao")
 disabled = true
 text = "THIS GAME DOES NOT HAVE AUTO-SAVING"
+
+[node name="Warning" type="Button" parent="CanvasLayer/Control/MarginContainer2/VBoxContainer"]
+modulate = Color(1, 0, 0, 1)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 5
+theme_override_styles/focus = SubResource("StyleBoxEmpty_bypao")
+disabled = true
+text = "DO NOT SAVE YOUR GAME WHILE ANY CRASH IS OCCURING.
+ YOU HAVE BEEN WARNED"
 
 [node name="Node2D" type="Node2D" parent="."]
 metadata/_edit_lock_ = true

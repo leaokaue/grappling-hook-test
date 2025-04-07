@@ -5,17 +5,22 @@ extends Control
 
 @export var description : Label
 
+var previous_area_name : String = ""
+
 func _ready() -> void:
 	Global.show_map_name_intro.connect(show_text) 
 	self.modulate.a = 0.0
 
-
 func _process(delta: float) -> void:
 	pass
 
-
-
 func show_text(area_name : String, desc : String):
+	
+	if area_name == previous_area_name:
+		return
+	
+	previous_area_name = area_name
+	
 	title.text = area_name
 	description.text = desc
 	

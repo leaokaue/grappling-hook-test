@@ -1,0 +1,18 @@
+[gd_resource type="CapsuleMesh" load_steps=2 format=3 uid="uid://cgm2khgj7skj0"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8y8ka"]
+transparency = 3
+alpha_hash_scale = 2.0
+alpha_antialiasing_mode = 0
+blend_mode = 4
+shading_mode = 2
+albedo_color = Color(0.279827, 0.311219, 0.376977, 1)
+roughness = 0.0
+refraction_scale = 0.2
+
+[resource]
+material = SubResource("StandardMaterial3D_8y8ka")
+radius = 0.02
+height = 0.7
+radial_segments = 4
+rings = 1

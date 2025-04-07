@@ -100,6 +100,8 @@ var gumption : int = 0
 
 var ignore_gumption : bool = false
 
+var has_grappling_hook : bool = true
+
 var seen_map : Dictionary = {
 	"Spawn" : false,
 	"Bog" : false,
@@ -122,59 +124,59 @@ var waypoints_unlocked : Dictionary = {
 	 
 }
 
-var current_equipment : EQUIPMENTS = EQUIPMENTS.None
+var current_equipment : int = 0
 
 var can_switch_equipments : bool = false
 
 var can_use_waypoints : bool = false
 
 #gives an arrow towards the closest coin
-var has_coin_compass : bool = false
+var has_coin_compass : bool = true
 
 #displays how many coins an area has left
-var has_coin_tracker : bool = false
+var has_coin_tracker : bool = true
 
 #chuffed coin!
-var has_chuffed_coin : bool = false
+var has_chuffed_coin : bool = true
 
 #allows you to dash once per jump
-var has_dash_boots : bool = false
+var has_dash_boots : bool = true
 
 #is a jetpack
-var has_jetpack : bool = false
+var has_jetpack : bool = true
 
 #reduces grapple cooldown
-var has_cool_drink : bool = false
+var has_cool_drink : bool = true
 
 #increases grapple range
-var has_rope_extension : bool = false
+var has_rope_extension : bool = true
 
 #resist poison completely
-var has_poison_resist : bool = false
+var has_poison_resist : bool = true
 
 #increases reteacting speed
-var has_rope_pulley : bool = false
+var has_rope_pulley : bool = true
 
 #increases boost from latching the grapple
-var has_boost_latch : bool = false
+var has_boost_latch : bool = true
 
 #increases grapple speed
-var has_steroids_1 : bool = false
+var has_steroids_1 : bool = true
 
 #increases jump speed
-var has_steroids_2 : bool = false
+var has_steroids_2 : bool = true
 
 #increases move speed
-var has_steroids_3 : bool = false
+var has_steroids_3 : bool = true
 
 #lets the player hover for a bit
-var has_hover_stone : bool = false
+var has_hover_stone : bool = true
 
 #allows player to waypoint anywhere
-var has_guiding_light : bool = false
+var has_guiding_light : bool = true
 
 #water dash
-var has_tambaqui : bool = false
+var has_tambaqui : bool = true
 
 var game_active : bool = true
 
@@ -189,13 +191,63 @@ var last_checkpoint_x : float = 0.0
 var last_checkpoint_y : float = 0.0
 
 var ended : bool = false
+
+var fullscreen : bool = false
+
+var trash_points : int = 0
+
+var has_trash_bag : bool = true
+
+var trash_bag_scrapped : bool = false
+
+var coin_compass_scrapped : bool = false
+
+var coin_tracker_scrapped : bool = false
+
+var dash_boots_scrapped : bool = false
+
+var jetpack_scrapped : bool = false
+
+var cool_drink_scrapped : bool = false
+
+var rope_extension_scrapped : bool = false
+
+var poison_resist_scrapped : bool = false
+
+var rope_pulley_scrapped : bool = false
+
+var boost_latch_scrapped : bool = false
+
+var steroids_1_scrapped : bool = false
+
+var steroids_2_scrapped : bool = false
+
+var steroids_3_scrapped : bool = false
+
+var hover_stone_scrapped : bool = false
+
+var guiding_light_scrapped : bool = false
+
+var tambaqui_scrapped : bool = false
 #endregion
 
 func _ready() -> void:
 	save_base_vars()
 
 func _process(_delta: float) -> void:
-	pass
+	if Input.is_action_just_pressed("fullscreen"):
+		if DisplayServer.window_get_mode() != DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN:
+			set_fullscreen(true)
+		else:
+			set_fullscreen(false)
+
+func set_fullscreen(full : bool):
+	fullscreen = full
+	
+	if fullscreen:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
+	else:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 
 func set_fade_screen(fade : bool):
 	var s : ColorRect = get_tree().get_first_node_in_group("BlackScreen")
@@ -251,9 +303,72 @@ func unlock_item(item : Item.ITEMS, unlock : bool):
 			has_tambaqui = unlock
 		i.PoisonResist:
 			has_poison_resist = unlock
+		i.Trash:
+			has_trash_bag = unlock
+
+func scrap_item(item : Item.ITEMS, scrap : bool):
+	var i := Item.ITEMS
+	
+	match item:
+		i.HookThrowBoost:
+			has_steroids_1 = !scrap
+			steroids_1_scrapped = scrap
+		i.JumpBoost:
+			has_steroids_2 = !scrap
+			steroids_2_scrapped = scrap
+		i.SpeedBoost:
+			has_steroids_3 = !scrap
+			steroids_3_scrapped = scrap
+		i.CoinCompass:
+			has_coin_compass = !scrap
+			coin_compass_scrapped = scrap
+		i.CoinTracker:
+			has_coin_tracker = !scrap
+			coin_tracker_scrapped = scrap
+		i.FastTravel:
+			has_guiding_light = !scrap
+			guiding_light_scrapped = scrap
+		i.DashBoots:
+			has_dash_boots = !scrap
+			dash_boots_scrapped = scrap
+			if (current_equipment == 1) and scrap:
+				current_equipment == 0
+		i.JetPack:
+			has_jetpack = !scrap
+			jetpack_scrapped = scrap
+			if (current_equipment == 4) and scrap:
+				current_equipment == 0
+		i.HookCooldownReducer:
+			has_cool_drink = !scrap
+			cool_drink_scrapped = scrap
+		i.GrappleRopeExtension:
+			has_rope_extension = !scrap
+			rope_extension_scrapped = scrap
+		i.RetractBoost:
+			has_rope_pulley = !scrap
+			rope_pulley_scrapped = scrap
+		i.LatchJumpBoost:
+			has_boost_latch = !scrap
+			boost_latch_scrapped = scrap
+		i.HoverStone:
+			has_hover_stone = !scrap
+			hover_stone_scrapped = scrap
+			if (current_equipment == 3) and scrap:
+				current_equipment == 0
+		i.WaterDash:
+			has_tambaqui = !scrap
+			tambaqui_scrapped = scrap
+			if (current_equipment == 2) and scrap:
+				current_equipment == 0
+		i.PoisonResist:
+			has_poison_resist = !scrap
+			poison_resist_scrapped = scrap
+		i.Trash:
+			has_trash_bag = !scrap
+			trash_bag_scrapped = scrap
 
 func set_area_seen(area : int):
-	if not seen_map[Waypoint.WAYPOINTS.keys()[area]]:
+	#if n'ot seen_map[Waypoint.WAYPOINTS.keys()[area]]:
 		seen_map[Waypoint.WAYPOINTS.keys()[area]] = true
 		
 		var shows : bool = false
@@ -268,7 +383,7 @@ func set_area_seen(area : int):
 			1: #Weeping Bogs
 				shows = true
 				mname = "Weeping Bogs"
-				mdesc = "This... is Fungus."
+				mdesc = "Land of Fungi and Acid."
 			2: #Windmillian Recluse
 				shows = true
 				mname = "Windmillian Recluse"
@@ -324,6 +439,7 @@ func remove_collected_coins_from_scene():
 		if coin is Node2D:
 			if collected_coin_position.has(coin.global_position):
 				coin.queue_free()
+				remove_coin_from_array(coin.global_position)
 
 func get_coin_vec2_array():
 	for coin in get_tree().get_nodes_in_group("Coins"):

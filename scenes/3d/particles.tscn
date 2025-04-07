@@ -1,0 +1,90 @@
+[gd_scene load_steps=12 format=3 uid="uid://52gcqusak331"]
+
+[ext_resource type="Texture2D" uid="uid://by3bd1w5xg2nh" path="res://sprites/textures/smoke0.png" id="1_40wia"]
+
+[sub_resource type="Curve" id="Curve_d2g08"]
+_data = [Vector2(0.069869, 0), 0.0, 0.0, 0, 0, Vector2(0.240175, 1), 0.0, 0.0, 0, 0, Vector2(0.716157, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_bo00d"]
+curve = SubResource("Curve_d2g08")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_tvgbj"]
+particle_flag_align_y = true
+emission_shape_offset = Vector3(-20, 0, 0)
+emission_shape = 3
+emission_box_extents = Vector3(20, 20, 20)
+spread = 0.0
+initial_velocity_min = 50.0
+initial_velocity_max = 70.0
+scale_min = 0.7
+scale_max = 1.2
+alpha_curve = SubResource("CurveTexture_bo00d")
+collision_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_71www"]
+transparency = 1
+cull_mode = 2
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.3752, 0.591387, 0.67, 0.168627)
+use_particle_trails = true
+
+[sub_resource type="RibbonTrailMesh" id="RibbonTrailMesh_khw8l"]
+material = SubResource("StandardMaterial3D_71www")
+shape = 0
+size = 0.005
+
+[sub_resource type="Curve" id="Curve_ckbu3"]
+_data = [Vector2(0.0305677, 0), 0.0, 0.0, 0, 0, Vector2(0.231441, 1), 0.0, 0.0, 0, 0, Vector2(0.724891, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_c2w2l"]
+curve = SubResource("Curve_ckbu3")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_idtbi"]
+emission_shape = 6
+emission_ring_axis = Vector3(0, 1, 0)
+emission_ring_height = 1.0
+emission_ring_radius = 20.0
+emission_ring_inner_radius = 10.0
+direction = Vector3(1, 0, 1)
+spread = 180.0
+flatness = 1.0
+initial_velocity_min = 0.3
+initial_velocity_max = 0.8
+gravity = Vector3(0, 0, 0)
+scale_max = 2.0
+alpha_curve = SubResource("CurveTexture_c2w2l")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bdbkf"]
+transparency = 1
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.5913, 0.711507, 0.73, 0.313726)
+albedo_texture = ExtResource("1_40wia")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+grow_amount = -9.354
+distance_fade_mode = 1
+
+[sub_resource type="QuadMesh" id="QuadMesh_bvcqu"]
+material = SubResource("StandardMaterial3D_bdbkf")
+size = Vector2(5, 5)
+
+[node name="Particles" type="Node3D"]
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+transform = Transform3D(-0.29024, 0.956368, -0.0334877, -0.956952, -0.290134, 0.00812236, -0.00194789, 0.0344035, 0.999406, -0.157787, -0.0587816, 0)
+amount = 1024
+trail_enabled = true
+trail_lifetime = 0.05
+process_material = SubResource("ParticleProcessMaterial_tvgbj")
+draw_pass_1 = SubResource("RibbonTrailMesh_khw8l")
+
+[node name="GPUParticles3D2" type="GPUParticles3D" parent="."]
+amount = 64
+lifetime = 5.0
+process_material = SubResource("ParticleProcessMaterial_idtbi")
+draw_pass_1 = SubResource("QuadMesh_bvcqu")
