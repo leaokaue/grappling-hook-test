@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Aleksander Wormchelt and The Quest for the Peculiar Coins"
 run/main_scene="res://scenes/title_screen.tscn"
-config/features=PackedStringArray("4.3", "Forward Plus")
+config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://sprites/PeculiarCoin.png"
 
 [autoload]
@@ -23,6 +23,10 @@ Global="*res://global.gd"
 
 window/stretch/mode="canvas_items"
 window/vsync/vsync_mode=2
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/proton_scatter/plugin.cfg")
 
 [global_group]
 
@@ -163,10 +167,13 @@ flashlight={
 
 [physics]
 
-2d/solver/solver_iterations=64
+2d/solver/solver_iterations=128
 
 [rendering]
 
 textures/canvas_textures/default_texture_filter=2
+lights_and_shadows/directional_shadow/size=512
+lights_and_shadows/directional_shadow/soft_shadow_filter_quality=0
 anti_aliasing/quality/msaa_2d=2
 anti_aliasing/quality/use_debanding=true
+mesh_lod/lod_change/threshold_pixels=4.0

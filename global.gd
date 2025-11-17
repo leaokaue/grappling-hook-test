@@ -32,6 +32,8 @@ signal clear_map
 
 signal begin_ending 
 
+signal game_autosaved
+
 var player : Worm
 
 var background : BackgroundManager
@@ -131,52 +133,108 @@ var can_switch_equipments : bool = false
 var can_use_waypoints : bool = false
 
 #gives an arrow towards the closest coin
-var has_coin_compass : bool = true
+var has_coin_compass : bool = false:
+	get():
+		if coin_compass_scrapped:
+			return false
+		return has_coin_compass
 
 #displays how many coins an area has left
-var has_coin_tracker : bool = true
+var has_coin_tracker : bool = false:
+	get():
+		if coin_tracker_scrapped:
+			return false
+		return has_coin_tracker
 
 #chuffed coin!
-var has_chuffed_coin : bool = true
+var has_chuffed_coin : bool = false
 
 #allows you to dash once per jump
-var has_dash_boots : bool = true
+var has_dash_boots : bool = false:
+	get():
+		if dash_boots_scrapped:
+			return false
+		return has_dash_boots
 
 #is a jetpack
-var has_jetpack : bool = true
+var has_jetpack : bool = false:
+	get():
+		if jetpack_scrapped:
+			return false
+		return has_jetpack
 
 #reduces grapple cooldown
-var has_cool_drink : bool = true
+var has_cool_drink : bool = false:
+	get():
+		if cool_drink_scrapped:
+			return false
+		return has_cool_drink
 
 #increases grapple range
-var has_rope_extension : bool = true
+var has_rope_extension : bool = false:
+	get():
+		if rope_extension_scrapped:
+			return false
+		return has_rope_extension
 
 #resist poison completely
-var has_poison_resist : bool = true
+var has_poison_resist : bool = false:
+	get():
+		if poison_resist_scrapped:
+			return false
+		return has_poison_resist
 
 #increases reteacting speed
-var has_rope_pulley : bool = true
+var has_rope_pulley : bool = false:
+	get():
+		if rope_pulley_scrapped:
+			return false
+		return has_rope_pulley
 
 #increases boost from latching the grapple
-var has_boost_latch : bool = true
+var has_boost_latch : bool = false:
+	get():
+		if boost_latch_scrapped:
+			return false
+		return has_boost_latch
 
 #increases grapple speed
-var has_steroids_1 : bool = true
+var has_steroids_1 : bool = false:
+	get():
+		if steroids_1_scrapped:
+			return false
+		return has_steroids_1
 
 #increases jump speed
-var has_steroids_2 : bool = true
+var has_steroids_2 : bool = false:
+	get():
+		if steroids_2_scrapped:
+			return false
+		return has_steroids_2
 
 #increases move speed
-var has_steroids_3 : bool = true
+var has_steroids_3 : bool = false:
+	get():
+		if steroids_3_scrapped:
+			return false
+		return has_steroids_3
 
 #lets the player hover for a bit
-var has_hover_stone : bool = true
+var has_hover_stone : bool = false:
+	get():
+		if hover_stone_scrapped:
+			return false
+		return has_hover_stone
 
 #allows player to waypoint anywhere
-var has_guiding_light : bool = true
+var has_guiding_light : bool = false:
+	get():
+		if guiding_light_scrapped:
+			return false
+		return has_guiding_light
 
 #water dash
-var has_tambaqui : bool = true
+var has_tambaqui : bool = false
 
 var game_active : bool = true
 
@@ -196,7 +254,11 @@ var fullscreen : bool = false
 
 var trash_points : int = 0
 
-var has_trash_bag : bool = true
+var has_trash_bag : bool = false:
+	get():
+		if trash_bag_scrapped:
+			return false
+		return has_trash_bag
 
 var trash_bag_scrapped : bool = false
 

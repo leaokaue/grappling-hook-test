@@ -1,13 +1,15 @@
 extends Area2D
 class_name Scrapper
 
-@export var item_list : Array[Control]
+var scrapper_ui_scene := preload("res://scenes/scrapper_ui.tscn")
 
 var player_inside : bool = false
 
 var ui_active : bool = false
 
 var t : Tween 
+
+var scrapper_ui : Control
 
 func _ready() -> void:
 	self.body_entered.connect(_on_player_enter)
@@ -16,12 +18,14 @@ func _ready() -> void:
 func _on_player_enter(body : Node2D):
 	if body is Worm:
 		%Label.show()
+		player_inside = true
 
 func _on_player_exit(body : Node2D):
 	if body is Worm:
 		%Label.hide()
+		player_inside = false
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if player_inside and not ui_active:
 		if Input.is_action_just_pressed("scrap"):
 			instantiate_scrapper_ui()
@@ -32,4 +36,12 @@ func animate_tween():
 	t = create_tween()
 
 func instantiate_scrapper_ui():
-	pass
+	var s := scrapper_ui_scene.instantiate()
+	ui_active = true
+	Global.player.can_control = false
+	%Label.hide()
+	var f := func():
+		ui_active = false
+		Global.player.can_control = true
+	s.tree_exited.connect(f)
+	get_tree().current_scene.add_child(s)

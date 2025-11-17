@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://dc5dnjl3ucis6"]
 
 [ext_resource type="Texture2D" uid="uid://dyry3stylh683" path="res://sprites/grapple.webp" id="1_0j1rd"]
-[ext_resource type="Script" path="res://scripts/title_screen.gd" id="1_5hbub"]
+[ext_resource type="Script" uid="uid://cvftvobs0hkar" path="res://scripts/title_screen.gd" id="1_5hbub"]
 [ext_resource type="Texture2D" uid="uid://bdw2ln7jh2dda" path="res://sprites/Wormchelt.png" id="2_y2wat"]
 [ext_resource type="AudioStream" uid="uid://c1biem7dj8ls1" path="res://sounds/The Second Summer [ ezmp3.cc ].mp3" id="4_v3oxm"]
 
@@ -190,7 +190,7 @@ text = "Tab - Map / Equipment / Menu"
 unique_name_in_owner = true
 modulate = Color(1, 1, 1, 0)
 z_index = 1
-layout_mode = 2
+layout_mode = 0
 offset_left = 1054.0
 offset_top = 592.0
 offset_right = 1148.0
@@ -250,6 +250,7 @@ layout_mode = 2
 text = "v1.0.6"
 
 [node name="ClearSave" type="Button" parent="CanvasLayer/Control/MarginContainer2/VBoxContainer"]
+visible = false
 layout_mode = 2
 theme_override_font_sizes/font_size = 9
 theme_override_styles/focus = SubResource("StyleBoxEmpty_bypao")

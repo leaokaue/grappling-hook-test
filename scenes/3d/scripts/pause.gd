@@ -6,10 +6,12 @@ func _input(event: InputEvent) -> void:
 			get_tree().paused = false
 			capture_mouse()
 			%PauseUI.hide()
+			%CRT.hide()
 		else:
 			release_mouse()
 			get_tree().paused = true
 			%PauseUI.show()
+			%CRT.show()
 
 func capture_mouse() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)

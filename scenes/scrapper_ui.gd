@@ -1,9 +1,11 @@
-extends Control
+extends CanvasLayer
 
 @onready var animation := %AnimationPlayer
 @export var item_rect : TextureRect
 
 @export var scrap_items : Array[ScrapItem]
+
+@export var hook_scrap_item : ScrapItem
 
 @export var scrapping : bool = false
 
@@ -29,10 +31,16 @@ func _ready() -> void:
 	item_rect.hide()
 	on_super_scrap_toggle(false)
 	update_trash_labels()
-	connect_item_signals() 
+	connect_item_signals()
+	%Exit.pressed.connect(on_exit_pressed)
+	
+	var t := create_tween()
+	$Control.modulate.a = 0.0
+	t.tween_property($Control,"modulate:a",1.0,0.9)
 
-func _process(delta: float) -> void:
-	pass
+
+func on_exit_pressed():
+	self.queue_free()
 
 func on_scrap_pressed():
 	
@@ -66,7 +74,6 @@ func connect_item_signals():
 	super_scrap.toggled.connect(on_super_scrap_toggle)
 
 func update_trash_labels():
-	var t := Global.trash_points
 	var text_trash_points_total : String = sl_text % Global.trash_points
 	var text_trash_points_unlock : String = ss_text % clampi(Global.trash_points,0,10)
 	

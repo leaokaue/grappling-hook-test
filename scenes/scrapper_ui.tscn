@@ -1,6 +1,6 @@
 [gd_scene load_steps=38 format=3 uid="uid://ddhlytswfhaa7"]
 
-[ext_resource type="Script" path="res://scenes/scrapper_ui.gd" id="1_bcbwj"]
+[ext_resource type="Script" uid="uid://dua3g1gv4e52r" path="res://scenes/scrapper_ui.gd" id="1_bcbwj"]
 [ext_resource type="Texture2D" uid="uid://rm6i6j71nttm" path="res://sprites/mapbg.png" id="1_l8l3l"]
 [ext_resource type="PackedScene" uid="uid://5p38i62bslmq" path="res://scenes/scrap_item.tscn" id="2_y7khr"]
 [ext_resource type="Texture2D" uid="uid://d3rf28vioo657" path="res://sprites/items/dash_boots.png" id="2_yvkgk"]
@@ -21,7 +21,7 @@
 [ext_resource type="Texture2D" uid="uid://dekd78yg2tjc3" path="res://sprites/items/extra_rope.png" id="16_nwek2"]
 [ext_resource type="Texture2D" uid="uid://kjtwj4om081x" path="res://sprites/items/trashbag.png" id="17_70g6u"]
 [ext_resource type="Texture2D" uid="uid://dsl3giocm0dc2" path="res://sprites/grappling_hook.png" id="19_w3f7q"]
-[ext_resource type="Script" path="res://scripts/scrap_item.gd" id="20_idkfq"]
+[ext_resource type="Script" uid="uid://c2xmved3uw8dj" path="res://scripts/scrap_item.gd" id="20_idkfq"]
 [ext_resource type="Texture2D" uid="uid://dvd0js1533ixy" path="res://sprites/uibg2.png" id="21_uby4k"]
 [ext_resource type="AudioStream" uid="uid://d386wqihiwj36" path="res://sounds/trash.mp3" id="21_w62x6"]
 [ext_resource type="AudioStream" uid="uid://dylmm5pj7rkwu" path="res://sounds/plunger.mp3" id="22_ceg26"]
@@ -253,8 +253,8 @@ tracks/8/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_i6sia"]
 _data = {
-"RESET": SubResource("Animation_68y5a"),
-"scrap": SubResource("Animation_4grng")
+&"RESET": SubResource("Animation_68y5a"),
+&"scrap": SubResource("Animation_4grng")
 }
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tr6px"]
@@ -303,35 +303,38 @@ scale_max = 0.25
 color = Color(0.625597, 0.625597, 0.625597, 1)
 alpha_curve = SubResource("CurveTexture_d0ymn")
 
-[node name="ScrapperUI" type="Control" node_paths=PackedStringArray("item_rect", "scrap_items", "scrap_container", "ss_container", "scrap_button", "scrap_label", "super_scrap", "ss_label")]
+[node name="ScrapperUI" type="CanvasLayer" node_paths=PackedStringArray("item_rect", "scrap_items", "scrap_container", "ss_container", "scrap_button", "scrap_label", "super_scrap", "ss_label")]
+layer = 19
+script = ExtResource("1_bcbwj")
+item_rect = NodePath("Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/ItemRect")
+scrap_items = [NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/WarpBoots"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Tambaqui"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/HoverStone"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Jetpack"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Meds1"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Meds2"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Meds3"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Tracker"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Compass"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Light"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Potion"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Juice"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Glove"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Pulley"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Rope"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Trash")]
+scrap_container = NodePath("Control/MarginContainer/ScrapContainer")
+ss_container = NodePath("Control/MarginContainer/SuperScrapContainer")
+scrap_button = NodePath("Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/Button")
+scrap_label = NodePath("Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/VBoxContainer/Label2")
+sl_text = "%01d/16 Trash Points"
+super_scrap = NodePath("Control/MarginContainer/SuperScrapperButton/HBoxContainer2/CheckButton")
+ss_label = NodePath("Control/MarginContainer/SuperScrapperButton/MarginContainer/Label")
+ss_text = "%01d/10 Trash Points"
+
+[node name="Control" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_bcbwj")
-item_rect = NodePath("MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/ItemRect")
-scrap_items = [NodePath("MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/WarpBoots"), NodePath("MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Tambaqui"), NodePath("MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/HoverStone"), NodePath("MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Jetpack"), NodePath("MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Meds1"), NodePath("MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Meds2"), NodePath("MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Meds3"), NodePath("MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Tracker"), NodePath("MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Compass"), NodePath("MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Light"), NodePath("MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Potion"), NodePath("MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Juice"), NodePath("MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Glove"), NodePath("MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Pulley"), NodePath("MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Rope"), NodePath("MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Trash")]
-scrap_container = NodePath("MarginContainer/ScrapContainer")
-ss_container = NodePath("MarginContainer/SuperScrapContainer")
-scrap_button = NodePath("MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/Button")
-scrap_label = NodePath("MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/VBoxContainer/Label2")
-sl_text = "%01d/16 Trash Points"
-super_scrap = NodePath("MarginContainer/SuperScrapperButton/HBoxContainer2/CheckButton")
-ss_label = NodePath("MarginContainer/SuperScrapperButton/MarginContainer/Label")
-ss_text = "%01d/10 Trash Points"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Control"]
 unique_name_in_owner = true
 root_node = NodePath("../MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper")
 libraries = {
-"": SubResource("AnimationLibrary_i6sia")
+&"": SubResource("AnimationLibrary_i6sia")
 }
 speed_scale = 0.8
 
-[node name="MapSprite" type="Control" parent="."]
-modulate = Color(0.646029, 0.646029, 0.646029, 1)
+[node name="MapSprite" type="Control" parent="Control"]
+modulate = Color(0.65, 0.65, 0.65, 0.8666667)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -342,8 +345,8 @@ mouse_filter = 2
 metadata/_edit_lock_ = true
 metadata/_edit_group_ = true
 
-[node name="TextureRect" type="TextureRect" parent="MapSprite"]
-self_modulate = Color(0.920995, 0.920995, 0.920995, 0.847059)
+[node name="TextureRect" type="TextureRect" parent="Control/MapSprite"]
+self_modulate = Color(0.92, 0.92, 0.92, 1)
 clip_children = 2
 layout_mode = 1
 anchors_preset = 15
@@ -357,28 +360,96 @@ mouse_filter = 2
 texture = ExtResource("1_l8l3l")
 expand_mode = 1
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="TextureRect2" type="TextureRect" parent="Control/MapSprite"]
+self_modulate = Color(0.92, 0.92, 0.92, 1)
+clip_children = 2
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -56.999996
+offset_top = -79.0
+offset_right = -57.0
+offset_bottom = -41.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(0.997342, 0.997342)
+mouse_filter = 2
+texture = ExtResource("1_l8l3l")
+expand_mode = 1
+
+[node name="TextureRect3" type="TextureRect" parent="Control/MapSprite"]
+self_modulate = Color(0.92, 0.92, 0.92, 1)
+clip_children = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 76.999985
+offset_top = -87.00001
+offset_right = 77.0
+offset_bottom = -49.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.997342, 0.997342)
+mouse_filter = 2
+texture = ExtResource("1_l8l3l")
+expand_mode = 1
+
+[node name="TextureRect4" type="TextureRect" parent="Control/MapSprite"]
+self_modulate = Color(0.92, 0.92, 0.92, 1)
+clip_children = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 126.0
+offset_top = -3.0000076
+offset_right = 126.0
+offset_bottom = 35.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.997342, 0.997342)
+mouse_filter = 2
+texture = ExtResource("1_l8l3l")
+expand_mode = 1
+
+[node name="TextureRect5" type="TextureRect" parent="Control/MapSprite"]
+self_modulate = Color(0.92, 0.92, 0.92, 1)
+clip_children = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -56.999985
+offset_top = 58.999996
+offset_right = -57.0
+offset_bottom = 97.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.997342, 0.997342)
+mouse_filter = 2
+texture = ExtResource("1_l8l3l")
+expand_mode = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="Control"]
+layout_mode = 0
+offset_right = 1094.0
+offset_bottom = 633.0
 mouse_filter = 2
 theme_override_constants/margin_left = 40
 theme_override_constants/margin_top = 40
 theme_override_constants/margin_right = 40
 theme_override_constants/margin_bottom = 40
 
-[node name="ScrapContainer" type="VBoxContainer" parent="MarginContainer"]
-visible = false
+[node name="ScrapContainer" type="VBoxContainer" parent="Control/MarginContainer"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/ScrapContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="Control/MarginContainer/ScrapContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/ScrapContainer/HBoxContainer2"]
+[node name="Label" type="Label" parent="Control/MarginContainer/ScrapContainer/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 30
@@ -386,136 +457,137 @@ text = "Scrapper. B. Scrappin #106"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/ScrapContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="Control/MarginContainer/ScrapContainer"]
 layout_mode = 2
 
-[node name="Label2" type="Label" parent="MarginContainer/ScrapContainer/MarginContainer"]
+[node name="Label2" type="Label" parent="Control/MarginContainer/ScrapContainer/MarginContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "Don't like a permanent \"upgrade\"? Scrap'em here and gain some Trash Points in return!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="MarginContainer2" type="MarginContainer" parent="MarginContainer/ScrapContainer"]
+[node name="MarginContainer2" type="MarginContainer" parent="Control/MarginContainer/ScrapContainer"]
 layout_mode = 2
 
-[node name="Label2" type="Label" parent="MarginContainer/ScrapContainer/MarginContainer2"]
+[node name="Label2" type="Label" parent="Control/MarginContainer/ScrapContainer/MarginContainer2"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "A.W.A.T.Q.F.T.P.C is not responsible for any softlocks that the Scrapper may cause."
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/ScrapContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/MarginContainer/ScrapContainer"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="HFlowContainer" type="FlowContainer" parent="MarginContainer/ScrapContainer/HBoxContainer"]
+[node name="HFlowContainer" type="FlowContainer" parent="Control/MarginContainer/ScrapContainer/HBoxContainer"]
 custom_minimum_size = Vector2(500, 460)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="WarpBoots" parent="MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+[node name="WarpBoots" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
 layout_mode = 2
 texture_normal = ExtResource("2_yvkgk")
 current_item = 7
 item_name = "Warp Boots"
 
-[node name="Tambaqui" parent="MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+[node name="Tambaqui" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
 layout_mode = 2
 texture_normal = ExtResource("3_55gk0")
 current_item = 10
 item_name = "Tambaqui"
 
-[node name="HoverStone" parent="MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+[node name="HoverStone" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
 layout_mode = 2
 texture_normal = ExtResource("4_poapj")
 current_item = 5
 item_name = "Hover Stone"
 
-[node name="Jetpack" parent="MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+[node name="Jetpack" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
 layout_mode = 2
 texture_normal = ExtResource("5_7pkgv")
 current_item = 8
 item_name = "Jetpack"
 
-[node name="Meds1" parent="MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+[node name="Meds1" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
 layout_mode = 2
 
-[node name="Meds2" parent="MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+[node name="Meds2" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
 layout_mode = 2
 texture_normal = ExtResource("7_35mu5")
 current_item = 1
 item_name = "Pretty Healthy Medicine"
 
-[node name="Meds3" parent="MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+[node name="Meds3" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
 layout_mode = 2
 texture_normal = ExtResource("8_8hcey")
 current_item = 2
 item_name = "Incredibly Healthy Medicine!"
 
-[node name="Tracker" parent="MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+[node name="Tracker" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
 layout_mode = 2
 texture_normal = ExtResource("9_qo74t")
 current_item = 4
 item_name = "Coin Tracker"
 
-[node name="Compass" parent="MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+[node name="Compass" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
 layout_mode = 2
 texture_normal = ExtResource("10_jd403")
 current_item = 3
 item_name = "Coin Compass"
 
-[node name="Light" parent="MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+[node name="Light" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
 layout_mode = 2
 texture_normal = ExtResource("11_kcvl4")
 current_item = 6
 item_name = "Guiding Light"
 
-[node name="Potion" parent="MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+[node name="Potion" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
 layout_mode = 2
 texture_normal = ExtResource("12_vssfn")
 current_item = 12
 item_name = "Green Potion"
 
-[node name="Juice" parent="MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+[node name="Juice" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
 layout_mode = 2
 texture_normal = ExtResource("13_3r5hx")
 current_item = 9
 item_name = "Grape Juice"
 
-[node name="Glove" parent="MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+[node name="Glove" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
 layout_mode = 2
 texture_normal = ExtResource("14_3hif5")
 current_item = 14
 item_name = "Titanium Glove"
 
-[node name="Pulley" parent="MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+[node name="Pulley" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
 layout_mode = 2
 texture_normal = ExtResource("15_t016g")
 current_item = 13
 item_name = "Motorized Pulley"
 
-[node name="Rope" parent="MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+[node name="Rope" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
 layout_mode = 2
 texture_normal = ExtResource("16_nwek2")
 current_item = 11
 item_name = "Extra Rope"
 
-[node name="Trash" parent="MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+[node name="Trash" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
 layout_mode = 2
 texture_normal = ExtResource("17_70g6u")
 current_item = 15
 item_name = "Trash Bag"
 
-[node name="SuperScrapContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="SuperScrapContainer" type="VBoxContainer" parent="Control/MarginContainer"]
+visible = false
 layout_mode = 2
 mouse_filter = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/SuperScrapContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="Control/MarginContainer/SuperScrapContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/SuperScrapContainer/HBoxContainer2"]
+[node name="Label" type="Label" parent="Control/MarginContainer/SuperScrapContainer/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 30
@@ -523,46 +595,47 @@ text = "Super Scrapper v0.0.4#09"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/SuperScrapContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="Control/MarginContainer/SuperScrapContainer"]
 layout_mode = 2
 
-[node name="Label2" type="Label" parent="MarginContainer/SuperScrapContainer/MarginContainer"]
+[node name="Label2" type="Label" parent="Control/MarginContainer/SuperScrapContainer/MarginContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "Congratulations on being invited to our Super Scrapper Program! Here you can scrap even the toughest of objects."
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="MarginContainer2" type="MarginContainer" parent="MarginContainer/SuperScrapContainer"]
+[node name="MarginContainer2" type="MarginContainer" parent="Control/MarginContainer/SuperScrapContainer"]
 layout_mode = 2
 
-[node name="Label2" type="Label" parent="MarginContainer/SuperScrapContainer/MarginContainer2"]
+[node name="Label2" type="Label" parent="Control/MarginContainer/SuperScrapContainer/MarginContainer2"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "We are not responsible for any physical, mental, or even spiritual damage caused to the user. By reading this, you are agreeing to our terms."
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/SuperScrapContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/MarginContainer/SuperScrapContainer"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="HFlowContainer" type="FlowContainer" parent="MarginContainer/SuperScrapContainer/HBoxContainer"]
+[node name="HFlowContainer" type="FlowContainer" parent="Control/MarginContainer/SuperScrapContainer/HBoxContainer"]
 custom_minimum_size = Vector2(500, 460)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="GrapplingHook" type="TextureButton" parent="MarginContainer/SuperScrapContainer/HBoxContainer/HFlowContainer"]
+[node name="GrapplingHook" type="TextureButton" parent="Control/MarginContainer/SuperScrapContainer/HBoxContainer/HFlowContainer"]
 visible = false
 custom_minimum_size = Vector2(450, 450)
 layout_mode = 2
 size_flags_horizontal = 4
-texture_normal = ExtResource("2_yvkgk")
+texture_normal = ExtResource("19_w3f7q")
 ignore_texture_size = true
 stretch_mode = 5
 script = ExtResource("20_idkfq")
 current_item = 7
-item_name = "Warp Boots"
+is_grappling_hook = true
+item_name = "Grappling... Hook?"
 roids1 = ExtResource("6_tj8fs")
 roids2 = ExtResource("7_35mu5")
 roids3 = ExtResource("8_8hcey")
@@ -581,7 +654,7 @@ titanium_glove = ExtResource("14_3hif5")
 trash = ExtResource("17_70g6u")
 grappling_hook = ExtResource("19_w3f7q")
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/SuperScrapContainer/HBoxContainer/HFlowContainer/GrapplingHook"]
+[node name="TextureRect" type="TextureRect" parent="Control/MarginContainer/SuperScrapContainer/HBoxContainer/HFlowContainer/GrapplingHook"]
 unique_name_in_owner = true
 modulate = Color(0, 0, 0, 1)
 show_behind_parent = true
@@ -594,7 +667,7 @@ grow_vertical = 2
 texture = ExtResource("21_uby4k")
 expand_mode = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/SuperScrapContainer/HBoxContainer/HFlowContainer/GrapplingHook"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer/SuperScrapContainer/HBoxContainer/HFlowContainer/GrapplingHook"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -602,7 +675,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Label" type="Label" parent="MarginContainer/SuperScrapContainer/HBoxContainer/HFlowContainer/GrapplingHook/VBoxContainer"]
+[node name="Label" type="Label" parent="Control/MarginContainer/SuperScrapContainer/HBoxContainer/HFlowContainer/GrapplingHook/VBoxContainer"]
 visible = false
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
@@ -612,14 +685,14 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="SuperScrapperButton" type="VBoxContainer" parent="MarginContainer"]
+[node name="SuperScrapperButton" type="VBoxContainer" parent="Control/MarginContainer"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/SuperScrapperButton"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="Control/MarginContainer/SuperScrapperButton"]
 layout_mode = 2
 
-[node name="CheckButton" type="CheckButton" parent="MarginContainer/SuperScrapperButton/HBoxContainer2"]
+[node name="CheckButton" type="CheckButton" parent="Control/MarginContainer/SuperScrapperButton/HBoxContainer2"]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 25
@@ -628,12 +701,12 @@ disabled = true
 text = "Super Scrapper"
 alignment = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/SuperScrapperButton"]
+[node name="MarginContainer" type="MarginContainer" parent="Control/MarginContainer/SuperScrapperButton"]
 layout_mode = 2
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = -10
 
-[node name="Label" type="Label" parent="MarginContainer/SuperScrapperButton/MarginContainer"]
+[node name="Label" type="Label" parent="Control/MarginContainer/SuperScrapperButton/MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 11
@@ -641,7 +714,7 @@ text = "%02d/10 Trash Points"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ScrapButtonContainer" type="MarginContainer" parent="MarginContainer"]
+[node name="ScrapButtonContainer" type="MarginContainer" parent="Control/MarginContainer"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 40
@@ -649,16 +722,16 @@ theme_override_constants/margin_top = 40
 theme_override_constants/margin_right = 40
 theme_override_constants/margin_bottom = 40
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/ScrapButtonContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/MarginContainer/ScrapButtonContainer"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Control" type="Control" parent="MarginContainer/ScrapButtonContainer/HBoxContainer"]
+[node name="Control" type="Control" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer"]
 custom_minimum_size = Vector2(400, 460)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ScrapButtonContainer" type="MarginContainer" parent="MarginContainer/ScrapButtonContainer/HBoxContainer"]
+[node name="ScrapButtonContainer" type="MarginContainer" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
@@ -667,11 +740,11 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 30
 theme_override_constants/margin_bottom = 10
 
-[node name="Scrapper" type="Control" parent="MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer"]
+[node name="Scrapper" type="Control" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
+[node name="Label" type="Label" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
 visible = false
 layout_mode = 1
 anchors_preset = 5
@@ -686,7 +759,7 @@ text = "Warp Boots"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Button" type="Button" parent="MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
+[node name="Button" type="Button" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -703,34 +776,34 @@ theme_override_font_sizes/font_size = 56
 theme_override_styles/focus = SubResource("StyleBoxEmpty_qb74s")
 text = "Scrap!"
 
-[node name="Fast" type="GPUParticles2D" parent="MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
+[node name="Fast" type="GPUParticles2D" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
 position = Vector2(265, 34)
 emitting = false
 amount = 50
-process_material = SubResource("ParticleProcessMaterial_etyfq")
 texture = ExtResource("3_65v3i")
 lifetime = 0.3
 one_shot = true
 explosiveness = 0.9
+process_material = SubResource("ParticleProcessMaterial_etyfq")
 
-[node name="Entered" type="GPUParticles2D" parent="MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
+[node name="Entered" type="GPUParticles2D" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
 z_index = 2
 position = Vector2(265, 258)
 emitting = false
 amount = 50
-process_material = SubResource("ParticleProcessMaterial_oxlwu")
 texture = ExtResource("3_65v3i")
 lifetime = 0.55
 one_shot = true
 explosiveness = 0.9
+process_material = SubResource("ParticleProcessMaterial_oxlwu")
 
-[node name="ItemRect" type="TextureRect" parent="MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
+[node name="ItemRect" type="TextureRect" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
 custom_minimum_size = Vector2(250, 250)
-layout_mode = 2
+layout_mode = 0
 offset_left = 159.0
 offset_top = -19.5
 offset_right = 409.0
-offset_bottom = 230.5
+offset_bottom = 230.50009
 pivot_offset = Vector2(125, 125)
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -738,7 +811,7 @@ texture = ExtResource("2_yvkgk")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Control" type="Control" parent="MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
+[node name="Control" type="Control" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -752,12 +825,12 @@ offset_bottom = 125.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Obelisk" type="Node2D" parent="MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
+[node name="Obelisk" type="Node2D" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
 unique_name_in_owner = true
 position = Vector2(264, 302)
 scale = Vector2(1.86202, 1.01589)
 
-[node name="ColorRect" type="ColorRect" parent="MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/Obelisk"]
+[node name="ColorRect" type="ColorRect" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/Obelisk"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -771,7 +844,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.205117, 0.205117, 0.205117, 1)
 
-[node name="ColorRect2" type="ColorRect" parent="MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/Obelisk"]
+[node name="ColorRect2" type="ColorRect" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/Obelisk"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -785,7 +858,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.92, 0.92, 0, 1)
 
-[node name="ColorRect3" type="ColorRect" parent="MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/Obelisk"]
+[node name="ColorRect3" type="ColorRect" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/Obelisk"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -799,7 +872,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.92, 0.92, 0, 1)
 
-[node name="Label" type="Label" parent="MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/Obelisk"]
+[node name="Label" type="Label" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/Obelisk"]
 unique_name_in_owner = true
 visible = false
 z_index = 1
@@ -811,43 +884,55 @@ theme_override_font_sizes/font_size = 25
 text = "Warp Boots"
 horizontal_alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -40.0
+offset_left = -114.0
 offset_top = -40.0
+offset_right = 45.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="Label2" type="Label" parent="MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/VBoxContainer"]
+[node name="Label2" type="Label" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "%02d/16 Trash Points"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Label3" type="Label" parent="MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/VBoxContainer"]
+[node name="Label3" type="Label" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 7
 text = "Obtain 10 Points to unlock our Super Scrapper!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Trash" type="AudioStreamPlayer" parent="."]
+[node name="Exit" type="Button" parent="Control"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 1013.0
+offset_top = 44.0
+offset_right = 1076.0
+offset_bottom = 107.83333
+theme_override_font_sizes/font_size = 40
+text = "✖"
+flat = true
+
+[node name="Trash" type="AudioStreamPlayer" parent="Control"]
 stream = ExtResource("21_w62x6")
 volume_db = 2.0
 pitch_scale = 0.9
 
-[node name="Dunk" type="AudioStreamPlayer" parent="."]
+[node name="Dunk" type="AudioStreamPlayer" parent="Control"]
 stream = ExtResource("22_ceg26")
 volume_db = 6.0
 pitch_scale = 0.7
 
-[node name="Fwoop" type="AudioStreamPlayer" parent="."]
+[node name="Fwoop" type="AudioStreamPlayer" parent="Control"]
 stream = ExtResource("23_queto")
 volume_db = 5.0
 pitch_scale = 1.2

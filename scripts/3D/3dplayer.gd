@@ -19,12 +19,21 @@ var walk_vel: Vector3 # Walking velocity
 var grav_vel: Vector3 # Gravity velocity 
 var jump_vel: Vector3 # Jumping velocity
 
+var returning : bool = false
+
+var initial_position : Vector3
+var initial_rotation : Vector3
+
+var walk_timer : float = 0.4
+
 @onready var camera : Camera3D = %Camera
 @onready var flashlight : SpotLight3D = %Flashlight
 
 func _ready() -> void:
+	initial_position = self.global_position
+	initial_rotation = camera.rotation
 	capture_mouse()
-	disable_flashlight()
+	disable_flashlight(false)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
@@ -39,7 +48,20 @@ func _unhandled_input(event: InputEvent) -> void:
 func _physics_process(delta: float) -> void:
 	#if Input.is_action_just_pressed(&"jump"): jumping = true
 	if mouse_captured: _handle_joypad_camera_rotation(delta)
-	velocity = _walk(delta) + _gravity(delta) + _jump(delta)
+	
+	var vel : Vector3 = Vector3()
+	
+	if is_on_floor():
+		vel += _walk(delta)
+	vel += _gravity(delta)
+	velocity = vel
+	
+	if (velocity.z != 0 or velocity.x != 0) and is_on_floor():
+		if walk_timer > 0:
+			walk_timer -= delta
+		else:
+			walk_timer = 0.5
+			$Footstep.play()
 	
 	lerp_flashlight_rotation(delta)
 	
@@ -56,10 +78,15 @@ func release_mouse() -> void:
 func enable_flashlight() -> void:
 	flashlight_active = true
 	flashlight.light_energy = 5.0
+	$FlashlightSound.pitch_scale = 0.5
+	$FlashlightSound.play()
 
-func disable_flashlight() -> void:
+func disable_flashlight(play_sound : bool = true) -> void:
 	flashlight_active = false
 	flashlight.light_energy = 0.0
+	$FlashlightSound.pitch_scale = 0.3
+	if play_sound:
+		$FlashlightSound.play()
 
 func _rotate_camera(sens_mod: float = 1.0) -> void:
 	camera.rotation.y -= look_dir.x * camera_sens * sens_mod

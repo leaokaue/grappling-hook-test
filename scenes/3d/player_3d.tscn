@@ -1,8 +1,21 @@
-[gd_scene load_steps=3 format=3 uid="uid://bqxxkjkro4ssn"]
+[gd_scene load_steps=9 format=3 uid="uid://bqxxkjkro4ssn"]
 
-[ext_resource type="Script" path="res://scripts/3D/3dplayer.gd" id="1_2s5h8"]
+[ext_resource type="Script" uid="uid://csih2ldh825jc" path="res://scripts/3D/3dplayer.gd" id="1_2s5h8"]
+[ext_resource type="AudioStream" uid="uid://ct5ks8g7duwqm" path="res://sounds/footstep/dirt_footstep_0.mp3" id="2_2wquo"]
+[ext_resource type="AudioStream" uid="uid://dhocm6sltv2xl" path="res://sounds/footstep/dirt_footstep_1.mp3" id="3_lvdve"]
+[ext_resource type="AudioStream" uid="uid://c2khn0gemldny" path="res://sounds/footstep/dirt_footstep_2.mp3" id="4_27wlx"]
+[ext_resource type="AudioStream" uid="uid://hdjieb7s2j68" path="res://sounds/footstep/dirt_footstep_3.mp3" id="5_4acon"]
+[ext_resource type="AudioStream" uid="uid://c2jvfn1qv10t4" path="res://sounds/flashlight.mp3" id="6_lvdve"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_yy7gn"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_2wquo"]
+random_pitch = 1.4
+streams_count = 4
+stream_0/stream = ExtResource("2_2wquo")
+stream_1/stream = ExtResource("3_lvdve")
+stream_2/stream = ExtResource("4_27wlx")
+stream_3/stream = ExtResource("5_4acon")
 
 [node name="Player3D" type="CharacterBody3D"]
 script = ExtResource("1_2s5h8")
@@ -11,13 +24,15 @@ acceleration = 50.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_yy7gn")
+debug_color = Color(0, 0.5950001, 0.7, 1)
 
 [node name="Flashlight" type="SpotLight3D" parent="."]
 unique_name_in_owner = true
 light_energy = 6.0
 light_volumetric_fog_energy = 1.556
-spot_range = 20.0
-spot_angle = 32.5
+shadow_enabled = true
+spot_range = 39.83525
+spot_angle = 48.20886
 spot_angle_attenuation = 1.46408
 
 [node name="Camera" type="Camera3D" parent="."]
@@ -25,3 +40,11 @@ unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.571271, 0)
 doppler_tracking = 1
 current = true
+
+[node name="Footstep" type="AudioStreamPlayer3D" parent="."]
+stream = SubResource("AudioStreamRandomizer_2wquo")
+volume_db = -40.0
+
+[node name="FlashlightSound" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("6_lvdve")
+volume_db = -30.0

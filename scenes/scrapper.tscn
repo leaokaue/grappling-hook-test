@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://c4ggohhvaywg7"]
 
-[ext_resource type="Script" path="res://scripts/scrapper.gd" id="1_efcat"]
+[ext_resource type="Script" uid="uid://lri4wsc024qo" path="res://scripts/scrapper.gd" id="1_efcat"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_g2p2g"]
 size = Vector2(120, 112)
@@ -62,10 +62,11 @@ color = Color(0.92, 0.92, 0, 1)
 unique_name_in_owner = true
 visible = false
 z_index = 1
-offset_left = -32.0
+offset_left = -62.0
 offset_top = -79.0
-offset_right = 32.0
+offset_right = 62.0
 offset_bottom = -44.0
 theme_override_font_sizes/font_size = 25
-text = "[ F ]"
+text = "[ F ] "
 horizontal_alignment = 1
+vertical_alignment = 1

@@ -1,27 +1,28 @@
-[gd_scene load_steps=32 format=3 uid="uid://bnvneh2xfqhpp"]
+[gd_scene load_steps=33 format=3 uid="uid://bnvneh2xfqhpp"]
 
-[ext_resource type="Script" path="res://scripts/screen_text_notifier.gd" id="1_28r26"]
-[ext_resource type="Script" path="res://scripts/map_intro.gd" id="1_jwpll"]
-[ext_resource type="Script" path="res://scripts/rain.gd" id="1_kj4sp"]
-[ext_resource type="Script" path="res://scripts/coin_counter.gd" id="1_le5ak"]
+[ext_resource type="Script" uid="uid://bt4pkr502m2v" path="res://scripts/screen_text_notifier.gd" id="1_28r26"]
+[ext_resource type="Script" uid="uid://jeprbhpns510" path="res://scripts/map_intro.gd" id="1_jwpll"]
+[ext_resource type="Script" uid="uid://b841wt4tjrche" path="res://scripts/rain.gd" id="1_kj4sp"]
+[ext_resource type="Script" uid="uid://bpbmua6sjajbu" path="res://scripts/coin_counter.gd" id="1_le5ak"]
 [ext_resource type="Texture2D" uid="uid://b2xs1j1q1scfq" path="res://sprites/nolan.jpg" id="2_4iwo5"]
-[ext_resource type="Script" path="res://scripts/vignette.gd" id="2_47kre"]
-[ext_resource type="Script" path="res://scripts/item_ui.gd" id="2_ejolm"]
+[ext_resource type="Script" uid="uid://cc47pwtqnogva" path="res://scripts/vignette.gd" id="2_47kre"]
+[ext_resource type="Script" uid="uid://by5ewu4mlbef5" path="res://scripts/item_ui.gd" id="2_ejolm"]
 [ext_resource type="Texture2D" uid="uid://d3rf28vioo657" path="res://sprites/items/dash_boots.png" id="3_b3lae"]
-[ext_resource type="Shader" path="res://shaders/shine.gdshader" id="3_hew1h"]
+[ext_resource type="Shader" uid="uid://cnmfovagnfevp" path="res://shaders/shine.gdshader" id="3_hew1h"]
 [ext_resource type="Texture2D" uid="uid://dcjmi3lyyjvne" path="res://sprites/equip_bar_behind-fill.png" id="4_1rntb"]
 [ext_resource type="Texture2D" uid="uid://dy1vyv8rptpvm" path="res://sprites/uibg1.png" id="4_m8224"]
 [ext_resource type="Texture2D" uid="uid://botg44dsl6ad1" path="res://sprites/grapplebarbg.png" id="4_nbvbl"]
 [ext_resource type="Texture2D" uid="uid://b1nfnd1n3qxwb" path="res://sprites/grapplebar.png" id="5_6kawo"]
 [ext_resource type="Texture2D" uid="uid://c3l6ocrlykhhh" path="res://sprites/equip_bar_over.png" id="5_cap3f"]
-[ext_resource type="Script" path="res://scripts/texture_progress_bar.gd" id="6_eqff7"]
+[ext_resource type="Script" uid="uid://c7jg8oe6ogwe2" path="res://scripts/texture_progress_bar.gd" id="6_eqff7"]
 [ext_resource type="Texture2D" uid="uid://dvpi7nso38kqm" path="res://sprites/grapple.png" id="6_wlgv8"]
 [ext_resource type="Texture2D" uid="uid://tqrrxtnsyvkn" path="res://sprites/items/tambaqui.png" id="7_bcy86"]
 [ext_resource type="Texture2D" uid="uid://dvd0js1533ixy" path="res://sprites/uibg2.png" id="9_sky3p"]
 [ext_resource type="Texture2D" uid="uid://os1xgfw72sd1" path="res://sprites/items/mysticalstone.png" id="9_wfct7"]
 [ext_resource type="Texture2D" uid="uid://c73ucvu5ijqjw" path="res://sprites/items/jetpack.png" id="10_388ll"]
-[ext_resource type="Script" path="res://scripts/timer.gd" id="19_1p538"]
-[ext_resource type="Script" path="res://scripts/winner_condition.gd" id="19_vkxe7"]
+[ext_resource type="Script" uid="uid://bhctgm6i0i6m4" path="res://scripts/timer.gd" id="19_1p538"]
+[ext_resource type="Script" uid="uid://72y351jfjj2f" path="res://scripts/winner_condition.gd" id="19_vkxe7"]
+[ext_resource type="AudioStream" uid="uid://cnilrnv668k01" path="res://sounds/Wave Button Press.mp3" id="20_catpy"]
 
 [sub_resource type="Shader" id="Shader_sjp6m"]
 code = "// Rain and Snow shader by Brian Smith (steampunkdemon.itch.io)
@@ -322,7 +323,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MapIntro/Panel"]
-layout_mode = 2
+layout_mode = 0
 offset_right = 492.0
 offset_bottom = 128.0
 
@@ -424,6 +425,20 @@ offset_bottom = 70.0
 theme_override_font_sizes/font_size = 20
 text = "FPS: 40"
 horizontal_alignment = 2
+
+[node name="Save" type="Label" parent="."]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+offset_left = 971.0
+offset_top = 577.0
+offset_right = 1153.0
+offset_bottom = 648.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 9
+theme_override_font_sizes/font_size = 20
+text = "Game Saved!"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Node2DUI" type="Node2D" parent="."]
 scale = Vector2(0.681819, 0.681819)
@@ -701,6 +716,11 @@ radial_initial_angle = 40.0
 texture_under = ExtResource("4_nbvbl")
 texture_progress = ExtResource("5_6kawo")
 script = ExtResource("6_eqff7")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer" parent="Node2DUI/GrappleCooldown/TextureProgressBar"]
+stream = ExtResource("20_catpy")
+volume_db = -20.0
+pitch_scale = 0.5
 
 [node name="Sprite2D" type="Sprite2D" parent="Node2DUI/GrappleCooldown"]
 position = Vector2(44, 166)

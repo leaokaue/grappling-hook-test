@@ -11,6 +11,7 @@ var can_exit : bool = false
 
 func _ready() -> void:
 	Global.begin_ending.connect(begin_ending)
+	Global.game_autosaved.connect(show_autosaved)
 	self.show()
 	color.modulate.a = 0.0
 	win.modulate.a = 0.0
@@ -85,6 +86,14 @@ func get_completion() -> float:
 	
 	return complete
 
+func show_autosaved():
+	var t : Tween
+	var s := 	%Save
+	t = create_tween()
+	s.modulate.a = 0.0
+	t.tween_property(s,"modulate:a",1.0,0.3)
+	t.tween_interval(0.65)
+	t.tween_property(s,"modulate:a",0.0,0.3)
 
 func _process(delta: float) -> void:
 	if can_exit:

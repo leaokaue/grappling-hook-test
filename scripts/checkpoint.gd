@@ -18,6 +18,8 @@ func on_body_entered(body : Node2D):
 			if point is Checkpoint:
 				point.set_active(false)
 		set_active(true)
+		Global.save_all()
+		Global.game_autosaved.emit()
 
 func on_body_exited(body : Node2D):
 	if body is Worm:

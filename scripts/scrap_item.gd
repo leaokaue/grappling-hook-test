@@ -66,6 +66,11 @@ func _process(delta: float) -> void:
 	pass
 
 func update_ui():
+	if is_grappling_hook:
+		self.texture_normal = grappling_hook
+		item_name = "Grappling... Hook?"
+		return
+	
 	match_item()
 	
 	if Item.is_item_owned(current_item):

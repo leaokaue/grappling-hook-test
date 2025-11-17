@@ -1,13 +1,16 @@
-[gd_scene load_steps=3 format=3 uid="uid://dopq4tacnt2t0"]
+[gd_scene load_steps=4 format=3 uid="uid://dopq4tacnt2t0"]
+
+[ext_resource type="Script" uid="uid://chpwlnlxym5d1" path="res://scripts/one_way_platform.gd" id="1_gdb4l"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ntdmt"]
-size = Vector2(70, 29)
+size = Vector2(61.99997, 29)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_r7g4n"]
 size = Vector2(62, 28)
 
 [node name="Block" type="StaticBody2D"]
 z_index = 1
+script = ExtResource("1_gdb4l")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 anchors_preset = 8
@@ -26,8 +29,7 @@ color = Color(0.0384, 0.244907, 0.32, 1)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(1.52588e-05, -13.5)
 shape = SubResource("RectangleShape2D_ntdmt")
-one_way_collision = true
-one_way_collision_margin = 30.0
+one_way_collision_margin = 128.0
 debug_color = Color(0.13, 0.3765, 1, 0)
 
 [node name="HookLatch" type="StaticBody2D" parent="."]

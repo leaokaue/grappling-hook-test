@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://c5bq6do6q0joe"]
+
+[ext_resource type="PackedScene" uid="uid://bcfrt4en1wy5u" path="res://scenes/peculiar_coin.tscn" id="1_dmi41"]
+[ext_resource type="Texture2D" uid="uid://6v5bnw456or8" path="res://sprites/alek.jpg" id="2_wmxve"]
+
+[node name="PeculiarCoin" instance=ExtResource("1_dmi41")]
+
+[node name="Sprite2D" parent="Polygon2D/po" index="0"]
+position = Vector2(-1, -32.5257)
+scale = Vector2(0.0565645, 0.0661682)
+texture = ExtResource("2_wmxve")

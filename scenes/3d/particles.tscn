@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://52gcqusak331"]
+[gd_scene load_steps=14 format=3 uid="uid://52gcqusak331"]
 
 [ext_resource type="Texture2D" uid="uid://by3bd1w5xg2nh" path="res://sprites/textures/smoke0.png" id="1_40wia"]
 
@@ -22,17 +22,22 @@ scale_max = 1.2
 alpha_curve = SubResource("CurveTexture_bo00d")
 collision_mode = 2
 
+[sub_resource type="Curve" id="Curve_w4do1"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.30980396, 1), 0.0, 0.0, 0, 0, Vector2(0.7803922, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_71www"]
 transparency = 1
 cull_mode = 2
 vertex_color_use_as_albedo = true
-albedo_color = Color(0.3752, 0.591387, 0.67, 0.168627)
+albedo_color = Color(0.3752, 0.59138674, 0.67, 0.09803922)
 use_particle_trails = true
 
 [sub_resource type="RibbonTrailMesh" id="RibbonTrailMesh_khw8l"]
 material = SubResource("StandardMaterial3D_71www")
 shape = 0
-size = 0.005
+size = 0.1
+curve = SubResource("Curve_w4do1")
 
 [sub_resource type="Curve" id="Curve_ckbu3"]
 _data = [Vector2(0.0305677, 0), 0.0, 0.0, 0, 0, Vector2(0.231441, 1), 0.0, 0.0, 0, 0, Vector2(0.724891, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -44,9 +49,10 @@ curve = SubResource("Curve_ckbu3")
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_idtbi"]
 emission_shape = 6
 emission_ring_axis = Vector3(0, 1, 0)
-emission_ring_height = 1.0
+emission_ring_height = 12.0
 emission_ring_radius = 20.0
 emission_ring_inner_radius = 10.0
+emission_ring_cone_angle = 90.0
 direction = Vector3(1, 0, 1)
 spread = 180.0
 flatness = 1.0
@@ -73,6 +79,18 @@ distance_fade_mode = 1
 material = SubResource("StandardMaterial3D_bdbkf")
 size = Vector2(5, 5)
 
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_qfd30"]
+emission_shape = 2
+emission_sphere_radius = 20.0
+direction = Vector3(1, 0, 1)
+spread = 180.0
+flatness = 1.0
+initial_velocity_min = 0.3
+initial_velocity_max = 0.8
+gravity = Vector3(0, 0, 0)
+scale_max = 2.0
+alpha_curve = SubResource("CurveTexture_c2w2l")
+
 [node name="Particles" type="Node3D"]
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="."]
@@ -87,4 +105,10 @@ draw_pass_1 = SubResource("RibbonTrailMesh_khw8l")
 amount = 64
 lifetime = 5.0
 process_material = SubResource("ParticleProcessMaterial_idtbi")
+draw_pass_1 = SubResource("QuadMesh_bvcqu")
+
+[node name="GPUParticles3D3" type="GPUParticles3D" parent="."]
+amount = 128
+lifetime = 5.0
+process_material = SubResource("ParticleProcessMaterial_qfd30")
 draw_pass_1 = SubResource("QuadMesh_bvcqu")

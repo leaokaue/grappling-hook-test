@@ -1,20 +1,28 @@
-[gd_scene load_steps=15 format=3 uid="uid://d2es5ksc3ksgp"]
+[gd_scene load_steps=19 format=3 uid="uid://d2es5ksc3ksgp"]
 
 [ext_resource type="Texture2D" uid="uid://dvd0js1533ixy" path="res://sprites/uibg2.png" id="1_i8q1j"]
-[ext_resource type="Script" path="res://scripts/map.gd" id="1_ifiad"]
+[ext_resource type="Script" uid="uid://dy6o3bom1a5qs" path="res://scripts/map.gd" id="1_ifiad"]
 [ext_resource type="Texture2D" uid="uid://rm6i6j71nttm" path="res://sprites/mapbg.png" id="2_sb3y0"]
 [ext_resource type="PackedScene" uid="uid://co05qhu7cwdgu" path="res://scenes/map_nodes_ui.tscn" id="3_2hgfs"]
-[ext_resource type="Script" path="res://scripts/equipment_ui.gd" id="5_lgy1i"]
+[ext_resource type="Script" uid="uid://d3djx54ur47kl" path="res://scripts/equipment_ui.gd" id="5_lgy1i"]
 [ext_resource type="Texture2D" uid="uid://d3rf28vioo657" path="res://sprites/items/dash_boots.png" id="6_g7j35"]
 [ext_resource type="Texture2D" uid="uid://tqrrxtnsyvkn" path="res://sprites/items/tambaqui.png" id="7_xusdj"]
 [ext_resource type="Texture2D" uid="uid://os1xgfw72sd1" path="res://sprites/items/mysticalstone.png" id="10_5wlx5"]
-[ext_resource type="Script" path="res://scripts/item_slot.gd" id="10_ikw3k"]
-[ext_resource type="Script" path="res://scripts/menu.gd" id="11_p61y7"]
+[ext_resource type="Script" uid="uid://c88qnaeqfthl7" path="res://scripts/item_slot.gd" id="10_ikw3k"]
+[ext_resource type="Script" uid="uid://bogd4qmpxowqp" path="res://scripts/menu.gd" id="11_p61y7"]
 [ext_resource type="Texture2D" uid="uid://c73ucvu5ijqjw" path="res://sprites/items/jetpack.png" id="11_ya6tx"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_h32r4"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_nn5lp"]
+
+[sub_resource type="ImageTexture" id="ImageTexture_mlgqr"]
+
+[sub_resource type="ImageTexture" id="ImageTexture_wslke"]
+
+[sub_resource type="ImageTexture" id="ImageTexture_gw3fx"]
+
+[sub_resource type="ImageTexture" id="ImageTexture_n1psn"]
 
 [sub_resource type="ImageTexture" id="ImageTexture_vbfsm"]
 
@@ -101,7 +109,6 @@ metadata/_tab_index = 1
 [node name="MapSprite" type="Control" parent="Control/TabContainer/Equipment"]
 modulate = Color(0.646029, 0.646029, 0.646029, 1)
 z_index = 1
-layout_mode = 3
 anchors_preset = 0
 offset_top = -36.0
 offset_right = 40.0
@@ -379,7 +386,6 @@ texture = ExtResource("1_i8q1j")
 expand_mode = 1
 
 [node name="HoverStone" type="Control" parent="Control/TabContainer/Equipment"]
-layout_mode = 2
 anchors_preset = 0
 offset_left = 791.0
 offset_top = 56.0
@@ -709,12 +715,15 @@ text = "Speedrun Timer"
 
 [node name="jumpcancel" type="CheckBox" parent="Control/TabContainer/Menu/MarginContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
+tooltip_text = "Allows you to shorten your jump by releasing the Space key.
+If your name is Jake, you prefer having this off."
 theme_override_styles/focus = SubResource("StyleBoxEmpty_nn5lp")
 button_pressed = true
 text = "Jump Cancelling"
 
 [node name="gump" type="CheckBox" parent="Control/TabContainer/Menu/MarginContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
+tooltip_text = "Prevents your Gumption Value from changing."
 theme_override_styles/focus = SubResource("StyleBoxEmpty_nn5lp")
 text = "Ignore Gumption"
 
@@ -761,8 +770,10 @@ vertical_alignment = 1
 [node name="completion" type="SpinBox" parent="Control/TabContainer/Menu/MarginContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/hbox8"]
 layout_mode = 2
 mouse_filter = 2
-theme_override_icons/updown = SubResource("ImageTexture_vbfsm")
-step = 0.1
+theme_override_icons/up = SubResource("ImageTexture_mlgqr")
+theme_override_icons/up_hover = SubResource("ImageTexture_wslke")
+theme_override_icons/up_disabled = SubResource("ImageTexture_gw3fx")
+theme_override_icons/down_disabled = SubResource("ImageTexture_n1psn")
 alignment = 1
 editable = false
 suffix = "%"
@@ -780,6 +791,10 @@ vertical_alignment = 1
 layout_mode = 2
 mouse_filter = 2
 theme_override_icons/updown = SubResource("ImageTexture_vbfsm")
+theme_override_icons/up = SubResource("ImageTexture_mlgqr")
+theme_override_icons/up_hover = SubResource("ImageTexture_wslke")
+theme_override_icons/up_disabled = SubResource("ImageTexture_gw3fx")
+theme_override_icons/down_disabled = SubResource("ImageTexture_n1psn")
 value = 43.0
 allow_greater = true
 alignment = 1
@@ -798,6 +813,10 @@ vertical_alignment = 1
 layout_mode = 2
 mouse_filter = 2
 theme_override_icons/updown = SubResource("ImageTexture_vbfsm")
+theme_override_icons/up = SubResource("ImageTexture_mlgqr")
+theme_override_icons/up_hover = SubResource("ImageTexture_wslke")
+theme_override_icons/up_disabled = SubResource("ImageTexture_gw3fx")
+theme_override_icons/down_disabled = SubResource("ImageTexture_n1psn")
 value = 100.0
 alignment = 1
 editable = false
@@ -815,6 +834,10 @@ vertical_alignment = 1
 layout_mode = 2
 mouse_filter = 2
 theme_override_icons/updown = SubResource("ImageTexture_vbfsm")
+theme_override_icons/up = SubResource("ImageTexture_mlgqr")
+theme_override_icons/up_hover = SubResource("ImageTexture_wslke")
+theme_override_icons/up_disabled = SubResource("ImageTexture_gw3fx")
+theme_override_icons/down_disabled = SubResource("ImageTexture_n1psn")
 value = 43.0
 allow_greater = true
 alignment = 1
@@ -833,6 +856,10 @@ vertical_alignment = 1
 layout_mode = 2
 mouse_filter = 2
 theme_override_icons/updown = SubResource("ImageTexture_vbfsm")
+theme_override_icons/up = SubResource("ImageTexture_mlgqr")
+theme_override_icons/up_hover = SubResource("ImageTexture_wslke")
+theme_override_icons/up_disabled = SubResource("ImageTexture_gw3fx")
+theme_override_icons/down_disabled = SubResource("ImageTexture_n1psn")
 value = 43.0
 allow_greater = true
 alignment = 1
@@ -851,6 +878,10 @@ vertical_alignment = 1
 layout_mode = 2
 mouse_filter = 2
 theme_override_icons/updown = SubResource("ImageTexture_vbfsm")
+theme_override_icons/up = SubResource("ImageTexture_mlgqr")
+theme_override_icons/up_hover = SubResource("ImageTexture_wslke")
+theme_override_icons/up_disabled = SubResource("ImageTexture_gw3fx")
+theme_override_icons/down_disabled = SubResource("ImageTexture_n1psn")
 value = 43.0
 allow_greater = true
 alignment = 1
@@ -869,6 +900,10 @@ vertical_alignment = 1
 layout_mode = 2
 mouse_filter = 2
 theme_override_icons/updown = SubResource("ImageTexture_vbfsm")
+theme_override_icons/up = SubResource("ImageTexture_mlgqr")
+theme_override_icons/up_hover = SubResource("ImageTexture_wslke")
+theme_override_icons/up_disabled = SubResource("ImageTexture_gw3fx")
+theme_override_icons/down_disabled = SubResource("ImageTexture_n1psn")
 step = 0.1
 alignment = 1
 editable = false
@@ -887,6 +922,10 @@ vertical_alignment = 1
 layout_mode = 2
 mouse_filter = 2
 theme_override_icons/updown = SubResource("ImageTexture_vbfsm")
+theme_override_icons/up = SubResource("ImageTexture_mlgqr")
+theme_override_icons/up_hover = SubResource("ImageTexture_wslke")
+theme_override_icons/up_disabled = SubResource("ImageTexture_gw3fx")
+theme_override_icons/down_disabled = SubResource("ImageTexture_n1psn")
 value = 20.0
 alignment = 1
 editable = false
@@ -904,6 +943,10 @@ vertical_alignment = 1
 layout_mode = 2
 mouse_filter = 2
 theme_override_icons/updown = SubResource("ImageTexture_vbfsm")
+theme_override_icons/up = SubResource("ImageTexture_mlgqr")
+theme_override_icons/up_hover = SubResource("ImageTexture_wslke")
+theme_override_icons/up_disabled = SubResource("ImageTexture_gw3fx")
+theme_override_icons/down_disabled = SubResource("ImageTexture_n1psn")
 value = 20.0
 alignment = 1
 editable = false

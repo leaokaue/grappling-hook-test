@@ -127,7 +127,8 @@ func _ready() -> void:
 	
 	print(Global.last_pos_x,Global.last_pos_y,"Positions!")
 	
-	if not Global.ended:
+	if Global.ended:
+		Global.ended = false
 		self.global_position.x = Global.last_pos_x
 		self.global_position.y = Global.last_pos_y
 	else:

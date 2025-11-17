@@ -171,87 +171,86 @@ func match_item():
 
 static func is_item_owned(item : Item.ITEMS) -> bool:
 	var i := ITEMS
-	var g := Global
 	#print(current_item)
 	
 	match item:
 		i.HookThrowBoost:
-			if Global.has_steroids_1 and not Global.steroids_1_scrapped:
+			if Global.has_steroids_1 or Global.steroids_1_scrapped:
 				return true
 			else:
 				return false
 		i.JumpBoost:
-			if Global.has_steroids_2 and not Global.steroids_2_scrapped:
+			if Global.has_steroids_2 or Global.steroids_2_scrapped:
 				return true
 			else:
 				return false
 		i.SpeedBoost:
-			if Global.has_steroids_3 and not Global.steroids_3_scrapped:
+			if Global.has_steroids_3 or Global.steroids_3_scrapped:
 				return true
 			else:
 				return false
 		i.CoinCompass:
-			if Global.has_coin_compass and not Global.coin_compass_scrapped:
+			if Global.has_coin_compass or Global.coin_compass_scrapped:
 				return true
 			else:
 				return false
 		i.CoinTracker:
-			if Global.has_coin_tracker and not Global.coin_tracker_scrapped:
+			if Global.has_coin_tracker or Global.coin_tracker_scrapped:
 				return true
 			else:
 				return false
 		i.FastTravel:
-			if Global.has_guiding_light and not Global.guiding_light_scrapped:
+			if Global.has_guiding_light or Global.guiding_light_scrapped:
 				return true
 			else:
 				return false
 		i.DashBoots:
-			if Global.has_dash_boots and not Global.dash_boots_scrapped:
+			if Global.has_dash_boots or Global.dash_boots_scrapped:
 				return true
 			else:
 				return false
 		i.JetPack:
-			if Global.has_jetpack and not Global.jetpack_scrapped:
+			if Global.has_jetpack or Global.jetpack_scrapped:
 				return true
 			else:
 				return false
 		i.HookCooldownReducer:
-			if Global.has_cool_drink and not Global.cool_drink_scrapped:
+			if Global.has_cool_drink or Global.cool_drink_scrapped:
 				return true
 			else:
 				return false
 		i.GrappleRopeExtension:
-			if Global.has_rope_extension and not Global.rope_extension_scrapped:
+			if Global.has_rope_extension or Global.rope_extension_scrapped:
 				return true
 			else:
 				return false
 		i.RetractBoost:
-			if Global.has_rope_pulley and not Global.rope_pulley_scrapped:
+			if Global.has_rope_pulley or Global.rope_pulley_scrapped:
 				return true
 			else:
 				return false
 		i.LatchJumpBoost:
-			if Global.has_boost_latch and not Global.boost_latch_scrapped:
+			if Global.has_boost_latch or Global.boost_latch_scrapped:
 				return true
 			else:
 				return false
 		i.HoverStone:
-			if Global.has_hover_stone and not Global.hover_stone_scrapped:
+			if Global.has_hover_stone or Global.hover_stone_scrapped:
 				return true
 			else:
 				return false
 		i.PoisonResist:
-			if Global.has_poison_resist and not Global.poison_resist_scrapped:
+			if Global.has_poison_resist or Global.poison_resist_scrapped:
 				return true
 			else:
 				return false
 		i.WaterDash:
-			if Global.has_tambaqui and not Global.tambaqui_scrapped:
+			if Global.has_tambaqui or Global.tambaqui_scrapped:
 				return true
 			else:
 				return false
 		i.Trash:
-			if Global.has_trash_bag and not Global.trash_bag_scrapped:
+			if Global.has_trash_bag or Global.trash_bag_scrapped:
 				return true
 			else:
 				return false
