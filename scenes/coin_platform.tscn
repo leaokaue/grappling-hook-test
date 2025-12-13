@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://c24ivy8cytnix"]
 
-[ext_resource type="Script" path="res://scripts/coin_platform.gd" id="1_jlhit"]
+[ext_resource type="Script" uid="uid://yeh3rmwa3514" path="res://scripts/coin_platform.gd" id="1_jlhit"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dtxcp"]
 size = Vector2(2335.24, 272)
@@ -11,6 +11,7 @@ size = Vector2(120, 224)
 [node name="CoinPlatform" type="AnimatableBody2D"]
 z_index = 1
 position = Vector2(30, 26)
+sync_to_physics = false
 script = ExtResource("1_jlhit")
 
 [node name="ColorRect" type="ColorRect" parent="."]

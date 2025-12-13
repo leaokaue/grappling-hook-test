@@ -38,6 +38,10 @@ func _ready() -> void:
 	checker.mouse_exited.connect(panel_leave)
 	clear_button.pressed.connect(clear_item)
 	
+	if not Global.can_switch_equipments:
+		clear_button.disabled = true
+		clear_button.modulate *= 0.6
+	
 	if Global.current_equipment == Global.EQUIPMENTS.None:
 		clear_button.disabled = true
 	

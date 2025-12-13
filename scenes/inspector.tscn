@@ -1,0 +1,118 @@
+[gd_scene load_steps=4 format=3 uid="uid://cdnmlfwg5h7qc"]
+
+[ext_resource type="Script" uid="uid://c6h1srdew7704" path="res://scripts/inspector.gd" id="1_hu1vf"]
+[ext_resource type="Texture2D" uid="uid://dkjp35tckxbnh" path="res://sprites/PeculiarCoin.png" id="2_b7swd"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_g2p2g"]
+size = Vector2(120, 112)
+
+[node name="Inspector" type="Area2D"]
+process_mode = 3
+script = ExtResource("1_hu1vf")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_g2p2g")
+debug_color = Color(0, 0.595, 0.7, 0.113725)
+
+[node name="Obelisk" type="Node2D" parent="."]
+unique_name_in_owner = true
+z_index = -2
+
+[node name="Polygon2D" type="Polygon2D" parent="Obelisk"]
+color = Color(0, 0.654902, 1, 1)
+polygon = PackedVector2Array(6, -53, 4, -22, -6, -18, -32, -38)
+
+[node name="ColorRect2" type="ColorRect" parent="Obelisk"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -43.0
+offset_top = -52.0
+offset_right = 5.164978
+offset_bottom = -32.279766
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -0.41857955
+color = Color(0.385235, 0.41118556, 0.40849996, 1)
+
+[node name="ColorRect3" type="ColorRect" parent="Obelisk"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -14.928598
+offset_top = 22.544436
+offset_right = -8.928598
+offset_bottom = 69.90902
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 2.458319
+color = Color(0.385235, 0.41118556, 0.40849996, 1)
+
+[node name="ColorRect4" type="ColorRect" parent="Obelisk"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -43.710846
+offset_top = -2.7516356
+offset_right = -37.710846
+offset_bottom = 44.368572
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 3.6147594
+color = Color(0.385235, 0.41118556, 0.40849996, 1)
+
+[node name="ColorRect5" type="ColorRect" parent="Obelisk"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -43.0
+offset_top = -5.0
+offset_right = -37.0
+offset_bottom = 1.4723434
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 3.8476388
+color = Color(0.14466858, 0.15845704, 0.15649569, 1)
+
+[node name="ColorRect" type="ColorRect" parent="Obelisk"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -21.0
+offset_top = 7.0
+offset_right = 21.0
+offset_bottom = 36.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.205117, 0.205117, 0.205117, 1)
+
+[node name="Label" type="Label" parent="Obelisk"]
+unique_name_in_owner = true
+visible = false
+z_index = 1
+offset_left = -54.0
+offset_top = -77.0
+offset_right = 70.0
+offset_bottom = -42.0
+theme_override_font_sizes/font_size = 25
+text = "[ F ] "
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="Obelisk"]
+offset_left = -8.0
+offset_top = -16.0
+offset_right = 446.0
+offset_bottom = 533.0
+scale = Vector2(0.036647566, 0.036647566)
+texture = ExtResource("2_b7swd")

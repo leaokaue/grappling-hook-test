@@ -1,8 +1,8 @@
 [gd_scene load_steps=25 format=3 uid="uid://cgr82nin8tx0k"]
 
-[ext_resource type="Script" path="res://scripts/nightmare_coin.gd" id="1_vreuo"]
+[ext_resource type="Script" uid="uid://d4a5cn86lpeqk" path="res://scripts/nightmare_coin.gd" id="1_vreuo"]
 [ext_resource type="Texture2D" uid="uid://umjm64f76xqr" path="res://scenes/nightmare_coin.png" id="2_6kbxp"]
-[ext_resource type="Shader" path="res://shaders/shine.gdshader" id="3_jv1id"]
+[ext_resource type="Shader" uid="uid://cnmfovagnfevp" path="res://shaders/shine.gdshader" id="3_jv1id"]
 [ext_resource type="AudioStream" uid="uid://cr2uyiph8cb5s" path="res://sounds/nightmare_bling.mp3" id="4_qb6n7"]
 [ext_resource type="AudioStream" uid="uid://djd5ucsxlxigf" path="res://sounds/nightmare_scream.mp3" id="5_0b6ju"]
 [ext_resource type="Texture2D" uid="uid://b2hpi4gi8412a" path="res://sprites/ball.png" id="6_b2lxp"]
@@ -135,6 +135,7 @@ emission_ring_axis = Vector3(0, 0, 1)
 emission_ring_height = 1.0
 emission_ring_radius = 200.0
 emission_ring_inner_radius = 190.0
+emission_ring_cone_angle = 90.0
 orbit_velocity_min = 0.126
 orbit_velocity_max = 0.288
 radial_velocity_min = -198.2
@@ -206,20 +207,20 @@ max_distance = 500.0
 [node name="collect" type="GPUParticles2D" parent="."]
 emitting = false
 amount = 256
-process_material = SubResource("ParticleProcessMaterial_8kb8e")
 texture = ExtResource("6_b2lxp")
 lifetime = 0.6
 one_shot = true
 explosiveness = 0.9
+process_material = SubResource("ParticleProcessMaterial_8kb8e")
 
 [node name="aura" type="GPUParticles2D" parent="."]
 unique_name_in_owner = true
 material = SubResource("CanvasItemMaterial_6m3je")
 scale = Vector2(1.6759, 1.6759)
 amount = 36
-process_material = SubResource("ParticleProcessMaterial_8ft3w")
 texture = ExtResource("6_b2lxp")
 visibility_rect = Rect2(-200, -200, 400, 400)
 local_coords = true
 trail_enabled = true
 trail_lifetime = 0.39
+process_material = SubResource("ParticleProcessMaterial_8ft3w")

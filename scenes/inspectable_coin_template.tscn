@@ -1,0 +1,67 @@
+[gd_scene load_steps=19 format=3 uid="uid://cm6liglngjl4x"]
+
+[ext_resource type="Texture2D" uid="uid://dkjp35tckxbnh" path="res://sprites/PeculiarCoin.png" id="1_dhd3o"]
+[ext_resource type="Script" uid="uid://bthf6xmvisfmc" path="res://scripts/inspectable_coin_template.gd" id="1_pwucy"]
+[ext_resource type="Texture2D" uid="uid://cenf2xsk3vtee" path="res://sprites/chuffed_coin.png" id="3_qreq6"]
+[ext_resource type="Texture2D" uid="uid://cd61y8wf0en0c" path="res://sprites/coins/entombed_coin_2.png" id="4_7m1a5"]
+[ext_resource type="Texture2D" uid="uid://chkex4utrq27a" path="res://sprites/confused_coin.png" id="5_vxj7v"]
+[ext_resource type="Texture2D" uid="uid://umjm64f76xqr" path="res://scenes/nightmare_coin.png" id="6_8srx4"]
+[ext_resource type="Texture2D" uid="uid://bjc774l2ouvfd" path="res://scenes/angel_coin.png" id="7_l8ete"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qreq6"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7m1a5"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vxj7v"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8srx4"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l8ete"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jjhgn"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ijdc6"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cdtbp"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_u2crs"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_77xr2"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qji2l"]
+
+[node name="CoinTemplate" type="Button"]
+custom_minimum_size = Vector2(168.75, 206.25)
+offset_right = 168.75
+offset_bottom = 206.25
+theme_override_styles/normal = SubResource("StyleBoxEmpty_qreq6")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_7m1a5")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_vxj7v")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_8srx4")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_l8ete")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxEmpty_jjhgn")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_ijdc6")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxEmpty_cdtbp")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_u2crs")
+theme_override_styles/disabled_mirrored = SubResource("StyleBoxEmpty_77xr2")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_qji2l")
+flat = true
+script = ExtResource("1_pwucy")
+peculiar_texture = ExtResource("1_dhd3o")
+chuffed_texture = ExtResource("3_qreq6")
+entombed_texture = ExtResource("4_7m1a5")
+confused_texture = ExtResource("5_vxj7v")
+nightmare_texture = ExtResource("6_8srx4")
+angel_coin = ExtResource("7_l8ete")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+unique_name_in_owner = true
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_qreq6")
+expand_mode = 1

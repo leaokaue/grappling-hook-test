@@ -26,6 +26,7 @@ func _on_player_exit(body : Node2D):
 		player_inside = false
 
 func _process(_delta: float) -> void:
+	#print(get_overlapping_bodies())
 	if player_inside and not ui_active:
 		if Input.is_action_just_pressed("scrap"):
 			instantiate_scrapper_ui()

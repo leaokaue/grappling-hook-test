@@ -29,9 +29,11 @@ signal item_clicked(item : Item.ITEMS,item_self)
 @export var trash : Texture
 @export var grappling_hook : Texture
 
+@export var name_label : Label
+
 func _ready() -> void:
 	
-	match_item()
+	#match_item()
 	
 	update_ui()
 	
@@ -43,11 +45,18 @@ func _ready() -> void:
 	button_up.connect(released)
 	button_down.connect(pressed)
 	
-	if Item.is_item_owned(current_item):
+	if is_grappling_hook:
 		show()
+		return
+	
+	if Item.is_item_owned(current_item):
+		if not Item.is_item_scrapped(current_item):
+			show()
+		else:
+			hide()
 	else:
 		hide()
-	
+
 
 func pressed() -> void:
 	self.modulate.v = 0.6
@@ -73,7 +82,7 @@ func update_ui():
 	
 	match_item()
 	
-	if Item.is_item_owned(current_item):
+	if not Item.is_item_scrapped(current_item):
 		show()
 	else:
 		hide()

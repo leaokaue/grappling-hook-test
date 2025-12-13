@@ -32,6 +32,7 @@ var property_name : StringName = ""
 @export var motorized_pulley : Texture
 @export var titanium_glove : Texture
 @export var trash : Texture
+@export var cube : Texture
 
 var i_desc : String
 var i_name : String
@@ -52,7 +53,8 @@ enum ITEMS {
 	PoisonResist,
 	RetractBoost,
 	LatchJumpBoost,
-	Trash
+	Trash,
+	ErrorCube
 }
 
 func _ready() -> void:
@@ -159,19 +161,118 @@ func match_item():
 		i.WaterDash:
 			s.texture = tambaqui
 			i_name = "Tambaqui"
-			i_desc = "It graces you with its presence.
-			 Press RMB to swim underwater.
-			 While swmming, press LMB to perform a Dolphin Dash
-			 Must be equipped first."
+			i_desc = "Hold RMB underwater to swim gracefully.
+			 Outside of water, you will perform a Dolphin Leap.
+			 It's quite pleasant. Must be equipped first."
 		i.Trash:
 			s.texture = trash
 			i_name = "Trash Bag"
 			i_desc = "Wow! This is worthless! If only you could scrap this."
+		i.ErrorCube:
+			s.texture = cube
+			i_name = "Error Cube"
+			i_desc = "Materialized from spite.
+			Press Shift to put it down on the world.
+			It will help you get out of here."
 	#sprite.texture = t
+
+static func is_item_scrapped(item : Item.ITEMS) -> bool:
+	var i := ITEMS
+	#print(current_item)
+	
+	if Engine.is_editor_hint():
+		return false
+	
+	match item:
+		i.HookThrowBoost:
+			if Global.steroids_1_scrapped:
+				return true
+			else:
+				return false
+		i.JumpBoost:
+			if Global.steroids_2_scrapped:
+				return true
+			else:
+				return false
+		i.SpeedBoost:
+			if Global.steroids_3_scrapped:
+				return true
+			else:
+				return false
+		i.CoinCompass:
+			if Global.coin_compass_scrapped:
+				return true
+			else:
+				return false
+		i.CoinTracker:
+			if Global.coin_tracker_scrapped:
+				return true
+			else:
+				return false
+		i.FastTravel:
+			if Global.guiding_light_scrapped:
+				return true
+			else:
+				return false
+		i.DashBoots:
+			if Global.dash_boots_scrapped:
+				return true
+			else:
+				return false
+		i.JetPack:
+			if Global.jetpack_scrapped:
+				return true
+			else:
+				return false
+		i.HookCooldownReducer:
+			if Global.cool_drink_scrapped:
+				return true
+			else:
+				return false
+		i.GrappleRopeExtension:
+			if Global.rope_extension_scrapped:
+				return true
+			else:
+				return false
+		i.RetractBoost:
+			if Global.rope_pulley_scrapped:
+				return true
+			else:
+				return false
+		i.LatchJumpBoost:
+			if Global.boost_latch_scrapped:
+				return true
+			else:
+				return false
+		i.HoverStone:
+			if Global.hover_stone_scrapped:
+				return true
+			else:
+				return false
+		i.PoisonResist:
+			if Global.poison_resist_scrapped:
+				return true
+			else:
+				return false
+		i.WaterDash:
+			if Global.tambaqui_scrapped:
+				return true
+			else:
+				return false
+		i.Trash:
+			if Global.trash_bag_scrapped:
+				return true
+			else:
+				return false
+	
+	return true
 
 static func is_item_owned(item : Item.ITEMS) -> bool:
 	var i := ITEMS
 	#print(current_item)
+	
+	if Engine.is_editor_hint():
+		return false
 	
 	match item:
 		i.HookThrowBoost:

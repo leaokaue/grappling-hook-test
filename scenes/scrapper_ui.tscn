@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://ddhlytswfhaa7"]
+[gd_scene load_steps=58 format=3 uid="uid://ddhlytswfhaa7"]
 
 [ext_resource type="Script" uid="uid://dua3g1gv4e52r" path="res://scenes/scrapper_ui.gd" id="1_bcbwj"]
 [ext_resource type="Texture2D" uid="uid://rm6i6j71nttm" path="res://sprites/mapbg.png" id="1_l8l3l"]
@@ -26,6 +26,14 @@
 [ext_resource type="AudioStream" uid="uid://d386wqihiwj36" path="res://sounds/trash.mp3" id="21_w62x6"]
 [ext_resource type="AudioStream" uid="uid://dylmm5pj7rkwu" path="res://sounds/plunger.mp3" id="22_ceg26"]
 [ext_resource type="AudioStream" uid="uid://dcap86o0xujd4" path="res://sounds/shovel_swing.mp3" id="23_queto"]
+[ext_resource type="Texture2D" uid="uid://bl8bng5lc06po" path="res://sprites/grapple_break1.png" id="24_oayo7"]
+[ext_resource type="Texture2D" uid="uid://8emwjd2jy7m0" path="res://sprites/grapple_break2.png" id="25_1nf0a"]
+[ext_resource type="Texture2D" uid="uid://popgykd3s4jc" path="res://sprites/grapple_break3.png" id="26_31cgy"]
+[ext_resource type="AudioStream" uid="uid://47db6viykbbt" path="res://sounds/scrap_fail.mp3" id="27_24its"]
+[ext_resource type="AudioStream" uid="uid://gesri0kc4d2y" path="res://sounds/deep_metal_hit_2.mp3" id="28_la0b1"]
+[ext_resource type="AudioStream" uid="uid://b5dgq7ovaet0l" path="res://sounds/scary-sound-suspense-314626.mp3" id="29_la0b1"]
+[ext_resource type="AudioStream" uid="uid://78kjcgg8o6gw" path="res://sounds/cry-of-pain-357978.mp3" id="33_31cgy"]
+[ext_resource type="AudioStream" uid="uid://du1sktnsi1iad" path="res://sounds/heavy-breathing-sound-effect-type-03-294201.mp3" id="34_o4rgu"]
 
 [sub_resource type="Animation" id="Animation_68y5a"]
 length = 0.001
@@ -132,6 +140,78 @@ tracks/8/path = NodePath("../../../../../Trash:playing")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("../../../../../Fail:playing")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("%Fail:emitting")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("../../../../../FailFinished:playing")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("../../../../../..:shake")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/13/type = "value"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("../../../../../..:shake_strength")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [3.0]
+}
+tracks/14/type = "value"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("../../../../../..:scrapping")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
@@ -251,10 +331,382 @@ tracks/8/keys = {
 "values": [true]
 }
 
+[sub_resource type="Animation" id="Animation_152d4"]
+resource_name = "scrap_fail"
+length = 3.0
+step = 0.005
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ItemRect:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.14, 1.7434227, 1.845),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(142, -19.5), Vector2(142, 106.400795), Vector2(142, 106.400795), Vector2(142, -19.5)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("ItemRect:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.0875, 0.14, 1.7434227, 1.845),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1, 1), Vector2(0.78966254, 0.78966254), Vector2(0.78966254, 0.78966254), Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Obelisk:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.085, 0.14499998, 1.75, 1.851666),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1.86202, 1.01589), Vector2(1.86202, 1.01589), Vector2(3.5, 1.461), Vector2(3.5, 1.461), Vector2(1.862, 1.061)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Fast:emitting")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.01),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Entered:emitting")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.133333),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("../../../../..:scrapping")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.01, 2.985),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("../../../../../Fwoop:playing")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0.02),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("../../../../../Dunk:playing")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0.175),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("../../../../../Trash:playing")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0.135),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("../../../../../Fail:playing")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0.1321642),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("%Fail:emitting")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0, 0.115001656, 1.75),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, false]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("../../../../../FailFinished:playing")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(1.74),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("../../../../../..:shake")
+tracks/12/interp = 0
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0.19, 1.76, 1.8600001),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [6.0, 6.0, 0.0]
+}
+tracks/13/type = "value"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("../../../../../..:shake_strength")
+tracks/13/interp = 0
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(0.18, 1.77, 1.8700001),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [3.0, 3.0, 9.0]
+}
+tracks/14/type = "value"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("../../../../../..:scrapping")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="Animation" id="Animation_oayo7"]
+resource_name = "scrap_fail_success"
+length = 2.1
+step = 0.005
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ItemRect:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.14, 1.7434227, 1.935),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(142, -19.5), Vector2(142, 106.400795), Vector2(142, 106.400795), Vector2(142, 190)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("ItemRect:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.0875, 0.14, 1.74, 1.845, 1.9699999),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1, 1), Vector2(0.78966254, 0.78966254), Vector2(0.78966254, 0.78966254), Vector2(0.79, 0.79), Vector2(0.088, 0.088)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Obelisk:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.085, 0.14499998, 1.915, 1.995),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1.86202, 1.01589), Vector2(1.86202, 1.01589), Vector2(3.5, 1.461), Vector2(3.5, 1.461), Vector2(1.862, 1.061)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Fast:emitting")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.01),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Entered:emitting")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(1.82),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("../../../../..:scrapping")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.01, 2.985),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("../../../../../Fwoop:playing")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0.02),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("../../../../../Dunk:playing")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(1.75),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("../../../../../Trash:playing")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(1.71),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("../../../../../Fail:playing")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0.1321642),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("%Fail:emitting")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0, 0.115001656, 1.75),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, false]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = false
+tracks/11/path = NodePath("../../../../../FailFinished:playing")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(1.74),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("../../../../../..:shake")
+tracks/12/interp = 0
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0.19, 1.76, 1.8600001),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [6.0, 6.0, 0.0]
+}
+tracks/13/type = "value"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("../../../../../..:shake_strength")
+tracks/13/interp = 0
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(0.18, 1.77, 1.8700001),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [3.0, 3.0, 9.0]
+}
+tracks/14/type = "value"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("../../../../../..:scrapping")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_i6sia"]
 _data = {
 &"RESET": SubResource("Animation_68y5a"),
-&"scrap": SubResource("Animation_4grng")
+&"scrap": SubResource("Animation_4grng"),
+&"scrap_fail": SubResource("Animation_152d4"),
+&"scrap_fail_success": SubResource("Animation_oayo7")
 }
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tr6px"]
@@ -303,19 +755,160 @@ scale_max = 0.25
 color = Color(0.625597, 0.625597, 0.625597, 1)
 alpha_curve = SubResource("CurveTexture_d0ymn")
 
-[node name="ScrapperUI" type="CanvasLayer" node_paths=PackedStringArray("item_rect", "scrap_items", "scrap_container", "ss_container", "scrap_button", "scrap_label", "super_scrap", "ss_label")]
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_1nf0a"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 50.0
+direction = Vector3(0, 1, 0)
+spread = 180.0
+initial_velocity_min = 431.75998
+initial_velocity_max = 511.18
+gravity = Vector3(0, 700, 0)
+scale_min = 0.099999994
+scale_max = 0.12
+color = Color(0.625597, 0.625597, 0.625597, 1)
+alpha_curve = SubResource("CurveTexture_d0ymn")
+
+[sub_resource type="Curve" id="Curve_24its"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.141079, 1), 0.0, 0.0, 0, 0, Vector2(0.775934, 1), 0.0, 0.0, 0, 0, Vector2(0.975104, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_la0b1"]
+curve = SubResource("Curve_24its")
+
+[sub_resource type="Gradient" id="Gradient_152d4"]
+offsets = PackedFloat32Array(0, 0.05076142, 1)
+colors = PackedColorArray(1, 0, 0, 1, 1, 0.516667, 0, 1, 0.966667, 1, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_sobcy"]
+gradient = SubResource("Gradient_152d4")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_oayo7"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 68.09
+direction = Vector3(0, 1, 0)
+spread = 43.092
+initial_velocity_min = 514.8
+initial_velocity_max = 669.45
+gravity = Vector3(0, 0.1, 0)
+linear_accel_min = -2.89
+linear_accel_max = -2.89
+scale_min = 0.01
+scale_max = 0.03
+color_ramp = SubResource("GradientTexture1D_sobcy")
+alpha_curve = SubResource("CurveTexture_la0b1")
+
+[sub_resource type="Shader" id="Shader_24its"]
+code = "shader_type canvas_item;
+
+uniform float inner_radius = 0.1;
+uniform float outer_radius = 1;
+uniform float vignette_strength = 1.0;
+uniform float dither_strength = 0.03;
+uniform vec4 vignette_color: source_color;
+
+
+void fragment() {
+	float dist = distance(UV, vec2(0.5));
+	
+	float vignette = smoothstep(inner_radius, outer_radius, dist) * vignette_strength;
+	float dither = fract(sin(dot(UV, vec2(12.9898, 78.233))) * 43758.5453123) * dither_strength;
+	
+	COLOR = vec4(vignette_color.rgb, vignette + dither);
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_la0b1"]
+shader = SubResource("Shader_24its")
+shader_parameter/inner_radius = 0.3
+shader_parameter/outer_radius = 0.6
+shader_parameter/vignette_strength = 0.0
+shader_parameter/dither_strength = 0.03
+shader_parameter/vignette_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Shader" id="Shader_31cgy"]
+code = "/*
+	Glitch Effect Shader by Yui Kinomoto @arlez80
+
+	MIT License
+*/
+
+shader_type canvas_item;
+
+// 振動の強さ
+uniform float shake_power = 0.03;
+// 振動率
+uniform float shake_rate : hint_range( 0.0, 1.0 ) = 0.2;
+// 振動速度
+uniform float shake_speed = 5.0;
+// 振動ブロックサイズ
+uniform float shake_block_size = 30.5;
+// 色の分離率
+uniform float shake_color_rate : hint_range( 0.0, 1.0 ) = 0.01;
+
+uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_linear_mipmap;
+
+float random( float seed )
+{
+	return fract( 543.2543 * sin( dot( vec2( seed, seed ), vec2( 3525.46, -54.3415 ) ) ) );
+}
+
+void fragment( )
+{
+	float enable_shift = float(
+		random( trunc( TIME * shake_speed ) )
+	<	shake_rate
+	);
+
+	vec2 fixed_uv = SCREEN_UV;
+	fixed_uv.x += (
+		random(
+			( trunc( SCREEN_UV.y * shake_block_size ) / shake_block_size )
+		+	TIME
+		) - 0.5
+	) * shake_power * enable_shift;
+
+	vec4 pixel_color = textureLod( SCREEN_TEXTURE, fixed_uv, 0.0 );
+	pixel_color.r = mix(
+		pixel_color.r
+	,	textureLod( SCREEN_TEXTURE, fixed_uv + vec2( shake_color_rate, 0.0 ), 0.0 ).r
+	,	enable_shift
+	);
+	pixel_color.b = mix(
+		pixel_color.b
+	,	textureLod( SCREEN_TEXTURE, fixed_uv + vec2( -shake_color_rate, 0.0 ), 0.0 ).b
+	,	enable_shift
+	);
+	COLOR = pixel_color;
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_o4rgu"]
+shader = SubResource("Shader_31cgy")
+shader_parameter/shake_power = 0.01
+shader_parameter/shake_rate = 0.0470000022325
+shader_parameter/shake_speed = 5.0
+shader_parameter/shake_block_size = 9.215
+shader_parameter/shake_color_rate = 0.01
+
+[node name="ScrapperUI" type="CanvasLayer" node_paths=PackedStringArray("item_rect", "scrap_items", "hook_scrap_item", "scrap_container", "ss_container", "main_control", "break_1", "break_2", "break_3", "scrap_button", "scrap_label", "super_scrap", "ss_label")]
 layer = 19
 script = ExtResource("1_bcbwj")
 item_rect = NodePath("Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/ItemRect")
 scrap_items = [NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/WarpBoots"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Tambaqui"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/HoverStone"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Jetpack"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Meds1"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Meds2"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Meds3"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Tracker"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Compass"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Light"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Potion"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Juice"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Glove"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Pulley"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Rope"), NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer/Trash")]
+hook_scrap_item = NodePath("Control/MarginContainer/SuperScrapContainer/HBoxContainer/HFlowContainer/GrapplingHook")
 scrap_container = NodePath("Control/MarginContainer/ScrapContainer")
 ss_container = NodePath("Control/MarginContainer/SuperScrapContainer")
+main_control = NodePath("Control")
+break_1 = NodePath("Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/ItemRect/Break1")
+break_2 = NodePath("Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/ItemRect/Break2")
+break_3 = NodePath("Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/ItemRect/Break3")
 scrap_button = NodePath("Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/Button")
-scrap_label = NodePath("Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/VBoxContainer/Label2")
+scrap_label = NodePath("Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/VBoxContainer/TPl1")
 sl_text = "%01d/16 Trash Points"
 super_scrap = NodePath("Control/MarginContainer/SuperScrapperButton/HBoxContainer2/CheckButton")
-ss_label = NodePath("Control/MarginContainer/SuperScrapperButton/MarginContainer/Label")
-ss_text = "%01d/10 Trash Points"
+ss_label = NodePath("Control/MarginContainer/SuperScrapperButton/MarginContainer/TrashPoints")
+ss_text = "%01d/8 Trash Points"
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
@@ -443,6 +1036,7 @@ theme_override_constants/margin_right = 40
 theme_override_constants/margin_bottom = 40
 
 [node name="ScrapContainer" type="VBoxContainer" parent="Control/MarginContainer"]
+visible = false
 layout_mode = 2
 mouse_filter = 2
 
@@ -470,7 +1064,7 @@ vertical_alignment = 1
 [node name="MarginContainer2" type="MarginContainer" parent="Control/MarginContainer/ScrapContainer"]
 layout_mode = 2
 
-[node name="Label2" type="Label" parent="Control/MarginContainer/ScrapContainer/MarginContainer2"]
+[node name="Label3" type="Label" parent="Control/MarginContainer/ScrapContainer/MarginContainer2"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "A.W.A.T.Q.F.T.P.C is not responsible for any softlocks that the Scrapper may cause."
@@ -487,102 +1081,121 @@ layout_mode = 2
 mouse_filter = 2
 
 [node name="WarpBoots" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+visible = true
 layout_mode = 2
 texture_normal = ExtResource("2_yvkgk")
 current_item = 7
 item_name = "Warp Boots"
 
 [node name="Tambaqui" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+visible = true
 layout_mode = 2
 texture_normal = ExtResource("3_55gk0")
 current_item = 10
 item_name = "Tambaqui"
 
 [node name="HoverStone" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+visible = true
 layout_mode = 2
 texture_normal = ExtResource("4_poapj")
 current_item = 5
 item_name = "Hover Stone"
 
 [node name="Jetpack" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+visible = true
 layout_mode = 2
 texture_normal = ExtResource("5_7pkgv")
 current_item = 8
 item_name = "Jetpack"
 
 [node name="Meds1" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+visible = true
 layout_mode = 2
 
 [node name="Meds2" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+visible = true
 layout_mode = 2
 texture_normal = ExtResource("7_35mu5")
 current_item = 1
 item_name = "Pretty Healthy Medicine"
 
 [node name="Meds3" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+visible = true
 layout_mode = 2
 texture_normal = ExtResource("8_8hcey")
 current_item = 2
 item_name = "Incredibly Healthy Medicine!"
 
 [node name="Tracker" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+visible = true
 layout_mode = 2
 texture_normal = ExtResource("9_qo74t")
 current_item = 4
 item_name = "Coin Tracker"
 
 [node name="Compass" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+visible = true
 layout_mode = 2
 texture_normal = ExtResource("10_jd403")
 current_item = 3
 item_name = "Coin Compass"
 
 [node name="Light" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+visible = true
 layout_mode = 2
 texture_normal = ExtResource("11_kcvl4")
 current_item = 6
 item_name = "Guiding Light"
 
 [node name="Potion" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+visible = true
 layout_mode = 2
 texture_normal = ExtResource("12_vssfn")
 current_item = 12
 item_name = "Green Potion"
 
 [node name="Juice" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+visible = true
 layout_mode = 2
 texture_normal = ExtResource("13_3r5hx")
 current_item = 9
 item_name = "Grape Juice"
 
 [node name="Glove" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+visible = true
 layout_mode = 2
 texture_normal = ExtResource("14_3hif5")
 current_item = 14
 item_name = "Titanium Glove"
 
 [node name="Pulley" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+visible = true
 layout_mode = 2
 texture_normal = ExtResource("15_t016g")
 current_item = 13
 item_name = "Motorized Pulley"
 
 [node name="Rope" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+visible = true
 layout_mode = 2
 texture_normal = ExtResource("16_nwek2")
 current_item = 11
 item_name = "Extra Rope"
 
 [node name="Trash" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
+visible = true
 layout_mode = 2
 texture_normal = ExtResource("17_70g6u")
 current_item = 15
 item_name = "Trash Bag"
 
 [node name="SuperScrapContainer" type="VBoxContainer" parent="Control/MarginContainer"]
-visible = false
 layout_mode = 2
 mouse_filter = 2
+
+[node name="HSeparator" type="HSeparator" parent="Control/MarginContainer/SuperScrapContainer"]
+visible = false
+layout_mode = 2
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="Control/MarginContainer/SuperScrapContainer"]
 layout_mode = 2
@@ -599,6 +1212,7 @@ vertical_alignment = 1
 layout_mode = 2
 
 [node name="Label2" type="Label" parent="Control/MarginContainer/SuperScrapContainer/MarginContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "Congratulations on being invited to our Super Scrapper Program! Here you can scrap even the toughest of objects."
@@ -608,7 +1222,8 @@ vertical_alignment = 1
 [node name="MarginContainer2" type="MarginContainer" parent="Control/MarginContainer/SuperScrapContainer"]
 layout_mode = 2
 
-[node name="Label2" type="Label" parent="Control/MarginContainer/SuperScrapContainer/MarginContainer2"]
+[node name="Label3" type="Label" parent="Control/MarginContainer/SuperScrapContainer/MarginContainer2"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "We are not responsible for any physical, mental, or even spiritual damage caused to the user. By reading this, you are agreeing to our terms."
@@ -675,8 +1290,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Label" type="Label" parent="Control/MarginContainer/SuperScrapContainer/HBoxContainer/HFlowContainer/GrapplingHook/VBoxContainer"]
-visible = false
+[node name="GName" type="Label" parent="Control/MarginContainer/SuperScrapContainer/HBoxContainer/HFlowContainer/GrapplingHook/VBoxContainer"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 50
@@ -698,15 +1313,17 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 25
 theme_override_styles/focus = SubResource("StyleBoxEmpty_tr6px")
 disabled = true
+action_mode = 0
 text = "Super Scrapper"
 alignment = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="Control/MarginContainer/SuperScrapperButton"]
 layout_mode = 2
 theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = -10
+theme_override_constants/margin_top = -14
 
-[node name="Label" type="Label" parent="Control/MarginContainer/SuperScrapperButton/MarginContainer"]
+[node name="TrashPoints" type="Label" parent="Control/MarginContainer/SuperScrapperButton/MarginContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 11
@@ -798,18 +1415,71 @@ explosiveness = 0.9
 process_material = SubResource("ParticleProcessMaterial_oxlwu")
 
 [node name="ItemRect" type="TextureRect" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
+clip_children = 2
 custom_minimum_size = Vector2(250, 250)
 layout_mode = 0
 offset_left = 159.0
 offset_top = -19.5
 offset_right = 409.0
-offset_bottom = 230.50009
+offset_bottom = 230.50262
 pivot_offset = Vector2(125, 125)
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource("2_yvkgk")
 expand_mode = 1
 stretch_mode = 5
+
+[node name="Break1" type="TextureRect" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/ItemRect"]
+visible = false
+layout_mode = 0
+offset_left = -13.0
+offset_top = 23.500004
+offset_right = 243.0
+offset_bottom = 279.5
+texture = ExtResource("24_oayo7")
+
+[node name="Break2" type="TextureRect" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/ItemRect"]
+visible = false
+layout_mode = 0
+offset_left = -13.0
+offset_top = 23.500004
+offset_right = 243.0
+offset_bottom = 279.5
+texture = ExtResource("25_1nf0a")
+
+[node name="Break3" type="TextureRect" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/ItemRect"]
+visible = false
+layout_mode = 0
+offset_left = -13.0
+offset_top = 23.500004
+offset_right = 243.0
+offset_bottom = 279.5
+texture = ExtResource("26_31cgy")
+
+[node name="Breaking" type="GPUParticles2D" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/ItemRect"]
+unique_name_in_owner = true
+show_behind_parent = true
+z_index = 1
+position = Vector2(124, 128.5)
+emitting = false
+amount = 4
+texture = ExtResource("3_65v3i")
+lifetime = 0.5
+speed_scale = 0.4
+explosiveness = 0.07
+process_material = SubResource("ParticleProcessMaterial_1nf0a")
+
+[node name="Fail" type="GPUParticles2D" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
+unique_name_in_owner = true
+position = Vector2(261, 247)
+rotation = 3.1415882
+emitting = false
+amount = 100
+texture = ExtResource("3_65v3i")
+lifetime = 0.08
+trail_enabled = true
+trail_lifetime = 0.1
+process_material = SubResource("ParticleProcessMaterial_oayo7")
 
 [node name="Control" type="Control" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
 layout_mode = 1
@@ -897,17 +1567,19 @@ offset_right = 45.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="Label2" type="Label" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/VBoxContainer"]
+[node name="TPl1" type="Label" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "%02d/16 Trash Points"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Label3" type="Label" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/VBoxContainer"]
+[node name="TPl2" type="Label" parent="Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 7
-text = "Obtain 10 Points to unlock our Super Scrapper!"
+theme_override_font_sizes/font_size = 8
+text = "Obtain 8 Points to unlock our Super Scrapper!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -924,15 +1596,67 @@ flat = true
 
 [node name="Trash" type="AudioStreamPlayer" parent="Control"]
 stream = ExtResource("21_w62x6")
-volume_db = 2.0
+volume_db = -4.0
 pitch_scale = 0.9
 
 [node name="Dunk" type="AudioStreamPlayer" parent="Control"]
 stream = ExtResource("22_ceg26")
-volume_db = 6.0
+volume_db = -4.0
 pitch_scale = 0.7
 
 [node name="Fwoop" type="AudioStreamPlayer" parent="Control"]
 stream = ExtResource("23_queto")
-volume_db = 5.0
+volume_db = -4.0
 pitch_scale = 1.2
+
+[node name="Fail" type="AudioStreamPlayer" parent="Control"]
+stream = ExtResource("27_24its")
+volume_db = -12.0
+pitch_scale = 1.2
+
+[node name="FailFinished" type="AudioStreamPlayer" parent="Control"]
+stream = ExtResource("28_la0b1")
+volume_db = -5.0
+pitch_scale = 1.3
+
+[node name="ScaryBG" type="AudioStreamPlayer" parent="Control"]
+unique_name_in_owner = true
+stream = ExtResource("29_la0b1")
+volume_db = -22.0
+
+[node name="CryPain" type="AudioStreamPlayer" parent="Control"]
+unique_name_in_owner = true
+stream = ExtResource("33_31cgy")
+volume_db = -21.896
+pitch_scale = 0.9
+
+[node name="BreathHeavy" type="AudioStreamPlayer" parent="Control"]
+unique_name_in_owner = true
+stream = ExtResource("34_o4rgu")
+volume_db = -35.0
+pitch_scale = 1.2
+
+[node name="Vignette" type="ColorRect" parent="."]
+unique_name_in_owner = true
+z_index = 2
+material = SubResource("ShaderMaterial_la0b1")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+metadata/_edit_lock_ = true
+
+[node name="Glitch" type="ColorRect" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 2
+material = SubResource("ShaderMaterial_o4rgu")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+metadata/_edit_lock_ = true

@@ -1,6 +1,6 @@
 [gd_scene load_steps=26 format=3 uid="uid://c4rnq4dmyj4b6"]
 
-[ext_resource type="Script" path="res://scripts/item.gd" id="1_tusiq"]
+[ext_resource type="Script" uid="uid://be66gb66mcucv" path="res://scripts/item.gd" id="1_tusiq"]
 [ext_resource type="AudioStream" uid="uid://btqsxajb0xqbt" path="res://sounds/item_pickup.mp3" id="3_0l2o8"]
 [ext_resource type="Texture2D" uid="uid://1as48kyf0dye" path="res://sprites/items/roids2.png" id="3_oq43g"]
 [ext_resource type="Texture2D" uid="uid://bkjmyd763rtes" path="res://sprites/items/roids1.png" id="3_wbyoc"]
@@ -80,9 +80,9 @@ shape = SubResource("RectangleShape2D_y6qwe")
 [node name="Item" type="TextureRect" parent="."]
 unique_name_in_owner = true
 offset_left = -40.0
-offset_top = -44.2414
+offset_top = -45.839394
 offset_right = 40.0
-offset_bottom = 35.7586
+offset_bottom = 34.160606
 texture = ExtResource("3_wbyoc")
 expand_mode = 4
 stretch_mode = 5
@@ -91,7 +91,7 @@ stretch_mode = 5
 unique_name_in_owner = true
 z_index = -1
 position = Vector2(40, 38)
-rotation = 3001.71
+rotation = 3103.0754
 color = Color(1, 1, 1, 0.247059)
 offset = Vector2(-10.305, -5.42459)
 polygon = PackedVector2Array(-19.5989, -25.8905, -10.5079, -32.3985, 7.68471, -5.60239, 12.1557, -5.50311, 17.4707, -43.4076, 25.8862, -39.6422, 17.1037, -6.73521, 35.6331, -35.3998, 40.909, -31.2568, 19.2399, -2.21454, 43, -21, 47, -17, 20.8993, 3.63752, 53, -2, 54, 9, 23.4627, 9.06232, 50, 27, 42, 39, 20.7007, 12.5796, 31, 39, 24, 43, 17, 16, 11, 60, -4, 60, 10, 17, -21, 49, -31, 37, 4.14795, 12.6594, -36, 20, -35.9921, 7.29482, 2.91584, 7.71144, -32.1273, -5.59177, -24.7454, -15.7163, 3.54165, -0.326496)
@@ -103,8 +103,8 @@ volume_db = -10.0
 [node name="collect" type="GPUParticles2D" parent="."]
 emitting = false
 amount = 32
-process_material = SubResource("ParticleProcessMaterial_3gvof")
 texture = ExtResource("4_hwiit")
 lifetime = 0.4
 one_shot = true
 explosiveness = 0.9
+process_material = SubResource("ParticleProcessMaterial_3gvof")

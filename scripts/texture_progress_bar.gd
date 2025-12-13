@@ -13,6 +13,8 @@ func _process(delta: float) -> void:
 	
 	if Global.has_cool_drink:
 		tint_progress = Color(1.0,0.0,1.0)
+	else:
+		tint_progress = Color(1.0,1.0,1.0)
 	
 	var c := p.current_hook_cooldown
 	var m := p.max_hook_cooldown
@@ -24,8 +26,9 @@ func _process(delta: float) -> void:
 	else:
 		if not has_played_sound:
 			has_played_sound = true
-			print("yo")
+			#print("yo")
 			if not Global.ignore_gumption:
+				$AudioStreamPlayer2D.pitch_scale = randf_range(0.7,1.4)
 				$AudioStreamPlayer2D.play()
 	
 	value = (c - m) * -1

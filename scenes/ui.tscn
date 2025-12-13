@@ -297,7 +297,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
-[node name="MapIntro" type="Control" parent="." node_paths=PackedStringArray("title", "description")]
+[node name="MapIntro" type="Control" parent="." node_paths=PackedStringArray("intro_panel", "title", "description", "revisit_panel", "revisit_title")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -305,8 +305,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_jwpll")
+intro_panel = NodePath("Panel")
 title = NodePath("Panel/VBoxContainer/MarginContainer2/Label")
 description = NodePath("Panel/VBoxContainer/MarginContainer/Label2")
+revisit_panel = NodePath("OnRevisit")
+revisit_title = NodePath("OnRevisit/VBoxContainer/MarginContainer2/Label")
 
 [node name="Panel" type="Panel" parent="MapIntro"]
 layout_mode = 1
@@ -354,6 +357,40 @@ text = "Welcome to Aleksander Wormchelt's Quest for The Peculiar Coins"
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
+
+[node name="OnRevisit" type="Panel" parent="MapIntro"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -570.0
+offset_top = 252.0
+offset_right = -124.0
+offset_bottom = 317.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MapIntro/OnRevisit"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="MapIntro/OnRevisit/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="MapIntro/OnRevisit/VBoxContainer/MarginContainer2"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 34
+text = "Weeping Bogs"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="MapIntro"]
 clip_contents = true
@@ -719,7 +756,7 @@ script = ExtResource("6_eqff7")
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer" parent="Node2DUI/GrappleCooldown/TextureProgressBar"]
 stream = ExtResource("20_catpy")
-volume_db = -20.0
+volume_db = -28.0
 pitch_scale = 0.5
 
 [node name="Sprite2D" type="Sprite2D" parent="Node2DUI/GrappleCooldown"]

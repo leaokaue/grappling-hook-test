@@ -12,6 +12,8 @@ signal emit_jetpack_cooldown(cooldown : float)
 
 @export var debug_mode : bool = false
 
+@export var horror_mode : bool = false
+
 @export var noclip : bool = false : set = set_noclip
 
 @onready var animated_sprite_2d = %Sprite2D
@@ -121,19 +123,23 @@ func _ready() -> void:
 	Global.teleport_to_waypoint.connect(teleport_to_waypoint)
 	Global.player = self
 	
+	if horror_mode:
+		can_control = false
+	
 	#if debug_mode:
 		#Global.last_checkpoint_x = global_position.x
 		#Global.last_checkpoint_y = global_position.y
 	
 	print(Global.last_pos_x,Global.last_pos_y,"Positions!")
 	
-	if Global.ended:
-		Global.ended = false
-		self.global_position.x = Global.last_pos_x
-		self.global_position.y = Global.last_pos_y
-	else:
-		self.global_position.x = Global.last_checkpoint_x
-		self.global_position.y = Global.last_checkpoint_y
+	if not horror_mode:
+		if Global.ended:
+			Global.ended = false
+			self.global_position.x = Global.last_pos_x
+			self.global_position.y = Global.last_pos_y
+		else:
+			self.global_position.x = Global.last_checkpoint_x
+			self.global_position.y = Global.last_checkpoint_y
 	Global.reset_camera_smoothing.emit()
 	
 	await get_tree().physics_frame
@@ -225,13 +231,14 @@ func _physics_process(delta):
 		
 		return
 	
-	if Input.is_action_just_pressed("grapple"):
-		if is_tambaqui:
-			apply_tambaqui_dash()
-		elif not is_grappling:
-			grapple()
-		else:
-			destroy_grapple()
+	if Global.has_grappling_hook:
+		if Input.is_action_just_pressed("grapple"):
+			#if is_tambaqui:
+				#apply_tambaqui_dash()
+			if not is_grappling:
+				grapple()
+			else:
+				destroy_grapple()
 	
 	if Input.is_action_pressed("dash"): #and Input.is_action_pressed("stop"):
 		if Global.current_equipment == Global.EQUIPMENTS.HoverStone:
@@ -248,9 +255,12 @@ func _physics_process(delta):
 	if Input.is_action_just_pressed("retract"):
 		if Global.current_equipment == Global.EQUIPMENTS.Tambaqui:
 			if not is_grappling:
-				if tambaqui_bar > 1.2:
-					is_tambaqui = true
-					print("Entering Tambaqui Mode")
+				if in_liquid:
+					if tambaqui_bar > 0:
+						is_tambaqui = true
+				else:
+					if tambaqui_bar >= tambaqui_max_bar:
+						is_tambaqui = true
 	
 	elif Input.is_action_pressed("retract"):
 		if is_grappling:
@@ -258,7 +268,6 @@ func _physics_process(delta):
 				retract(delta)
 	
 	apply_tambaqui(delta)
-	
 	
 	if Input.is_action_just_released("retract"):
 		#print("Exiting")
@@ -276,7 +285,7 @@ func _physics_process(delta):
 	
 	var m_bonus : float = 1.0
 	
-	if Global.has_steroids_3:
+	if Global.has_steroids_3 or horror_mode:
 		m_bonus = 1.35
 		m_bonus = 1.35
 	# UPGRADE /////////////////////////////////////////////////////////////
@@ -315,7 +324,7 @@ func _physics_process(delta):
 	# UPGRADE /////////////////////////////////////////////////////////////
 	var j_bonus : float = 1.0
 	
-	if Global.has_steroids_2:
+	if Global.has_steroids_2 or horror_mode:
 		j_bonus = 1.35
 	# UPGRADE /////////////////////////////////////////////////////////////
 	
@@ -406,7 +415,7 @@ func apply_dash():
 	print(linear_velocity.y)
 	
 	if linear_velocity.y > 0:
-		linear_velocity.y = 0
+		linear_velocity.y = -50
 	
 	print(linear_velocity.y)
 	
@@ -420,10 +429,14 @@ func apply_tambaqui(delta : float):
 	if is_tambaqui:
 		is_freefalling = true
 		
+		if not in_liquid:
+			apply_tambaqui_dash()
+			return
+		
 		var speed : float = 125
 		var vel_dec : float = 0.5
 		
-		drown_buildup -= delta * 0.5
+		drown_buildup -= delta * 0.75
 		
 		if is_instance_valid(last_fish_trail):
 			last_fish_trail.global_position = self.global_position
@@ -464,22 +477,17 @@ func apply_jetpack(delta : float):
 
 func apply_tambaqui_dash():
 	if is_tambaqui:
-		if tambaqui_bar < 1.2:
-			return
+		tambaqui_bar = 0.0
 		
-		tambaqui_bar -= 1.2
 		is_freefalling = true
 		
-		var speed : float = 220
+		var speed : float = 210
 		%splash.emitting = true
 		if (drown_buildup_buffer > 0) or (in_liquid):
-			speed = 330
+			speed = 300
 		
 		var dir := (get_global_mouse_position() - self.global_position).normalized()
 		self.rotation = dir.rotated(Vector2.DOWN.angle()).angle()
-		
-		is_tambaqui = false
-		
 		
 		await get_tree().physics_frame
 		await get_tree().physics_frame
@@ -497,7 +505,6 @@ func apply_tambaqui_dash():
 		
 		if not is_tambaqui:
 			set_fish_trail(false)
-		
 
 func handle_dashcast():
 	
@@ -578,7 +585,6 @@ func handle_non_control(delta : float):
 	else:
 		time_fallen = 0.0
 	
-	
 	if _on_floor():
 		can_scream = true
 	
@@ -588,7 +594,7 @@ func handle_equipment_cooldowns(delta : float):
 	if _on_floor():
 		if dash_cooldown < max_dash_cooldown:
 			dash_cooldown += delta * 1.5
-	elif not is_grappling:
+	else:
 		if dash_cooldown < max_dash_cooldown:
 			dash_cooldown += delta * 1.4
 	
@@ -599,16 +605,14 @@ func handle_equipment_cooldowns(delta : float):
 	if not is_tambaqui:
 		if in_liquid:
 			if tambaqui_bar < tambaqui_max_bar:
-				tambaqui_bar += delta * 0.75
+				tambaqui_bar += delta * 2.5
 		else:
 			if tambaqui_bar < tambaqui_max_bar:
-				tambaqui_bar -= delta * 0.01
+				tambaqui_bar += delta * 1.1
 	else:
 		if tambaqui_bar > 0:
 			if in_liquid:
 				tambaqui_bar -= delta
-			else:
-				tambaqui_bar -= delta * 1.15
 		else:
 			is_tambaqui = false
 	
@@ -692,6 +696,8 @@ func set_fish_trail(tambaqui : bool):
 	
 	var fd := f.duplicate()
 	
+	#print("trail")
+	
 	if tambaqui:
 		for child in fd.get_children():
 			if child is LineTrail2D:
@@ -706,6 +712,9 @@ func set_fish_trail(tambaqui : bool):
 				if child is LineTrail2D:
 					child.fading_away = true
 					#child.follow_player = false
+	
+	await get_tree().create_timer(8.0,false).timeout
+	fd.free()
 
 @warning_ignore("unused_parameter")
 func _integrate_forces(state):
@@ -731,6 +740,7 @@ func _on_floor():
 			return true
 
 func instantiate_map(tab : int = 0):
+	if horror_mode: return
 	var m := map.instantiate()
 	m.open_tab = tab
 	get_tree().current_scene.add_child(m)
@@ -983,6 +993,8 @@ func impulse_to_grapple():
 func create_ui():
 	var u := ui.instantiate()
 	get_tree().current_scene.add_child.call_deferred(u)
+	if horror_mode:
+		u.hide()
 
 func scream(scream_type : int = 0):
 	if not can_scream:
@@ -1183,6 +1195,7 @@ func handle_ending(delta : float):
 			Global.ended = true
 			start_ending()
 			destroy_grapple()
+			Global.set_background(BackgroundManager.BACKGROUNDS.Empty)
 			Global.begin_ending.emit()
 	
 	if ending:

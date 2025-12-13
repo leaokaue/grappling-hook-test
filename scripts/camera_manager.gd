@@ -5,6 +5,8 @@ extends Camera2D
 var target_zoom : Vector2 = Vector2(0.7,0.7)
 
 func _ready() -> void:
+	target_zoom = zoom
+	init_zoom = zoom
 	Global.reset_camera_smoothing.connect(signal_reset_smoothing)
 	Global.change_target_zoom.connect(set_zoom_target)
 	Global.reset_zoom.connect(reset_zoom)

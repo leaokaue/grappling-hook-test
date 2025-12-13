@@ -59,7 +59,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_h32r4")
 tab_alignment = 1
-current_tab = 2
+current_tab = 1
 tab_focus_mode = 1
 
 [node name="Map" type="Control" parent="Control/TabContainer"]
@@ -102,7 +102,6 @@ render_target_update_mode = 0
 [node name="BG" parent="Control/TabContainer/Map/MapSprite/BGClip/SubViewportContainer/SubViewport" instance=ExtResource("3_2hgfs")]
 
 [node name="Equipment" type="Control" parent="Control/TabContainer"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
@@ -133,9 +132,9 @@ expand_mode = 1
 
 [node name="DashBoots" type="Control" parent="Control/TabContainer/Equipment"]
 anchors_preset = 0
-offset_left = 178.0
+offset_left = 186.0
 offset_top = 58.0
-offset_right = 318.0
+offset_right = 326.0
 offset_bottom = 198.0
 mouse_filter = 2
 
@@ -216,10 +215,10 @@ expand_mode = 1
 
 [node name="Tambaqui" type="Control" parent="Control/TabContainer/Equipment"]
 anchors_preset = 0
-offset_left = 210.0
-offset_top = 318.0
-offset_right = 350.0
-offset_bottom = 458.0
+offset_left = 127.0
+offset_top = 362.0
+offset_right = 267.0
+offset_bottom = 502.0
 mouse_filter = 2
 
 [node name="Label" type="Label" parent="Control/TabContainer/Equipment/Tambaqui"]
@@ -301,10 +300,10 @@ expand_mode = 1
 
 [node name="Jetpack" type="Control" parent="Control/TabContainer/Equipment"]
 anchors_preset = 0
-offset_left = 791.0
-offset_top = 316.0
-offset_right = 931.0
-offset_bottom = 456.0
+offset_left = 897.0
+offset_top = 354.0
+offset_right = 1037.0
+offset_bottom = 494.0
 mouse_filter = 2
 
 [node name="Label" type="Label" parent="Control/TabContainer/Equipment/Jetpack"]
@@ -474,10 +473,10 @@ expand_mode = 1
 
 [node name="ActiveSlot" type="Control" parent="Control/TabContainer/Equipment" node_paths=PackedStringArray("clear_button", "bg", "item_rect", "dash_boots", "tambaqui", "hover_stone", "jetpack", "checker")]
 anchors_preset = 0
-offset_left = 461.0
-offset_top = 140.0
-offset_right = 699.0
-offset_bottom = 378.0
+offset_left = 466.0
+offset_top = 234.23712
+offset_right = 704.0
+offset_bottom = 472.23712
 script = ExtResource("10_ikw3k")
 clear_button = NodePath("../Clear")
 bg = NodePath("BG")
@@ -534,28 +533,28 @@ horizontal_alignment = 1
 
 [node name="Panel" type="Panel" parent="Control/TabContainer/Equipment"]
 layout_mode = 0
-offset_left = 455.0
-offset_top = 256.0
-offset_right = 645.0
-offset_bottom = 446.0
+offset_left = 460.0
+offset_top = 350.23712
+offset_right = 650.0
+offset_bottom = 540.2371
 rotation = -0.785397
 scale = Vector2(0.90984, 0.889209)
 
 [node name="Clear" type="Button" parent="Control/TabContainer/Equipment"]
 layout_mode = 0
-offset_left = 534.0
-offset_top = 373.0
-offset_right = 622.0
-offset_bottom = 404.0
+offset_left = 539.0
+offset_top = 467.23712
+offset_right = 627.0
+offset_bottom = 498.23712
 text = "Clear Item
 "
 
 [node name="Label" type="Label" parent="Control/TabContainer/Equipment"]
 layout_mode = 0
 offset_left = 350.0
-offset_top = 503.0
+offset_top = 532.0
 offset_right = 830.0
-offset_bottom = 526.0
+offset_bottom = 579.6667
 text = "You can only select equipment at a Checkpoint and Waypoints
 "
 horizontal_alignment = 1
@@ -564,14 +563,15 @@ vertical_alignment = 1
 [node name="Label2" type="Label" parent="Control/TabContainer/Equipment"]
 layout_mode = 0
 offset_left = 399.0
-offset_top = 478.0
+offset_top = 507.0
 offset_right = 761.0
-offset_bottom = 501.0
+offset_bottom = 530.0
 text = "Drag and drop equipment into the center node"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Menu" type="Control" parent="Control/TabContainer" node_paths=PackedStringArray("map", "speedrun", "completion", "deaths", "notcoins", "gjumps", "hjumps", "thrown", "accuracy", "luck", "gump", "ignore_gump", "jump_cancel", "time", "fullscreen")]
+visible = false
 layout_mode = 2
 script = ExtResource("11_p61y7")
 map = NodePath("../../..")

@@ -24,10 +24,25 @@ var returning : bool = false
 var initial_position : Vector3
 var initial_rotation : Vector3
 
-var walk_timer : float = 0.4
+var walk_timer : float = 0.6
+
+var player_paused : bool = false
+
+var quest_begun : bool = false
+
+var quest_completed : bool = false
+
+var terminal_finished : bool = false
+
+var can_run : bool = false
 
 @onready var camera : Camera3D = %Camera
 @onready var flashlight : SpotLight3D = %Flashlight
+@onready var interact_cast : RayCast3D = %InteractCast
+
+var current_interactable : Interactable3D
+
+var hide_interact_prompt : bool = false
 
 func _ready() -> void:
 	initial_position = self.global_position
@@ -36,6 +51,11 @@ func _ready() -> void:
 	disable_flashlight(false)
 
 func _unhandled_input(event: InputEvent) -> void:
+	
+	if player_paused: return
+	
+	if returning: return
+	
 	if event is InputEventMouseMotion:
 		look_dir = event.relative * 0.0015
 		if mouse_captured: _rotate_camera()
@@ -47,11 +67,13 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _physics_process(delta: float) -> void:
 	#if Input.is_action_just_pressed(&"jump"): jumping = true
-	if mouse_captured: _handle_joypad_camera_rotation(delta)
+	if mouse_captured and not player_paused: _handle_joypad_camera_rotation(delta) 
+	
+	handle_interactable_ray()
 	
 	var vel : Vector3 = Vector3()
 	
-	if is_on_floor():
+	if is_on_floor() and not player_paused:
 		vel += _walk(delta)
 	vel += _gravity(delta)
 	velocity = vel
@@ -60,7 +82,7 @@ func _physics_process(delta: float) -> void:
 		if walk_timer > 0:
 			walk_timer -= delta
 		else:
-			walk_timer = 0.5
+			walk_timer = 0.55
 			$Footstep.play()
 	
 	lerp_flashlight_rotation(delta)
@@ -121,3 +143,36 @@ func _jump(delta: float) -> Vector3:
 func lerp_flashlight_rotation(delta : float) -> void:
 	var camrot := camera.rotation
 	flashlight.rotation = flashlight.rotation.lerp(camrot,0.2)
+
+func handle_interactable_ray():
+	if interact_cast.is_colliding():
+		var c := interact_cast.get_collider()
+		if c is Interactable3D:
+			current_interactable = c
+			if not hide_interact_prompt:
+				%InteractLabel.show()
+			else:
+				%InteractLabel.hide()
+		else:
+			%InteractLabel.hide()
+			current_interactable = null
+	else:
+		%InteractLabel.hide()
+		current_interactable = null
+
+func return_to_spawn():
+		returning = true
+		%FogVolume.material.density = 0.0
+		%FogVolume.show()
+		var t := create_tween()
+		t.set_trans(Tween.TRANS_EXPO)
+		t.tween_property(%FogVolume,"material:density",10.0,1.5)
+		await get_tree().create_timer(1.5,false).timeout
+		global_position = initial_position
+		camera.rotation = initial_rotation
+		await get_tree().create_timer(1.0,false).timeout
+		var t2 := create_tween()
+		t2.set_trans(Tween.TRANS_EXPO)
+		t2.tween_property(%FogVolume,"material:density",0.0,0.5)
+		await get_tree().create_timer(1.4,false).timeout
+		returning = false

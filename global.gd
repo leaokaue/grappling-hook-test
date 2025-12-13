@@ -16,6 +16,8 @@ signal create_screen_text(text : String)
 
 signal show_map_name_intro(mname : String, desc : String)
 
+signal show_map_name_intro_small(mname : String, desc : String)
+
 signal change_target_zoom(zoom : float)
 
 signal reset_zoom
@@ -33,6 +35,8 @@ signal clear_map
 signal begin_ending 
 
 signal game_autosaved
+
+signal disable_music
 
 var player : Worm
 
@@ -57,7 +61,8 @@ enum EQUIPMENTS {
 	DashBoots,
 	Tambaqui,
 	HoverStone,
-	Jetpack
+	Jetpack,
+	ErrorCube
 }
 
 var coin_positions : PackedVector2Array
@@ -107,7 +112,7 @@ var has_grappling_hook : bool = true
 var seen_map : Dictionary = {
 	"Spawn" : false,
 	"Bog" : false,
-	"Windmill" : false,
+	"Windmill" : true,
 	"Spike" : false,
 	"Space" : false,
 	"Spike2" : false,
@@ -118,7 +123,7 @@ var seen_map : Dictionary = {
 var waypoints_unlocked : Dictionary = {
 	"Spawn" : false,
 	"Bog" : false,
-	"Windmill" : false,
+	"Windmill" : true,
 	"Spike" : false,
 	"Space" : false,
 	"Spike2" : false,
@@ -244,15 +249,15 @@ var grounded_jumps : int = 0
 
 var cancelling_jump_enabled : bool = true
 
-var last_checkpoint_x : float = 0.0
+var last_checkpoint_x : float = -780
 
-var last_checkpoint_y : float = 0.0
+var last_checkpoint_y : float = 448
 
 var ended : bool = false
 
 var fullscreen : bool = false
 
-var trash_points : int = 0
+var trash_points : int = 8
 
 var has_trash_bag : bool = false:
 	get():
@@ -291,6 +296,22 @@ var hover_stone_scrapped : bool = false
 var guiding_light_scrapped : bool = false
 
 var tambaqui_scrapped : bool = false
+
+var has_golden_hook : bool = false
+
+var has_error_cube : bool = false
+
+enum COIN_TYPES {
+	Peculiar,
+	Chuffed,
+	Entombed,
+	Confused,
+	Nightmare,
+	Angel,
+}
+
+var collected_coins_list : Array[COIN_TYPES] = [0,0,0,0,0,1]
+
 #endregion
 
 func _ready() -> void:
@@ -431,11 +452,12 @@ func scrap_item(item : Item.ITEMS, scrap : bool):
 
 func set_area_seen(area : int):
 	#if n'ot seen_map[Waypoint.WAYPOINTS.keys()[area]]:
-		seen_map[Waypoint.WAYPOINTS.keys()[area]] = true
 		
+		var seen : bool = seen_map[Waypoint.WAYPOINTS.keys()[area]]
 		var shows : bool = false
 		var mname : String
 		var mdesc : String
+		
 		
 		match area:
 			0: #Spawn Island
@@ -461,8 +483,13 @@ func set_area_seen(area : int):
 				mname = "Black Hole District"
 				mdesc = "Wormchelt’s Big Day Out With The Big Black Holes: Herald of Armageddon"
 		
+		seen_map[Waypoint.WAYPOINTS.keys()[area]] = true
+		
 		if shows:
-			show_map_name_intro.emit(mname,mdesc)
+			if not seen:
+				show_map_name_intro.emit(mname,mdesc)
+			else:
+				show_map_name_intro_small.emit(mname,mdesc)
 		
 		#Spawn,
 		#Bog,
@@ -471,6 +498,9 @@ func set_area_seen(area : int):
 		#Space,
 		#Empty,
 		#Spike2
+
+func add_coin_to_list(type : COIN_TYPES):
+	collected_coins_list.append(type)
 
 func set_background(bg : BackgroundManager.BACKGROUNDS):
 	background.set_current_background(bg)

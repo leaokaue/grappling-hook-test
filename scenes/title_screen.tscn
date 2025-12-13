@@ -247,7 +247,7 @@ layout_mode = 2
 
 [node name="Version" type="Label" parent="CanvasLayer/Control/MarginContainer2/VBoxContainer"]
 layout_mode = 2
-text = "v1.0.6"
+text = "v1.0.7"
 
 [node name="ClearSave" type="Button" parent="CanvasLayer/Control/MarginContainer2/VBoxContainer"]
 visible = false
@@ -261,11 +261,13 @@ text = "THIS GAME DOES NOT HAVE AUTO-SAVING"
 modulate = Color(1, 0, 0, 1)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
-theme_override_font_sizes/font_size = 5
+theme_override_font_sizes/font_size = 7
 theme_override_styles/focus = SubResource("StyleBoxEmpty_bypao")
 disabled = true
-text = "DO NOT SAVE YOUR GAME WHILE ANY CRASH IS OCCURING.
- YOU HAVE BEEN WARNED"
+text = "Your game saves at every Checkpoint
+In the case of major frame lag, close the game.
+Do not save the game while it is crashing.
+"
 
 [node name="Node2D" type="Node2D" parent="."]
 metadata/_edit_lock_ = true
