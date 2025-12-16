@@ -136,7 +136,7 @@ func start_sequence():
 		#else:
 			#key_speed = 3
 		
-		print("loop ",i," modifier ",modifier," delay ", delay," line delay ", line_delay," wps ", wps)
+		#print("loop ",i," modifier ",modifier," delay ", delay," line delay ", line_delay," wps ", wps)
 		
 		handle_container(label_containers[2],delay,line_delay)
 		await container_finished

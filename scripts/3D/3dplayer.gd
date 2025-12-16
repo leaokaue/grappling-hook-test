@@ -54,11 +54,12 @@ var current_interactable : Interactable3D
 var hide_interact_prompt : bool = false
 
 func _ready() -> void:
+	get_tree().set_auto_accept_quit(true)
 	initial_position = self.global_position
 	initial_rotation = camera.rotation
 	capture_mouse()
 	disable_flashlight(false)
-	begin_intro()
+	#begin_intro()
 
 func _unhandled_input(event: InputEvent) -> void:
 	
@@ -74,6 +75,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			disable_flashlight()
 		else:
 			enable_flashlight()
+	
+	if Input.is_action_just_pressed("interact"):
+		_try_interact()
 
 func _physics_process(delta: float) -> void:
 	#if Input.is_action_just_pressed(&"jump"): jumping = true
@@ -159,18 +163,25 @@ func lerp_flashlight_rotation(delta : float) -> void:
 func handle_interactable_ray():
 	if interact_cast.is_colliding():
 		var c := interact_cast.get_collider()
+		#print(c)
 		if c is Interactable3D:
 			current_interactable = c
-			if not hide_interact_prompt:
-				%InteractLabel.show()
-			else:
+			%InteractLabel.text = c.get_description()
+			if not c.can_see_description:
 				%InteractLabel.hide()
+			else:
+				%InteractLabel.show()
 		else:
 			%InteractLabel.hide()
 			current_interactable = null
 	else:
 		%InteractLabel.hide()
 		current_interactable = null
+
+func _try_interact():
+	if current_interactable:
+		if current_interactable.interactable:
+			current_interactable.interact()
 
 func return_to_spawn():
 		returning = true

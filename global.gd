@@ -317,6 +317,10 @@ var collected_coins_list : Array[COIN_TYPES] = [0,0,0,0,0,1]
 func _ready() -> void:
 	save_base_vars()
 
+#func _notification(what: int) -> void:
+	#if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		#return
+
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("fullscreen"):
 		if DisplayServer.window_get_mode() != DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN:

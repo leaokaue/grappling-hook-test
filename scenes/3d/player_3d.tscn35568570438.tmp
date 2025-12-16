@@ -48,6 +48,7 @@ current = true
 unique_name_in_owner = true
 target_position = Vector3(0, 0, -2.5)
 collide_with_areas = true
+collide_with_bodies = false
 
 [node name="Footstep" type="AudioStreamPlayer3D" parent="."]
 stream = SubResource("AudioStreamRandomizer_2wquo")
@@ -80,8 +81,9 @@ theme_override_constants/margin_top = 500
 
 [node name="InteractLabel" type="Label" parent="InteractUI/Control/MarginContainer"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 24
 text = "[E]"
 horizontal_alignment = 1
 vertical_alignment = 1

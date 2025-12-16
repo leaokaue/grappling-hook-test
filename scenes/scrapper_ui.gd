@@ -181,6 +181,7 @@ func progress_hook_scrap():
 	super_scrap_tries += 1
 	match super_scrap_tries:
 		1:
+			get_tree().set_auto_accept_quit(false)
 			animation.play("scrap_fail")
 			set_vignette(0.33)
 			disable_all_exits()
