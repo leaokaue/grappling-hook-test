@@ -1,6 +1,6 @@
 extends TextureProgressBar
 
-var has_played_sound : bool = false
+var has_played_sound : bool = true
 
 func _ready() -> void:
 	pass

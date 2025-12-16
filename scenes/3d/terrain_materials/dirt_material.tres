@@ -14,3 +14,5 @@ clearcoat_roughness = 1.0
 clearcoat_texture = ExtResource("2_h46ps")
 uv1_scale = Vector3(30, 30, 30)
 uv1_triplanar_sharpness = 1.86607
+stencil_flags = 1
+stencil_compare = 5

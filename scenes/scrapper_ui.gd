@@ -207,7 +207,7 @@ func progress_hook_scrap():
 			%BreathHeavy.stop()
 			await get_tree().create_timer(2.6,false).timeout
 			%TrashPoints.text = "01010010 01000101 01010100 01010010 01001001 01000010 01010101 01010100 01001001 01001111 01001110"
-			
+			%Glitch.show()
 			%CryPain.stop()
 			%BreathHeavy.play()
 		3:
@@ -223,7 +223,6 @@ func progress_hook_scrap():
 			await get_tree().create_timer(2.6,false).timeout
 			%CryPain.stop()
 			%BreathHeavy.play()
-			%Glitch.show()
 		4:
 			animation.play("scrap_fail")
 			set_vignette(1.0)
@@ -243,11 +242,12 @@ func progress_hook_scrap():
 			animation.play("scrap_fail_success")
 			%CryPain.play(1.5)
 			%BreathHeavy.stop()
-			%Label3.text = "%s, IT DOESN'T END HERE" % get_user_name()
+			%Label3.text = "%s, IT DOESN'T END HERE" % get_user_name().to_upper()
 			await get_tree().create_timer(2.4,false).timeout
 			go_into_darkness()
 			%ScaryBG.stop()
 			%CryPain.stop()
+			
 			#grapple finally goes in, fade to black, cut to scary load scren.
 
 func go_into_darkness():
@@ -261,6 +261,9 @@ func go_into_darkness():
 	
 	t.tween_method(s_i,i_radius,0.0,0.1)
 	t.parallel().tween_method(s_o,o_radius,0.0,0.2)
+	await t.finished
+	await get_tree().create_timer(1.2,false).timeout
+	start_glitch_sequence()
 
 func set_vignette(strength : float):
 	var t : Tween = create_tween()
@@ -281,3 +284,42 @@ func get_user_name() -> String:
 	else:
 		username = "Player"
 	return username
+
+func start_glitch_sequence():
+	var t := create_tween()
+	var t2 := create_tween()
+	var s := func():
+		$Control/Fail.play(3.0)
+	t2.set_loops(2000)
+	t2.tween_callback(s)
+	t2.tween_interval(0.01)
+	
+	t.tween_property(%Crash,"modulate:a",1.0,0.5)
+	t.tween_interval(4.0)
+	await t.finished
+	$Control/Fail.stop()
+	%Error.play()
+	open_fake_cmd(0.5)
+	#t2.kill()
+	await get_tree().create_timer(4.0,false).timeout
+	go_to_transition()
+
+func go_to_transition():
+	get_tree().change_scene_to_file("res://scenes/3d/secret_zone_transition.tscn")
+
+func open_fake_cmd(close_delay : float = 0.0):
+	var c := %CMD2
+	var t := create_tween()
+	c.show()
+	c.scale = Vector2(0.55,0.55)
+	c.modulate.a = -0.5
+	t.tween_property(c,"modulate:a",1.0,0.1)
+	t.parallel().tween_property(c,"scale",Vector2(0.6,0.6),0.1)
+	t.pause()
+	t.custom_step(0.033)
+	await get_tree().create_timer(0.05,false).timeout
+	t.custom_step(0.033)
+	await get_tree().create_timer(0.05,false).timeout
+	t.custom_step(0.034)
+	await get_tree().create_timer(close_delay,false).timeout
+	c.hide()

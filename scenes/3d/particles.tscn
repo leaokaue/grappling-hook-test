@@ -40,7 +40,7 @@ size = 0.1
 curve = SubResource("Curve_w4do1")
 
 [sub_resource type="Curve" id="Curve_ckbu3"]
-_data = [Vector2(0.0305677, 0), 0.0, 0.0, 0, 0, Vector2(0.231441, 1), 0.0, 0.0, 0, 0, Vector2(0.724891, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(0.0305677, 0), 0.0, 0.0, 0, 0, Vector2(0.23318386, 1), 0.0, 0.0, 0, 0, Vector2(0.49775788, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 4
 
 [sub_resource type="CurveTexture" id="CurveTexture_c2w2l"]
@@ -93,7 +93,7 @@ alpha_curve = SubResource("CurveTexture_c2w2l")
 
 [node name="Particles" type="Node3D"]
 
-[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+[node name="Rain" type="GPUParticles3D" parent="."]
 transform = Transform3D(-0.29024, 0.956368, -0.0334877, -0.956952, -0.290134, 0.00812236, -0.00194789, 0.0344035, 0.999406, -0.157787, -0.0587816, 0)
 amount = 1024
 trail_enabled = true
@@ -101,14 +101,14 @@ trail_lifetime = 0.05
 process_material = SubResource("ParticleProcessMaterial_tvgbj")
 draw_pass_1 = SubResource("RibbonTrailMesh_khw8l")
 
-[node name="GPUParticles3D2" type="GPUParticles3D" parent="."]
+[node name="Fog2" type="GPUParticles3D" parent="."]
 amount = 64
-lifetime = 5.0
+lifetime = 6.0
 process_material = SubResource("ParticleProcessMaterial_idtbi")
 draw_pass_1 = SubResource("QuadMesh_bvcqu")
 
-[node name="GPUParticles3D3" type="GPUParticles3D" parent="."]
-amount = 128
-lifetime = 5.0
+[node name="Fog" type="GPUParticles3D" parent="."]
+amount = 256
+lifetime = 6.0
 process_material = SubResource("ParticleProcessMaterial_qfd30")
 draw_pass_1 = SubResource("QuadMesh_bvcqu")

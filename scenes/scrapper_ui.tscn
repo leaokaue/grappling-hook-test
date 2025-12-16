@@ -1,4 +1,4 @@
-[gd_scene load_steps=58 format=3 uid="uid://ddhlytswfhaa7"]
+[gd_scene load_steps=61 format=3 uid="uid://ddhlytswfhaa7"]
 
 [ext_resource type="Script" uid="uid://dua3g1gv4e52r" path="res://scenes/scrapper_ui.gd" id="1_bcbwj"]
 [ext_resource type="Texture2D" uid="uid://rm6i6j71nttm" path="res://sprites/mapbg.png" id="1_l8l3l"]
@@ -34,6 +34,8 @@
 [ext_resource type="AudioStream" uid="uid://b5dgq7ovaet0l" path="res://sounds/scary-sound-suspense-314626.mp3" id="29_la0b1"]
 [ext_resource type="AudioStream" uid="uid://78kjcgg8o6gw" path="res://sounds/cry-of-pain-357978.mp3" id="33_31cgy"]
 [ext_resource type="AudioStream" uid="uid://du1sktnsi1iad" path="res://sounds/heavy-breathing-sound-effect-type-03-294201.mp3" id="34_o4rgu"]
+[ext_resource type="AudioStream" uid="uid://2q3bnkygfkq5" path="res://sounds/windows-10-error-sound.mp3" id="35_o4rgu"]
+[ext_resource type="Texture2D" uid="uid://cf5kqkasx2268" path="res://sprites/Screenshot_3884.png" id="36_ctnvj"]
 
 [sub_resource type="Animation" id="Animation_68y5a"]
 length = 0.001
@@ -798,6 +800,8 @@ scale_min = 0.01
 scale_max = 0.03
 color_ramp = SubResource("GradientTexture1D_sobcy")
 alpha_curve = SubResource("CurveTexture_la0b1")
+
+[sub_resource type="SystemFont" id="SystemFont_ctnvj"]
 
 [sub_resource type="Shader" id="Shader_24its"]
 code = "shader_type canvas_item;
@@ -1636,6 +1640,34 @@ stream = ExtResource("34_o4rgu")
 volume_db = -35.0
 pitch_scale = 1.2
 
+[node name="Error" type="AudioStreamPlayer" parent="Control"]
+unique_name_in_owner = true
+stream = ExtResource("35_o4rgu")
+
+[node name="CMD2" type="Sprite2D" parent="Control"]
+unique_name_in_owner = true
+visible = false
+z_index = 4
+texture_filter = 1
+position = Vector2(351, 209)
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("36_ctnvj")
+
+[node name="Label" type="Label" parent="Control/CMD2"]
+texture_filter = 1
+offset_left = -415.71298
+offset_top = -177.2006
+offset_right = -375.71298
+offset_bottom = -154.2006
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_fonts/font = SubResource("SystemFont_ctnvj")
+theme_override_font_sizes/font_size = 12
+text = "You"
+metadata/_edit_use_anchors_ = true
+
+[node name="CMD" type="CanvasLayer" parent="Control"]
+layer = 24
+
 [node name="Vignette" type="ColorRect" parent="."]
 unique_name_in_owner = true
 z_index = 2
@@ -1659,4 +1691,17 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+metadata/_edit_lock_ = true
+
+[node name="Crash" type="ColorRect" parent="."]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+z_index = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.2)
 metadata/_edit_lock_ = true

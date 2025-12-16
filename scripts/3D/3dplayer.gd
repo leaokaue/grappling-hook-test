@@ -1,5 +1,11 @@
 class_name Player extends CharacterBody3D
 
+signal intro_finished
+
+@export var sounds : Array[AudioStreamPlayer]
+@export var plane_collision : CollisionShape3D
+@export var platform : Node3D
+
 @export_range(1, 35, 1) var speed: float = 10 # m/s
 @export_range(10, 400, 1) var acceleration: float = 100 # m/s^2
 
@@ -36,6 +42,9 @@ var terminal_finished : bool = false
 
 var can_run : bool = false
 
+var physics_paused : bool = false
+
+#@export var tube : Intro
 @onready var camera : Camera3D = %Camera
 @onready var flashlight : SpotLight3D = %Flashlight
 @onready var interact_cast : RayCast3D = %InteractCast
@@ -49,6 +58,7 @@ func _ready() -> void:
 	initial_rotation = camera.rotation
 	capture_mouse()
 	disable_flashlight(false)
+	begin_intro()
 
 func _unhandled_input(event: InputEvent) -> void:
 	
@@ -68,6 +78,8 @@ func _unhandled_input(event: InputEvent) -> void:
 func _physics_process(delta: float) -> void:
 	#if Input.is_action_just_pressed(&"jump"): jumping = true
 	if mouse_captured and not player_paused: _handle_joypad_camera_rotation(delta) 
+	
+	if physics_paused: return
 	
 	handle_interactable_ray()
 	
@@ -176,3 +188,42 @@ func return_to_spawn():
 		t2.tween_property(%FogVolume,"material:density",0.0,0.5)
 		await get_tree().create_timer(1.4,false).timeout
 		returning = false
+
+func begin_intro():
+	$Machine.play()
+	handle_intro_fade()
+	player_paused = true
+	physics_paused = true
+	disable_collision(15.0)
+	self.global_position.y -= 60
+	var t := create_tween()
+	var t2 := create_tween()
+	set_sound_db(-90)
+	t.tween_property(self,"global_position:y",initial_position.y,20.0)
+	t2.set_trans(Tween.TRANS_EXPO)
+	t2.set_ease(Tween.EASE_OUT)
+	t2.tween_method(set_sound_db,-90.0,-45.0,7.5).set_delay(10.0)
+	await t.finished
+	$Machine.stop()
+	$Klunk.play()
+	intro_finished.emit()
+	plane_collision.disabled = false
+	platform.show()
+	player_paused = false
+	physics_paused = false
+
+func handle_intro_fade():
+	%Fade.show()
+	%IntroLabel.show()
+	var t : Tween = create_tween()
+	t.tween_interval(1.0)
+	t.tween_property(%Fade,"modulate:a",0.0,4.0)
+	t.parallel().tween_property(%IntroLabel,"modulate:a",0.0,2.0).set_delay(3.0)
+
+func set_sound_db(db : float):
+	for s in sounds:
+		s.volume_db = db
+
+func disable_collision(delay : float):
+	await get_tree().create_timer(delay,false).timeout
+	plane_collision.disabled = true

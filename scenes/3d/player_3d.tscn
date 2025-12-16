@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bqxxkjkro4ssn"]
+[gd_scene load_steps=11 format=3 uid="uid://bqxxkjkro4ssn"]
 
 [ext_resource type="Script" uid="uid://csih2ldh825jc" path="res://scripts/3D/3dplayer.gd" id="1_2s5h8"]
 [ext_resource type="AudioStream" uid="uid://ct5ks8g7duwqm" path="res://sounds/footstep/dirt_footstep_0.mp3" id="2_2wquo"]
@@ -6,6 +6,8 @@
 [ext_resource type="AudioStream" uid="uid://c2khn0gemldny" path="res://sounds/footstep/dirt_footstep_2.mp3" id="4_27wlx"]
 [ext_resource type="AudioStream" uid="uid://hdjieb7s2j68" path="res://sounds/footstep/dirt_footstep_3.mp3" id="5_4acon"]
 [ext_resource type="AudioStream" uid="uid://c2jvfn1qv10t4" path="res://sounds/flashlight.mp3" id="6_lvdve"]
+[ext_resource type="AudioStream" uid="uid://gmu2fba8lusm" path="res://sounds/inside-old-train-169418.mp3" id="7_4acon"]
+[ext_resource type="AudioStream" uid="uid://gesri0kc4d2y" path="res://sounds/deep_metal_hit_2.mp3" id="8_o617v"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_yy7gn"]
 radius = 0.17089844
@@ -83,3 +85,48 @@ theme_override_font_sizes/font_size = 24
 text = "[E]"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="FadingScreen" type="Control" parent="InteractUI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Fade" type="ColorRect" parent="InteractUI/FadingScreen"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="InteractUI/FadingScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="IntroLabel" type="Label" parent="InteractUI/FadingScreen/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Aborting user."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Machine" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_4acon")
+volume_db = -20.0
+
+[node name="Klunk" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_o617v")
+volume_db = -20.0
