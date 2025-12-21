@@ -552,7 +552,6 @@ autoscroll = Vector2(0.995, 0)
 repeat_times = 31
 
 [node name="BlueScreen" type="Sprite2D" parent="BG/Parallax2D"]
-visible = false
 modulate = Color(0.3553136, 0.35531354, 0.35531357, 1)
 texture_filter = 1
 scale = Vector2(1.8025, 1.8025)

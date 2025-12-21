@@ -135,7 +135,7 @@ var waypoints_unlocked : Dictionary = {
 	 
 }
 
-var current_equipment : int = 5
+var current_equipment : int = 0
 
 var can_switch_equipments : bool = false
 
