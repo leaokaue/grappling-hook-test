@@ -6,10 +6,8 @@ extends Node2D
 func _ready() -> void:
 	pass
 
-
-
 func _process(delta: float) -> void:
-	if Global.timer_visible:
+	if Global.timer_visible and (not Global.is_in_finality):
 		self.show()
 	else:
 		self.hide()

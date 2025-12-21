@@ -481,7 +481,7 @@ func _update_split_multimeshes() -> void:
 					# This matters because otherwise the visibility range fading is messed up
 					var center =  ProtonScatterUtil.get_aabb_from_transforms(transform_chunks[xi][yi][zi]).get_center()
 					mmi.transform.origin = center
-
+					
 					var t: Transform3D
 					for i in chunk_elements:
 						t = transform_chunks[xi][yi][zi][i]

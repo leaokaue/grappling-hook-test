@@ -245,6 +245,7 @@ func progress_hook_scrap():
 			%BreathHeavy.stop()
 			%Label3.text = "%s, IT DOESN'T END HERE" % get_user_name().to_upper()
 			await get_tree().create_timer(2.4,false).timeout
+			Global.has_grappling_hook = false
 			go_into_darkness()
 			%ScaryBG.stop()
 			%CryPain.stop()

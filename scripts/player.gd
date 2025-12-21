@@ -2,6 +2,8 @@ extends RigidBody2D
 class_name Worm
 
 @warning_ignore("unused_signal")
+signal emit_cube_cooldown(cooldown : float)
+
 signal emit_dash_cooldown(cooldown : float)
 
 signal emit_fish_cooldown(cooldown : float)
@@ -13,6 +15,8 @@ signal emit_jetpack_cooldown(cooldown : float)
 @export var debug_mode : bool = false
 
 @export var horror_mode : bool = false
+
+@export var finality_mode : bool = false
 
 @export var noclip : bool = false : set = set_noclip
 
@@ -63,6 +67,14 @@ var jetpack_bar : float = 2.0
 
 const max_jetpack_bar : float = 2.0
 
+var cube_bar : float = 3.0
+
+const max_cube_bar : float = 3.0
+
+var current_cube : FalseCube2D
+
+const cube_scene := preload("res://scenes/false_cube.tscn")
+
 #LIQUIDS
 
 var drown_buildup_buffer : float = 0.0
@@ -108,6 +120,8 @@ var last_trail : LineTrail2D
 
 #var global_joint : PinJoint2D
 
+var initial_horror_pos : Vector2
+
 var global_joint : DampedSpringJoint2D
 
 const ui := preload("res://scenes/ui.tscn")
@@ -119,11 +133,25 @@ const map := preload("res://scenes/map.tscn")
 var gump_timer : float = 40.0
 
 func _ready() -> void:
+	if finality_mode:
+		Global.is_in_finality = true
 	create_ui()
+	var c := func(x : bool):
+		can_control = x
 	Global.teleport_to_waypoint.connect(teleport_to_waypoint)
+	Global.toggle_worm_control.connect(c)
 	Global.player = self
 	
+	if horror_mode or finality_mode:
+		Global.has_grappling_hook = false
+	
 	if horror_mode:
+		var s := func():
+			return_to_checkpoint(-1,0.0)
+			Global.glitch_coins_collected = 0
+		Global.reset_glitched.connect(s)
+		initial_horror_pos = self.global_position
+		is_teleporting = false
 		can_control = false
 	
 	#if debug_mode:
@@ -138,8 +166,13 @@ func _ready() -> void:
 			self.global_position.x = Global.last_pos_x
 			self.global_position.y = Global.last_pos_y
 		else:
-			self.global_position.x = Global.last_checkpoint_x
-			self.global_position.y = Global.last_checkpoint_y
+			if finality_mode:
+				self.global_position.x = Global.last_finality_x
+				self.global_position.y = Global.last_finality_y
+			else:
+				self.global_position.x = Global.last_checkpoint_x
+				self.global_position.y = Global.last_checkpoint_y
+				
 	Global.reset_camera_smoothing.emit()
 	
 	await get_tree().physics_frame
@@ -224,10 +257,10 @@ func _physics_process(delta):
 		var vdir : float = Input.get_axis("up","stop")
 		
 		if hdir != 0:
-			global_position.x += 550 * delta * hdir
+			global_position.x += 550 * delta * hdir * 2.5
 		
 		if vdir != 0:
-			global_position.y += 550 * delta * vdir
+			global_position.y += 550 * delta * vdir * 2.5
 		
 		return
 	
@@ -280,6 +313,9 @@ func _physics_process(delta):
 					#%LineTrail2D.show()
 					#%LineTrail2D.set_point_position(0,dashcast.global_position)
 					apply_dash()
+			elif Global.current_equipment == Global.EQUIPMENTS.ErrorCube:
+				if cube_bar >= max_cube_bar:
+					apply_cube()
 	
 	# UPGRADE /////////////////////////////////////////////////////////////
 	
@@ -292,6 +328,9 @@ func _physics_process(delta):
 	
 	if is_hovering:
 		m_bonus += 0.40
+	
+	if horror_mode:
+		m_bonus += 0.05
 	
 	if direction != 0:
 		if (not is_freefalling) or (in_liquid):
@@ -465,7 +504,7 @@ func apply_hoverstone(_delta : float):
 	else:
 		%hover.emitting = false
 
-func apply_jetpack(delta : float):
+func apply_jetpack(_delta : float):
 	if is_jetpacking:
 		%jetpack.emitting = true
 		#linear_velocity.y = lerp(linear_velocity.y,0.0,1.5)
@@ -505,6 +544,23 @@ func apply_tambaqui_dash():
 		
 		if not is_tambaqui:
 			set_fish_trail(false)
+
+func apply_cube():
+	if current_cube:
+		current_cube.dissapear()
+	
+	cube_bar = 0.0
+	
+	var remove_previous_cube_reference := func():
+		current_cube = null
+	
+	var c := cube_scene.instantiate() as FalseCube2D
+	c.dissapeared.connect(destroy_grapple)
+	current_cube = c
+	c.dissapeared.connect(remove_previous_cube_reference)
+	c.global_position = get_global_mouse_position()
+	get_tree().root.add_child(c)
+
 
 func handle_dashcast():
 	
@@ -597,10 +653,14 @@ func handle_equipment_cooldowns(delta : float):
 	else:
 		if dash_cooldown < max_dash_cooldown:
 			dash_cooldown += delta * 1.4
-	
 	dash_cooldown = clampf(dash_cooldown,0.0,max_dash_cooldown)
-
+	
 	emit_dash_cooldown.emit(dash_cooldown)
+	
+	if cube_bar < max_cube_bar:
+		cube_bar += delta * 1.0
+	
+	emit_cube_cooldown.emit(cube_bar)
 	
 	if not is_tambaqui:
 		if in_liquid:
@@ -743,6 +803,8 @@ func instantiate_map(tab : int = 0):
 	if horror_mode: return
 	var m := map.instantiate()
 	m.open_tab = tab
+	if Global.is_in_finality:
+		m.open_tab = 2
 	get_tree().current_scene.add_child(m)
 	#can_control = false
 
@@ -766,6 +828,7 @@ func grapple():
 	
 	g.grappled = false
 	g.player = self
+	
 	g.hit.connect(impulse_to_grapple)
 	g.hit.connect(create_joint)
 	g.global_position = self.global_position
@@ -915,6 +978,8 @@ func create_joint():
 	#if not is_instance_valid(global_joint):
 		#return
 	
+	
+	
 	if is_instance_valid(hook):
 		var dir := (hook.global_position - self.global_position)
 		var length := dir.length()
@@ -925,8 +990,11 @@ func create_joint():
 	
 	global_joint.node_b = self.get_path()
 	
-	
 	global_joint.node_a = hook.get_path()
+
+func replace_joint_path(path : NodePath):
+	if global_joint:
+		global_joint.node_a = path
 
 func destroy_joint():
 	if not is_instance_valid(global_joint):
@@ -1041,6 +1109,9 @@ func return_to_checkpoint(scream_type : int = 0,duration_multiplier : float = 1.
 	if ending:
 		return
 	
+	if current_cube:
+		current_cube.dissapear()
+	
 	can_control = false
 	is_teleporting = true
 	Global.clear_map.emit()
@@ -1132,6 +1203,11 @@ func teleport_to_waypoint(waypoint : int):
 	can_control = true
 
 func set_pos_to_checkpoint():
+	if horror_mode:
+		self.global_position = initial_horror_pos
+		return
+	if finality_mode:
+		self.global_position = Vector2(Global.last_finality_x,Global.last_finality_y)
 	self.global_position = Vector2(Global.last_checkpoint_x,Global.last_checkpoint_y)
 
 func handle_coin_compass():

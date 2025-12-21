@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://bnvneh2xfqhpp"]
+[gd_scene load_steps=34 format=3 uid="uid://bnvneh2xfqhpp"]
 
 [ext_resource type="Script" uid="uid://bt4pkr502m2v" path="res://scripts/screen_text_notifier.gd" id="1_28r26"]
 [ext_resource type="Script" uid="uid://jeprbhpns510" path="res://scripts/map_intro.gd" id="1_jwpll"]
@@ -20,6 +20,7 @@
 [ext_resource type="Texture2D" uid="uid://dvd0js1533ixy" path="res://sprites/uibg2.png" id="9_sky3p"]
 [ext_resource type="Texture2D" uid="uid://os1xgfw72sd1" path="res://sprites/items/mysticalstone.png" id="9_wfct7"]
 [ext_resource type="Texture2D" uid="uid://c73ucvu5ijqjw" path="res://sprites/items/jetpack.png" id="10_388ll"]
+[ext_resource type="Texture2D" uid="uid://c5gkhmbc2y4gf" path="res://sprites/items/false_cube_item.png" id="14_41akx"]
 [ext_resource type="Script" uid="uid://bhctgm6i0i6m4" path="res://scripts/timer.gd" id="19_1p538"]
 [ext_resource type="Script" uid="uid://72y351jfjj2f" path="res://scripts/winner_condition.gd" id="19_vkxe7"]
 [ext_resource type="AudioStream" uid="uid://cnilrnv668k01" path="res://sounds/Wave Button Press.mp3" id="20_catpy"]
@@ -481,7 +482,6 @@ vertical_alignment = 1
 scale = Vector2(0.681819, 0.681819)
 
 [node name="Items" type="Control" parent="Node2DUI"]
-visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_left = 237.6
@@ -653,6 +653,36 @@ tint_under = Color(0, 0, 0, 1)
 tint_over = Color(0.77238, 0.695494, 1.54018e-06, 1)
 tint_progress = Color(1, 0.517647, 0, 1)
 
+[node name="CubeUI" type="HBoxContainer" parent="Node2DUI/Items/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="TextureRect" type="TextureRect" parent="Node2DUI/Items/VBoxContainer/CubeUI"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("14_41akx")
+expand_mode = 1
+
+[node name="CubeBar" type="TextureProgressBar" parent="Node2DUI/Items/VBoxContainer/CubeUI"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+max_value = 3.43
+step = 0.0
+value = 3.0
+nine_patch_stretch = true
+stretch_margin_left = 150
+stretch_margin_top = 45
+stretch_margin_right = 101
+stretch_margin_bottom = 19
+texture_under = ExtResource("4_1rntb")
+texture_over = ExtResource("5_cap3f")
+texture_progress = ExtResource("4_1rntb")
+tint_under = Color(0.06666667, 0.03529412, 0.18431373, 1)
+tint_over = Color(0.52156866, 0.5254902, 0.6627451, 1)
+tint_progress = Color(0.56266665, 0.36, 1, 1)
+
 [node name="CoinCounter" type="Node2D" parent="Node2DUI"]
 position = Vector2(-26, -18)
 script = ExtResource("1_le5ak")
@@ -730,17 +760,9 @@ rotation = 1.0472
 scale = Vector2(0.410174, 0.410174)
 texture = ExtResource("4_m8224")
 
-[node name="Sprite2D4" type="Sprite2D" parent="Node2DUI/CoinCounter"]
-modulate = Color(1, 1, 1, 0.415686)
-z_index = -1
-position = Vector2(43, 258)
-rotation = 0.856155
-scale = Vector2(0.410174, 0.410174)
-texture = ExtResource("4_m8224")
-
 [node name="GrappleCooldown" type="Node2D" parent="Node2DUI"]
 
-[node name="TextureProgressBar" type="TextureProgressBar" parent="Node2DUI/GrappleCooldown"]
+[node name="TextureProgressBar" type="TextureProgressBar" parent="Node2DUI/GrappleCooldown" node_paths=PackedStringArray("holder")]
 offset_left = 13.0
 offset_top = 126.0
 offset_right = 525.0
@@ -753,6 +775,7 @@ radial_initial_angle = 40.0
 texture_under = ExtResource("4_nbvbl")
 texture_progress = ExtResource("5_6kawo")
 script = ExtResource("6_eqff7")
+holder = NodePath("..")
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer" parent="Node2DUI/GrappleCooldown/TextureProgressBar"]
 stream = ExtResource("20_catpy")
@@ -771,6 +794,14 @@ z_index = -1
 position = Vector2(38, 165)
 scale = Vector2(0.337663, 0.337663)
 texture = ExtResource("9_sky3p")
+
+[node name="Sprite2D4" type="Sprite2D" parent="Node2DUI/GrappleCooldown"]
+modulate = Color(1, 1, 1, 0.415686)
+z_index = -1
+position = Vector2(17, 240.00002)
+rotation = 0.85615504
+scale = Vector2(0.41017404, 0.41017404)
+texture = ExtResource("4_m8224")
 
 [node name="Timer" type="Node2D" parent="Node2DUI" node_paths=PackedStringArray("label")]
 position = Vector2(1686.66, 4.39999)

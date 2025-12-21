@@ -1,0 +1,446 @@
+[gd_scene load_steps=16 format=4 uid="uid://eehymxj7fbos"]
+
+[ext_resource type="Texture2D" uid="uid://bv6fss7i2qors" path="res://sprites/bluescreen_bg.png" id="1_0ymxm"]
+[ext_resource type="TileSet" uid="uid://w5rst4ax56w1" path="res://resources/WorldTiles.tres" id="1_jr662"]
+[ext_resource type="Texture2D" uid="uid://c10jphrgk4aly" path="res://sprites/glitched_bg.png" id="2_68gb3"]
+[ext_resource type="PackedScene" uid="uid://bacl7irhgnrr7" path="res://scenes/worm.tscn" id="2_j5vfb"]
+[ext_resource type="Texture2D" uid="uid://dgt4aekeutbt5" path="res://sprites/bgnight.png" id="3_68gb3"]
+[ext_resource type="Script" uid="uid://cr1gleusj0kab" path="res://scripts/camera_manager.gd" id="3_j5vfb"]
+[ext_resource type="Script" uid="uid://bdjrd2hrbpnxg" path="res://scripts/death_barrier.gd" id="7_ityff"]
+[ext_resource type="PackedScene" uid="uid://b6b10pnth34j6" path="res://scenes/windmill_spinner_block.tscn" id="8_2aemj"]
+
+[sub_resource type="Shader" id="Shader_ylpcy"]
+code = "shader_type canvas_item;
+
+// Amount of detail.
+uniform int octaves = 4;
+
+// Opacity of the output fog.
+uniform float starting_amplitude: hint_range(0.0, 0.5) = 0.5;
+
+// Rate of pattern within the fog.
+uniform float starting_frequency = 1.0;
+
+// Shift towards transparency (clamped) for sparser fog.
+uniform float shift: hint_range(-1.0, 0.0) = -0.2;
+
+// Direction and speed of travel.
+uniform vec2 velocity = vec2(1.0, 1.0);
+
+// Color of the fog.
+uniform vec4 fog_color: source_color = vec4(0.0, 0.0, 0.0, 1.0);
+
+// Noise texture; OpenSimplexNoise is great, but any filtered texture is fine.
+uniform sampler2D noise: repeat_enable;
+
+uniform vec2 camera_pos;
+
+uniform float camera_fog_speed = 0.002;
+
+float rand(vec2 uv) {
+    float amplitude = starting_amplitude;
+    float frequency = starting_frequency;
+    float output = 0.0;
+    for (int i = 0; i < octaves; i++) {
+        amplitude /= 2.0;
+        frequency *= 2.0;
+        output += texture(noise, (uv+(camera_pos*camera_fog_speed * 0.1)) * frequency).x * amplitude;
+    }
+    return clamp(output + shift, 0.0, 1.0);
+}
+
+void fragment() {
+    vec2 motion = vec2(rand(UV + TIME * starting_frequency * velocity));
+    COLOR = mix(vec4(0.0), fog_color, rand(SCREEN_UV + motion));
+}
+"
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_68gb3"]
+noise_type = 2
+fractal_lacunarity = 1.925
+fractal_gain = 0.6
+cellular_distance_function = 2
+cellular_jitter = 2.995
+cellular_return_type = 0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_0ymxm"]
+noise = SubResource("FastNoiseLite_68gb3")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_68gb3"]
+shader = SubResource("Shader_ylpcy")
+shader_parameter/octaves = 4
+shader_parameter/starting_amplitude = 0.5
+shader_parameter/starting_frequency = 0.235
+shader_parameter/shift = -0.1469999594825
+shader_parameter/velocity = Vector2(0.3, 0.3)
+shader_parameter/fog_color = Color(0, 0.2644999, 0.69, 0.43529412)
+shader_parameter/noise = SubResource("NoiseTexture2D_0ymxm")
+shader_parameter/camera_pos = Vector2(0, 0)
+shader_parameter/camera_fog_speed = 0.002
+
+[sub_resource type="Shader" id="Shader_inpyq"]
+code = "/*
+Shader from Godot Shaders - the free shader library.
+godotshaders.com/shader/VHS-and-CRT-monitor-effect
+
+This shader is under CC0 license. Feel free to use, improve and
+change this shader according to your needs and consider sharing
+the modified result to godotshaders.com.
+*/
+
+shader_type canvas_item;
+
+//*** IMPORTANT! ***/
+// - If you are using this shader to affect the node it is applied to set 'overlay' to false (unchecked in the instepctor).
+// - If you are using this shader as an overlay, and want the shader to affect the nodes below in the Scene hierarchy,
+//   set 'overlay' to true (checked in the inspector).
+// On Mac there is potentially a bug causing this to not work properly. If that is the case and you want to use the shader as an overlay
+// change all \"overlay ? SCREEN_TEXTURE : TEXTURE\" to only \"SCREEN_TEXTURE\" on lines 129-140, and \"vec2 uv = overlay ? warp(SCREEN_UV) : warp(UV);\"
+// to \"vec2 uv = warp(SCREEN_UV);\" on line 98.
+uniform bool overlay = false;
+
+uniform float scanlines_opacity : hint_range(0.0, 1.0) = 0.4;
+uniform float scanlines_width : hint_range(0.0, 0.5) = 0.25;
+uniform float grille_opacity : hint_range(0.0, 1.0) = 0.3;
+uniform vec2 resolution = vec2(640.0, 480.0); // Set the number of rows and columns the texture will be divided in. Scanlines and grille will make a square based on these values
+
+uniform bool pixelate = true; // Fill each square (\"pixel\") with a sampled color, creating a pixel look and a more accurate representation of how a CRT monitor would work.
+
+uniform bool roll = true;
+uniform float roll_speed = 8.0; // Positive values are down, negative are up
+uniform float roll_size : hint_range(0.0, 100.0) = 15.0;
+uniform float roll_variation : hint_range(0.1, 5.0) = 1.8; // This valie is not an exact science. You have to play around with the value to find a look you like. How this works is explained in the code below.
+uniform float distort_intensity : hint_range(0.0, 0.2) = 0.05; // The distortion created by the rolling effect.
+
+uniform float noise_opacity : hint_range(0.0, 1.0) = 0.4;
+uniform float noise_speed = 5.0; // There is a movement in the noise pattern that can be hard to see first. This sets the speed of that movement.
+
+uniform float static_noise_intensity : hint_range(0.0, 1.0) = 0.06;
+
+uniform float aberration : hint_range(-1.0, 1.0) = 0.03; // Chromatic aberration, a distortion on each color channel.
+uniform float brightness = 1.4; // When adding scanline gaps and grille the image can get very dark. Brightness tries to compensate for that.
+uniform bool discolor = true; // Add a discolor effect simulating a VHS
+
+uniform float warp_amount :hint_range(0.0, 5.0) = 1.0; // Warp the texture edges simulating the curved glass of a CRT monitor or old TV.
+uniform bool clip_warp = false;
+
+uniform float vignette_intensity = 0.4; // Size of the vignette, how far towards the middle it should go.
+uniform float vignette_opacity : hint_range(0.0, 1.0) = 0.5;
+
+uniform sampler2D SCREEN_TEXTURE : hint_screen_texture,filter_linear_mipmap;
+
+// Used by the noise functin to generate a pseudo random value between 0.0 and 1.0
+vec2 random(vec2 uv){
+    uv = vec2( dot(uv, vec2(127.1,311.7) ),
+               dot(uv, vec2(269.5,183.3) ) );
+    return -1.0 + 2.0 * fract(sin(uv) * 43758.5453123);
+}
+
+// Generate a Perlin noise used by the distortion effects
+float noise(vec2 uv) {
+    vec2 uv_index = floor(uv);
+    vec2 uv_fract = fract(uv);
+
+    vec2 blur = smoothstep(0.0, 1.0, uv_fract);
+
+    return mix( mix( dot( random(uv_index + vec2(0.0,0.0) ), uv_fract - vec2(0.0,0.0) ),
+                     dot( random(uv_index + vec2(1.0,0.0) ), uv_fract - vec2(1.0,0.0) ), blur.x),
+                mix( dot( random(uv_index + vec2(0.0,1.0) ), uv_fract - vec2(0.0,1.0) ),
+                     dot( random(uv_index + vec2(1.0,1.0) ), uv_fract - vec2(1.0,1.0) ), blur.x), blur.y) * 0.5 + 0.5;
+}
+
+// Takes in the UV and warps the edges, creating the spherized effect
+vec2 warp(vec2 uv){
+	vec2 delta = uv - 0.5;
+	float delta2 = dot(delta.xy, delta.xy);
+	float delta4 = delta2 * delta2;
+	float delta_offset = delta4 * warp_amount;
+
+	return uv + delta * delta_offset;
+}
+
+// Adds a black border to hide stretched pixel created by the warp effect
+float border (vec2 uv){
+	float radius = min(warp_amount, 0.08);
+	radius = max(min(min(abs(radius * 2.0), abs(1.0)), abs(1.0)), 1e-5);
+	vec2 abs_uv = abs(uv * 2.0 - 1.0) - vec2(1.0, 1.0) + radius;
+	float dist = length(max(vec2(0.0), abs_uv)) / radius;
+	float square = smoothstep(0.96, 1.0, dist);
+	return clamp(1.0 - square, 0.0, 1.0);
+}
+
+// Adds a vignette shadow to the edges of the image
+float vignette(vec2 uv){
+	uv *= 1.0 - uv.xy;
+	float vignette = uv.x * uv.y * 15.0;
+	return pow(vignette, vignette_intensity * vignette_opacity);
+}
+
+void fragment()
+{
+	vec2 uv = overlay ? warp(SCREEN_UV) : warp(UV); // Warp the uv. uv will be used in most cases instead of UV to keep the warping
+	vec2 text_uv = uv;
+	vec2 roll_uv = vec2(0.0);
+	float time = roll ? TIME : 0.0;
+
+
+	// Pixelate the texture based on the given resolution.
+	if (pixelate)
+	{
+		text_uv = ceil(uv * resolution) / resolution;
+	}
+
+	// Create the rolling effect. We need roll_line a bit later to make the noise effect.
+	// That is why this runs if roll is true OR noise_opacity is over 0.
+	float roll_line = 0.0;
+	if (roll || noise_opacity > 0.0)
+	{
+		// Create the areas/lines where the texture will be distorted.
+		roll_line = smoothstep(0.3, 0.9, sin(uv.y * roll_size - (time * roll_speed) ) );
+		// Create more lines of a different size and apply to the first set of lines. This creates a bit of variation.
+		roll_line *= roll_line * smoothstep(0.3, 0.9, sin(uv.y * roll_size * roll_variation - (time * roll_speed * roll_variation) ) );
+		// Distort the UV where where the lines are
+		roll_uv = vec2(( roll_line * distort_intensity * (1.-UV.x)), 0.0);
+	}
+
+	vec4 text;
+	if (roll)
+	{
+		// If roll is true distort the texture with roll_uv. The texture is split up into RGB to
+		// make some chromatic aberration. We apply the aberration to the red and green channels accorging to the aberration parameter
+		// and intensify it a bit in the roll distortion.
+		text.r = texture(SCREEN_TEXTURE, text_uv + roll_uv * 0.8 + vec2(aberration, 0.0) * .1).r;
+		text.g = texture(SCREEN_TEXTURE, text_uv + roll_uv * 1.2 - vec2(aberration, 0.0) * .1 ).g;
+		text.b = texture(SCREEN_TEXTURE, text_uv + roll_uv).b;
+		text.a = 1.0;
+	}
+	else
+	{
+		// If roll is false only apply the aberration without any distorion. The aberration values are very small so the .1 is only
+		// to make the slider in the Inspector less sensitive.
+		text.r = texture(SCREEN_TEXTURE, text_uv + vec2(aberration, 0.0) * .1).r;
+		text.g = texture(SCREEN_TEXTURE, text_uv - vec2(aberration, 0.0) * .1).g;
+		text.b = texture(SCREEN_TEXTURE, text_uv).b;
+		text.a = 1.0;
+	}
+
+	float r = text.r;
+	float g = text.g;
+	float b = text.b;
+
+	uv = warp(UV);
+
+	// CRT monitors don't have pixels but groups of red, green and blue dots or lines, called grille. We isolate the texture's color channels
+	// and divide it up in 3 offsetted lines to show the red, green and blue colors next to each other, with a small black gap between.
+	if (grille_opacity > 0.0){
+
+		float g_r = smoothstep(0.85, 0.95, abs(sin(uv.x * (resolution.x * 3.14159265))));
+		r = mix(r, r * g_r, grille_opacity);
+
+		float g_g = smoothstep(0.85, 0.95, abs(sin(1.05 + uv.x * (resolution.x * 3.14159265))));
+		g = mix(g, g * g_g, grille_opacity);
+
+		float b_b = smoothstep(0.85, 0.95, abs(sin(2.1 + uv.x * (resolution.x * 3.14159265))));
+		b = mix(b, b * b_b, grille_opacity);
+
+	}
+
+	// Apply the grille to the texture's color channels and apply Brightness. Since the grille and the scanlines (below) make the image very dark you
+	// can compensate by increasing the brightness.
+	text.r = clamp(r * brightness, 0.0, 1.0);
+	text.g = clamp(g * brightness, 0.0, 1.0);
+	text.b = clamp(b * brightness, 0.0, 1.0);
+
+	// Scanlines are the horizontal lines that make up the image on a CRT monitor.
+	// Here we are actual setting the black gap between each line, which I guess is not the right definition of the word, but you get the idea
+	float scanlines = 0.5;
+	if (scanlines_opacity > 0.0)
+	{
+		// Same technique as above, create lines with sine and applying it to the texture. Smoothstep to allow setting the line size.
+		scanlines = smoothstep(scanlines_width, scanlines_width + 0.5, abs(sin(uv.y * (resolution.y * 3.14159265))));
+		text.rgb = mix(text.rgb, text.rgb * vec3(scanlines), scanlines_opacity);
+	}
+
+	// Apply the banded noise.
+	if (noise_opacity > 0.0)
+	{
+		// Generate a noise pattern that is very stretched horizontally, and animate it with noise_speed
+		float noise = smoothstep(0.4, 0.5, noise(uv * vec2(2.0, 200.0) + vec2(10.0, (TIME * (noise_speed))) ) );
+
+		// We use roll_line (set above) to define how big the noise should be vertically (multiplying cuts off all black parts).
+		// We also add in some basic noise with random() to break up the noise pattern above. The noise is sized according to
+		// the resolution value set in the inspector. If you don't like this look you can
+		// change \"ceil(uv * resolution) / resolution\" to only \"uv\" to make it less pixelated. Or multiply resolution with som value
+		// greater than 1.0 to make them smaller.
+		roll_line *= noise * scanlines * clamp(random((ceil(uv * resolution) / resolution) + vec2(TIME * 0.8, 0.0)).x + 0.8, 0.0, 1.0);
+		// Add it to the texture based on noise_opacity
+		text.rgb = clamp(mix(text.rgb, text.rgb + roll_line, noise_opacity), vec3(0.0), vec3(1.0));
+	}
+
+	// Apply static noise by generating it over the whole screen in the same way as above
+	if (static_noise_intensity > 0.0)
+	{
+		text.rgb += clamp(random((ceil(uv * resolution) / resolution) + fract(TIME)).x, 0.0, 1.0) * static_noise_intensity;
+	}
+
+	// Apply a black border to hide imperfections caused by the warping.
+	// Also apply the vignette
+	text.rgb *= border(uv);
+	text.rgb *= vignette(uv);
+	// Hides the black border and make that area transparent. Good if you want to add the the texture on top an image of a TV or monitor.
+	if (clip_warp)
+	{
+		text.a = border(uv);
+	}
+
+	// Apply discoloration to get a VHS look (lower saturation and higher contrast)
+	// You can play with the values below or expose them in the Inspector.
+	float saturation = 0.5;
+	float contrast = 1.2;
+	if (discolor)
+	{
+		// Saturation
+		vec3 greyscale = vec3(text.r + text.g + text.b) / 3.;
+		text.rgb = mix(text.rgb, greyscale, saturation);
+
+		// Contrast
+		float midpoint = pow(0.5, 2.2);
+		text.rgb = (text.rgb - vec3(midpoint)) * contrast + midpoint;
+	}
+
+	COLOR = text;
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0ymxm"]
+shader = SubResource("Shader_inpyq")
+shader_parameter/overlay = true
+shader_parameter/scanlines_opacity = 0.182000008645
+shader_parameter/scanlines_width = 0.0
+shader_parameter/grille_opacity = 0.151
+shader_parameter/resolution = Vector2(1320.645, 891.75)
+shader_parameter/pixelate = true
+shader_parameter/roll = true
+shader_parameter/roll_speed = 0.65
+shader_parameter/roll_size = 20.0
+shader_parameter/roll_variation = 1.4
+shader_parameter/distort_intensity = 0.0090000004275
+shader_parameter/noise_opacity = 0.10800000513
+shader_parameter/noise_speed = 0.0
+shader_parameter/static_noise_intensity = 0.045
+shader_parameter/aberration = 0.00300004764250005
+shader_parameter/brightness = 1.4
+shader_parameter/discolor = true
+shader_parameter/warp_amount = 0.294000013965
+shader_parameter/clip_warp = false
+shader_parameter/vignette_intensity = 0.4
+shader_parameter/vignette_opacity = 0.172
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2aemj"]
+size = Vector2(9653, 282)
+
+[node name="glitched_main" type="Node2D"]
+
+[node name="FG" type="CanvasLayer" parent="."]
+
+[node name="Sprite2D2" type="ColorRect" parent="FG"]
+modulate = Color(1, 1, 1, 0.20392157)
+material = SubResource("ShaderMaterial_68gb3")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -391.72223
+offset_bottom = -191.19443
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(1.5652174, 1.5652174)
+
+[node name="CRT" type="ColorRect" parent="FG"]
+material = SubResource("ShaderMaterial_0ymxm")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -415.36108
+offset_bottom = -233.36111
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(1.5652174, 1.5652174)
+
+[node name="BG" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="Parallax2D" type="Parallax2D" parent="BG"]
+visible = false
+scroll_scale = Vector2(1.1, 1.1)
+repeat_size = Vector2(640, 400)
+autoscroll = Vector2(0.995, 0)
+repeat_times = 14
+
+[node name="BlueScreen" type="Sprite2D" parent="BG/Parallax2D"]
+modulate = Color(0.3553136, 0.35531354, 0.35531357, 1)
+texture_filter = 1
+scale = Vector2(1.8025, 1.8025)
+texture = ExtResource("1_0ymxm")
+centered = false
+
+[node name="Screen" type="Sprite2D" parent="BG"]
+visible = false
+modulate = Color(0.3553136, 0.35531354, 0.35531357, 1)
+scale = Vector2(1.8253164, 1.8253164)
+texture = ExtResource("2_68gb3")
+centered = false
+
+[node name="FirstBG" type="Sprite2D" parent="BG"]
+modulate = Color(0.3553136, 0.35531354, 0.35531357, 1)
+scale = Vector2(0.33001983, 0.3314815)
+texture = ExtResource("3_68gb3")
+centered = false
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAAAAMAAQAGAAAAAAABAAMAAQAGAAAAAAACAAMAAQAGAAAAAAADAAMAAQAGAAAAAAAEAAMAAQAGAAAAAAAFAAMAAQAGAAAAAAAGAAMAAQAGAAAAAAAHAAMAAQAGAAAAAAAIAAMAAQAGAAAAAAAJAAMAAQAGAAAAAAAJAAQAAQAGAAAAAAAIAAQAAQAGAAAAAAAHAAQAAQAGAAAAAAAGAAQAAQAGAAAAAAAFAAQAAQAGAAAAAAAEAAQAAQAGAAAAAAADAAQAAQAGAAAAAAACAAQAAQAGAAAAAAABAAQAAQAGAAAAAAAAAAQAAQAGAAAAAAAAAAUAAQAGAAAAAAABAAUAAQAGAAAAAAACAAUAAQAGAAAAAAADAAUAAQAGAAAAAAAEAAUAAQAGAAAAAAAFAAUAAQAGAAAAAAAGAAUAAQAGAAAAAAAHAAUAAQAGAAAAAAAIAAUAAQAGAAAAAAAJAAUAAQAGAAAAAAAKAAUAAQAGAAAAAAAKAAYAAQAGAAAAAAAJAAYAAQAGAAAAAAAIAAYAAQAGAAAAAAAHAAcAAQAGAAAAAAAGAAcAAQAGAAAAAAAFAAcAAQAGAAAAAAAEAAcAAQAGAAAAAAADAAcAAQAGAAAAAAACAAcAAQAGAAAAAAABAAcAAQAGAAAAAAAAAAcAAQAGAAAAAAD//wYAAQAGAAAAAAAAAAYAAQAGAAAAAAABAAYAAQAGAAAAAAAIAAcAAQAGAAAAAAAJAAcAAQAGAAAAAAAKAAcAAQAGAAAAAAALAAcAAQAGAAAAAAALAAYAAQAGAAAAAAAHAAYAAQAGAAAAAAAGAAYAAQAGAAAAAAAFAAYAAQAGAAAAAAAEAAYAAQAGAAAAAAADAAYAAQAGAAAAAAACAAYAAQAGAAAAAAD//wcAAQAGAAAAAAD//wUAAQAGAAAAAAD//wQAAQAGAAAAAAD//wMAAQAGAAAAAAAKAAQAAQAGAAAAAAAKAAMAAQAGAAAAAAALAAUAAQAGAAAAAAALAAQAAQAGAAAAAAALAAMAAQAGAAAAAAAMAAMAAQAGAAAAAAAMAAQAAQAGAAAAAAAMAAUAAQAGAAAAAAAMAAYAAQAGAAAAAAAMAAcAAQAGAAAAAAANAAcAAQAGAAAAAAANAAYAAQAGAAAAAAANAAUAAQAGAAAAAAANAAQAAQAGAAAAAAANAAMAAQAGAAAAAAAOAAMAAQAGAAAAAAAOAAQAAQAGAAAAAAAOAAUAAQAGAAAAAAAOAAYAAQAGAAAAAAAPAAUAAQAGAAAAAAAPAAQAAQAGAAAAAAAPAAYAAQAGAAAAAAAOAAcAAQAGAAAAAAAPAAcAAQAGAAAAAAAVAP//AQAGAAAAAAAWAP//AQAGAAAAAAAXAP//AQAGAAAAAAAYAP//AQAGAAAAAAAVAAAAAQAGAAAAAAAWAAAAAQAGAAAAAAAXAAAAAQAGAAAAAAAYAAAAAQAGAAAAAAAZAAAAAQAGAAAAAAAZAP//AQAGAAAAAAAaAP//AQAGAAAAAAAaAAAAAQAGAAAAAAARAAEAAQAGAAAAAAASAAEAAQAGAAAAAAASAAIAAQAGAAAAAAARAAAAAQAGAAAAAAASAAAAAQAGAAAAAAAQAAUAAQAGAAAAAAAQAAYAAQAGAAAAAAARAAUAAQAGAAAAAAARAAYAAQAGAAAAAAARAAcAAQAGAAAAAAAQAAcAAQAGAAAAAAAVAP7/AQAGAAAAAAAWAP7/AQAGAAAAAAAXAP7/AQAGAAAAAAAYAP7/AQAGAAAAAAAZAP7/AQAGAAAAAAAaAP7/AQAGAAAAAAASAPz/AQAGAAAAAAARAPz/AQAGAAAAAAAQAPz/AQAGAAAAAAAPAPz/AQAGAAAAAAAOAPz/AQAGAAAAAAANAPz/AQAGAAAAAAAMAPz/AQAGAAAAAAALAPz/AQAGAAAAAAAKAPz/AQAGAAAAAAAJAPz/AQAGAAAAAAAIAPz/AQAGAAAAAAAHAPz/AQAGAAAAAAARAP3/AQAGAAAAAAAQAP3/AQAGAAAAAAAPAP3/AQAGAAAAAAAOAP3/AQAGAAAAAAANAP3/AQAGAAAAAAAMAP3/AQAGAAAAAAALAP3/AQAGAAAAAAAKAP3/AQAGAAAAAAAJAP3/AQAGAAAAAAAIAP3/AQAGAAAAAAAHAP3/AQAGAAAAAAAGAP3/AQAGAAAAAAAGAPz/AQAGAAAAAAAFAPz/AQAGAAAAAAAVAAgAAQAGAAAAAAAVAAkAAQAGAAAAAAAWAAkAAQAGAAAAAAAWAAgAAQAGAAAAAAAXAAgAAQAGAAAAAAAYAAgAAQAGAAAAAAAYAAkAAQAGAAAAAAAXAAkAAQAGAAAAAAAdAAgAAQAGAAAAAAAdAAkAAQAGAAAAAAAeAAkAAQAGAAAAAAAfAAkAAQAGAAAAAAAfAAgAAQAGAAAAAAAgAAgAAQAGAAAAAAAgAAkAAQAGAAAAAAAeAAgAAQAGAAAAAAAlAAkAAQAGAAAAAAAmAAkAAQAGAAAAAAAmAAgAAQAGAAAAAAAnAAgAAQAGAAAAAAAoAAkAAQAGAAAAAAAnAAkAAQAGAAAAAAAlAAgAAQAGAAAAAAAoAAgAAQAGAAAAAAAkAAgAAQAGAAAAAAAkAAkAAQAGAAAAAAAcAAgAAQAGAAAAAAAcAAkAAQAGAAAAAAAsAAgAAQAGAAAAAAAsAAkAAQAGAAAAAAAtAAkAAQAGAAAAAAAtAAgAAQAGAAAAAAAuAAgAAQAGAAAAAAAuAAkAAQAGAAAAAAAvAAkAAQAGAAAAAAAvAAgAAQAGAAAAAAAwAAgAAQAGAAAAAAAdAP7/AQAGAAAAAAADAPn/AQAGAAAAAAAFAPb/AQAGAAAAAAAHAPP/AQAGAAAAAAAJAPD/AQAGAAAAAAAGAO7/AQAGAAAAAAAFAO7/AQAGAAAAAAAEAO7/AQAGAAAAAAADAO7/AQAGAAAAAAACAO7/AQAGAAAAAAADAO//AQAGAAAAAAAEAO//AQAGAAAAAAAFAO//AQAGAAAAAAACAO//AQAGAAAAAAABAO//AQAGAAAAAAABAO7/AQAGAAAAAAAAAO7/AQAGAAAAAAAAAOv/AQAGAAAAAAD+/+j/AQAGAAAAAAD8/+X/AQAGAAAAAAD4/+X/AQAGAAAAAAD3/+X/AQAGAAAAAAD2/+X/AQAGAAAAAAD1/+X/AQAGAAAAAAD0/+X/AQAGAAAAAADz/+X/AQAGAAAAAADy/+X/AQAGAAAAAADx/+X/AQAGAAAAAAD0/+b/AQAGAAAAAAD1/+b/AQAGAAAAAAD2/+b/AQAGAAAAAAD3/+b/AQAGAAAAAADz/+b/AQAGAAAAAADy/+b/AQAGAAAAAADx/+b/AQAGAAAAAADx/+T/AQAGAAAAAADy/+T/AQAGAAAAAAD6/+T/AAAAAAAACQD5/+X/AQAGAAAAAAD5/+b/AQAGAAAAAAD4/+b/AQAGAAAAAAD6/+X/AQAGAAAAAAD5/+T/AAAAAAAACQD9/wIAAAAAAAAACQD9/wMAAQAGAAAAAAD+/wIAAAAAAAAACQD+/wMAAQAGAAAAAAD9/wQAAQAGAAAAAAD9/wUAAQAGAAAAAAD9/wYAAQAGAAAAAAD9/wcAAQAGAAAAAAD+/wcAAQAGAAAAAAD+/wUAAQAGAAAAAAD+/wQAAQAGAAAAAAD+/wYAAQAGAAAAAAD7/wUAAQAGAAAAAAD6/wUAAQAGAAAAAAD9//3/AQAGAAAAAAD9//7/AAAAAAAACQD+//3/AQAGAAAAAAD+//7/AAAAAAAACQD3/wQAAAAAAAAACQD3/wUAAQAGAAAAAAD4/wQAAAAAAAAACQD4/wUAAQAGAAAAAAD0/wYAAQAGAAAAAAD1/wYAAQAGAAAAAAD7/wQAAQAGAAAAAAD6/wQAAQAGAAAAAAD3////AAAAAAAACQD4////AAAAAAAACQD3//7/AQAGAAAAAAD4//7/AQAGAAAAAAD5//7/AQAGAAAAAAD5////AAAAAAAACQD6//7/AQAGAAAAAAD6////AAAAAAAACQD7//3/AQAGAAAAAAD7//7/AAAAAAAACQD8//3/AQAGAAAAAAD8//7/AAAAAAAACQD1////AQAGAAAAAAD1/wAAAAAAAAAACQD2////AQAGAAAAAAD2/wAAAAAAAAAACQD0////AQAGAAAAAAD0/wAAAAAAAAAACQDz////AQAGAAAAAADz/wAAAAAAAAAACQDx/wAAAQAGAAAAAADx/wEAAAAAAAAACQDy/wAAAQAGAAAAAADy/wEAAAAAAAAACQDv/wAAAQAGAAAAAADv/wEAAAAAAAAACQDw/wAAAQAGAAAAAADw/wEAAAAAAAAACQDt/wEAAQAGAAAAAADt/wIAAAAAAAAACQDu/wEAAQAGAAAAAADu/wIAAAAAAAAACQDr/wEAAQAGAAAAAADr/wIAAAAAAAAACQDs/wEAAQAGAAAAAADs/wIAAAAAAAAACQDx/wYAAAAAAAAACQDx/wcAAQAGAAAAAADy/wYAAAAAAAAACQDy/wcAAQAGAAAAAADt/wcAAAAAAAAACQDt/wgAAQAGAAAAAADv/wgAAQAGAAAAAADr/wcAAQAGAAAAAADq/wgAAQAGAAAAAADp/wgAAQAGAAAAAADp/wcAAQAGAAAAAADo/wcAAQAGAAAAAADq/wcAAQAGAAAAAADo/wgAAQAGAAAAAADn/wcAAQAGAAAAAADm/wcAAQAGAAAAAADn/wgAAQAGAAAAAADm/wgAAQAGAAAAAADl/wgAAQAGAAAAAADk/wgAAQAGAAAAAADj/wcAAQAGAAAAAADi/wcAAQAGAAAAAADk/wcAAQAGAAAAAADl/wcAAQAGAAAAAADj/wgAAQAGAAAAAADi/wgAAQAGAAAAAADh/wcAAQAGAAAAAADh/wgAAQAGAAAAAADg/wgAAQAGAAAAAADg/wcAAQAGAAAAAADf/wcAAQAGAAAAAADg/wYAAQAGAAAAAADf/wYAAQAGAAAAAADl/wUAAQAGAAAAAADm/wMAAQAGAAAAAADl/wEAAQAGAAAAAADn////AQAGAAAAAADr/wAAAQAGAAAAAADr////AQAGAAAAAADq////AQAGAAAAAADq/wAAAQAGAAAAAADs////AQAGAAAAAADs/wAAAQAGAAAAAADt/wAAAQAGAAAAAADu////AQAGAAAAAADv////AQAGAAAAAADw////AQAGAAAAAADw//7/AQAGAAAAAADv//7/AQAGAAAAAADu//7/AQAGAAAAAADt//7/AQAGAAAAAADt////AQAGAAAAAADu/wAAAQAGAAAAAADf/wQAAQAGAAAAAADx//7/AQAGAAAAAADy//7/AQAGAAAAAADz//7/AQAGAAAAAADy////AQAGAAAAAADx////AQAGAAAAAAD0//7/AQAGAAAAAAD1//7/AQAGAAAAAAD2//7/AQAGAAAAAAD3//3/AQAGAAAAAAD4//3/AQAGAAAAAAD5//3/AQAGAAAAAAD6//3/AQAGAAAAAAD2//3/AQAGAAAAAAD1//3/AQAGAAAAAAD0//3/AQAGAAAAAADz//3/AQAGAAAAAADy//3/AQAGAAAAAADx//3/AQAGAAAAAADw//3/AQAGAAAAAADv//3/AQAGAAAAAADu//3/AQAGAAAAAADs//7/AQAGAAAAAADr//7/AQAGAAAAAADq//7/AQAGAAAAAADv//z/AQAGAAAAAADw//z/AQAGAAAAAADx//z/AQAGAAAAAADy//z/AQAGAAAAAADz//z/AQAGAAAAAAD0//z/AQAGAAAAAAD1//z/AQAGAAAAAAD2//z/AQAGAAAAAAD3//z/AQAGAAAAAAD4//z/AQAGAAAAAAD5//z/AQAGAAAAAAD6//z/AQAGAAAAAAD7//z/AQAGAAAAAAD8//z/AQAGAAAAAAD9//z/AQAGAAAAAAD+//z/AQAGAAAAAAD+//v/AQAGAAAAAAD+//r/AQAGAAAAAAD+//n/AQAGAAAAAAD+//j/AQAGAAAAAAD+//f/AQAGAAAAAAD+//b/AQAGAAAAAAD+//X/AQAGAAAAAAD+//T/AQAGAAAAAAD9//T/AQAGAAAAAAD9//X/AQAGAAAAAAD8//b/AQAGAAAAAAD8//f/AQAGAAAAAAD8//j/AQAGAAAAAAD8//n/AQAGAAAAAAD7//n/AQAGAAAAAAD7//r/AQAGAAAAAAD8//r/AQAGAAAAAAD9//r/AQAGAAAAAAD9//n/AQAGAAAAAAD9//j/AQAGAAAAAAD9//f/AQAGAAAAAAD9//b/AQAGAAAAAAD9//v/AQAGAAAAAAD8//v/AQAGAAAAAAD7//v/AQAGAAAAAAD6//v/AQAGAAAAAAD5//v/AQAGAAAAAAD4//v/AQAGAAAAAAD3//v/AQAGAAAAAAD5//r/AQAGAAAAAAD6//r/AQAGAAAAAAD6//n/AQAGAAAAAAD7//j/AQAGAAAAAAD7/+7/AQAGAAAAAAD6/+7/AQAGAAAAAAD5/+7/AQAGAAAAAAD4/+7/AQAGAAAAAAD3/+7/AQAGAAAAAAD2/+7/AQAGAAAAAAD1/+7/AQAGAAAAAAD0/+7/AQAGAAAAAADz/+7/AQAGAAAAAADy/+7/AQAGAAAAAADx/+7/AQAGAAAAAADw/+7/AQAGAAAAAADv/+7/AQAGAAAAAADu/+7/AQAGAAAAAADt/+7/AQAGAAAAAADs/+7/AQAGAAAAAADr/+7/AQAGAAAAAADq/+7/AQAGAAAAAAD8/+7/AQAGAAAAAAD9/+7/AQAGAAAAAAD+/+7/AQAGAAAAAAD+/+3/AAAAAAAACQD9/+3/AAAAAAAACQD8/+3/AAAAAAAACQD7/+3/AAAAAAAACQD6/+3/AAAAAAAACQD5/+3/AAAAAAAACQD4/+3/AAAAAAAACQD3/+3/AAAAAAAACQD2/+3/AAAAAAAACQD1/+3/AAAAAAAACQD0/+3/AAAAAAAACQDz/+3/AAAAAAAACQDy/+3/AAAAAAAACQDx/+3/AAAAAAAACQDw/+3/AAAAAAAACQDv/+3/AAAAAAAACQDu/+3/AAAAAAAACQDt/+3/AAAAAAAACQDs/+3/AAAAAAAACQDr/+3/AAAAAAAACQDq/+3/AAAAAAAACQAwAAcAAQAGAAAAAAAvAAcAAQAGAAAAAAAdAP3/AQAGAAAAAAAeAP7/AQAGAAAAAAAeAP3/AQAGAAAAAAAeAPz/AQAGAAAAAAAfAPz/AQAGAAAAAAAfAP3/AQAGAAAAAAAfAP7/AQAGAAAAAAAiAPr/AQAGAAAAAAAiAPn/AQAGAAAAAAAjAPn/AQAGAAAAAAAjAPr/AQAGAAAAAAAiAPv/AQAGAAAAAAAjAPv/AQAGAAAAAAAkAPr/AQAGAAAAAAAkAPn/AQAGAAAAAAAdAPb/AQAGAAAAAAAdAPf/AQAGAAAAAAAeAPf/AQAGAAAAAAAeAPj/AQAGAAAAAAAfAPf/AQAGAAAAAAAfAPb/AQAGAAAAAAAeAPb/AQAGAAAAAAAdAPj/AQAGAAAAAAAcAPf/AQAGAAAAAAAcAPb/AQAGAAAAAAAhAPP/AQAGAAAAAAAkAPD/AQAGAAAAAAAkAPH/AQAGAAAAAAAlAPL/AQAGAAAAAAAlAPH/AQAGAAAAAAAlAPD/AQAGAAAAAAAmAPD/AQAGAAAAAAAnAPD/AQAGAAAAAAAnAPH/AQAGAAAAAAAnAPL/AQAGAAAAAAAmAPL/AQAGAAAAAAAiAPP/AQAGAAAAAAAmAPH/AQAGAAAAAAAnAPT/AQAGAAAAAAAoAPT/AQAGAAAAAAApAPT/AQAGAAAAAAAqAPT/AQAGAAAAAAArAPT/AQAGAAAAAAAsAPT/AQAGAAAAAAAtAPT/AQAGAAAAAAAnAPP/AQAGAAAAAAAmAPP/AQAGAAAAAAAlAPP/AQAGAAAAAAAkAPL/AQAGAAAAAAAqAPP/AAAAAAAACQArAPP/AAAAAAAACQAsAPP/AAAAAAAACQAtAPP/AAAAAAAACQAvAAUAAQAGAAAAAADx/+L/AQAGAAAAAAAZAPb/AQAGAAAAAAAYAPb/AQAGAAAAAAAZAPf/AQAGAAAAAAAYAPf/AQAGAAAAAAAXAPf/AQAGAAAAAAAXAPb/AQAGAAAAAAAWAPb/AQAGAAAAAAAoAPD/AQAGAAAAAAAoAPH/AQAGAAAAAAAoAPL/AQAGAAAAAAAoAPP/AQAGAAAAAAAtAPX/AQAGAAAAAAAsAPX/AQAGAAAAAAArAPX/AQAGAAAAAAAqAPX/AQAGAAAAAAApAPX/AQAGAAAAAAAoAPX/AQAGAAAAAAA0APD/AAAAAAAAAQAyAPD/AAAAAAAAAQA2APD/AAAAAAAAAQA4APD/AAAAAAAAAQAvAPP/AAAAAAAACQAvAPT/AQAGAAAAAAAvAPX/AQAGAAAAAAAwAPP/AAAAAAAACQAwAPT/AQAGAAAAAAAwAPX/AQAGAAAAAAAxAPP/AAAAAAAACQAxAPT/AQAGAAAAAAAxAPX/AQAGAAAAAAAyAPP/AAAAAAAACQAyAPT/AQAGAAAAAAAyAPX/AQAGAAAAAAAzAPP/AAAAAAAACQAzAPT/AQAGAAAAAAAzAPX/AQAGAAAAAAA0APP/AAAAAAAACQA0APT/AQAGAAAAAAA0APX/AQAGAAAAAAA1APP/AAAAAAAACQA1APT/AQAGAAAAAAA1APX/AQAGAAAAAAA2APP/AAAAAAAACQA2APT/AQAGAAAAAAA2APX/AQAGAAAAAAA3APP/AAAAAAAACQA3APT/AQAGAAAAAAA3APX/AQAGAAAAAAA4APP/AAAAAAAACQA4APT/AQAGAAAAAAA4APX/AQAGAAAAAAA5APP/AAAAAAAACQA5APT/AQAGAAAAAAA5APX/AQAGAAAAAAA6APP/AAAAAAAACQA6APT/AQAGAAAAAAA6APX/AQAGAAAAAAAuAPP/AAAAAAAACQAuAPT/AQAGAAAAAAAuAPX/AQAGAAAAAAApAPP/AAAAAAAACQA/APP/AAAAAAAACQA/APT/AQAGAAAAAAA/APX/AQAGAAAAAABAAPP/AAAAAAAACQBAAPT/AQAGAAAAAABAAPX/AQAGAAAAAABBAPP/AAAAAAAACQBBAPT/AQAGAAAAAABBAPX/AQAGAAAAAABCAPP/AAAAAAAACQBCAPT/AQAGAAAAAABCAPX/AQAGAAAAAABDAPP/AAAAAAAACQBDAPT/AQAGAAAAAABDAPX/AQAGAAAAAABEAPD/AQAGAAAAAABEAPH/AQAGAAAAAABEAPL/AQAGAAAAAABEAPP/AQAGAAAAAABEAPT/AQAGAAAAAABEAPX/AQAGAAAAAABFAPD/AQAGAAAAAABFAPH/AQAGAAAAAABFAPL/AQAGAAAAAABGAPD/AQAGAAAAAABGAPH/AQAGAAAAAABHAPD/AQAGAAAAAABHAPH/AQAGAAAAAABIAPD/AQAGAAAAAABIAPH/AQAGAAAAAABJAPD/AQAGAAAAAABJAPH/AQAGAAAAAABKAO//AQAGAAAAAABKAPD/AQAGAAAAAABFAPP/AQAGAAAAAABFAPT/AQAGAAAAAABFAPX/AQAGAAAAAABGAPL/AQAGAAAAAABKAPH/AQAGAAAAAABLAO//AQAGAAAAAABLAPD/AQAGAAAAAAA+APP/AAAAAAAACQA+APT/AQAGAAAAAAA+APX/AQAGAAAAAAA9APP/AAAAAAAACQA9APT/AQAGAAAAAAA9APX/AQAGAAAAAAA8APP/AAAAAAAACQA8APT/AQAGAAAAAAA8APX/AQAGAAAAAAA7APP/AAAAAAAACQA7APT/AQAGAAAAAAA7APX/AQAGAAAAAAALAO7/AQAGAAAAAAAMAO7/AQAGAAAAAAANAO7/AQAGAAAAAAAOAO7/AQAGAAAAAAAPAO7/AQAGAAAAAAAPAO//AQAGAAAAAAAQAO//AQAGAAAAAAARAO//AQAGAAAAAAARAO7/AQAGAAAAAAASAO7/AQAGAAAAAAAQAO7/AQAGAAAAAAAOAO//AQAGAAAAAAANAO//AQAGAAAAAAAMAO//AQAGAAAAAAASAO//AQAGAAAAAAATAO//AQAGAAAAAAAUAO//AQAGAAAAAAAUAO7/AQAGAAAAAAATAO7/AQAGAAAAAAAVAO7/AQAGAAAAAAAWAO7/AQAGAAAAAAAVAO//AQAGAAAAAAATAOv/AQAGAAAAAAAUAOv/AQAGAAAAAAAUAOz/AQAGAAAAAAARAOj/AQAGAAAAAAA=")
+tile_set = ExtResource("1_jr662")
+
+[node name="Worm" parent="." instance=ExtResource("2_j5vfb")]
+position = Vector2(367, 148)
+horror_mode = true
+
+[node name="Camera2D" type="Camera2D" parent="Worm"]
+process_callback = 0
+limit_bottom = 3120
+position_smoothing_enabled = true
+position_smoothing_speed = 6.0
+editor_draw_limits = true
+script = ExtResource("3_j5vfb")
+
+[node name="DeathBarrier" type="Area2D" parent="."]
+position = Vector2(-161, 467)
+collision_mask = 2
+script = ExtResource("7_ityff")
+metadata/_custom_type_script = "uid://bdjrd2hrbpnxg"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DeathBarrier"]
+position = Vector2(1031.5, 310)
+shape = SubResource("RectangleShape2D_2aemj")
+
+[node name="platforms" type="Node2D" parent="."]
+modulate = Color(0, 0, 0, 1)
+position = Vector2(32, 28)
+
+[node name="WindmillSpinner" parent="platforms" instance=ExtResource("8_2aemj")]
+position = Vector2(3058, -896)
+is_spinner = false
+h_cell_distance = -9
+platform_speed = 2.0
+
+[node name="WindmillSpinner2" parent="platforms" instance=ExtResource("8_2aemj")]
+position = Vector2(3298, -896)
+is_spinner = false
+h_cell_distance = 9
+platform_speed = 2.0
+
+[node name="WindmillSpinner3" parent="platforms" instance=ExtResource("8_2aemj")]
+position = Vector2(3298, -896)
+is_spinner = false
+h_cell_distance = 9
+v_cell_distance = -23
+platform_speed = 2.0

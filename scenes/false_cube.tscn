@@ -1,0 +1,134 @@
+[gd_scene load_steps=17 format=3 uid="uid://bp8mej2nd1k3a"]
+
+[ext_resource type="Script" uid="uid://sc7lbb7li7ix" path="res://scripts/false_cube.gd" id="1_1e4l7"]
+[ext_resource type="Texture2D" uid="uid://b6r1hdb4tw6yc" path="res://sprites/false_cube_back.png" id="2_jdwkr"]
+[ext_resource type="Texture2D" uid="uid://bgdvk6qmd00ni" path="res://sprites/false_cube_gear.png" id="3_c41mq"]
+[ext_resource type="Texture2D" uid="uid://cfdvmbigkjhom" path="res://sprites/false_cube_front.png" id="4_diqa7"]
+[ext_resource type="AudioStream" uid="uid://clrx3m3synheu" path="res://sounds/MetalHit.mp3" id="5_diqa7"]
+[ext_resource type="AudioStream" uid="uid://gesri0kc4d2y" path="res://sounds/deep_metal_hit_2.mp3" id="6_psufj"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_diqa7"]
+rough = true
+absorbent = true
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ymqhm"]
+size = Vector2(96, 96)
+
+[sub_resource type="Gradient" id="Gradient_ywqth"]
+offsets = PackedFloat32Array(0.6473029, 0.6846473)
+colors = PackedColorArray(0.966805, 0.966805, 0.966805, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_vsimk"]
+gradient = SubResource("Gradient_ywqth")
+width = 128
+height = 128
+fill = 2
+fill_from = Vector2(0.5, 0.5)
+metadata/_snap_enabled = true
+metadata/_snap_count = 2
+
+[sub_resource type="Curve" id="Curve_jdwkr"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.352697, 0.703297), 0.0, 0.0, 0, 0, Vector2(0.788382, 0.659341), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_c41mq"]
+curve = SubResource("Curve_jdwkr")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_diqa7"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 47.49
+direction = Vector3(0, 1, 0)
+spread = 180.0
+initial_velocity_min = 213.37
+initial_velocity_max = 292.79
+gravity = Vector3(0, 40, 0)
+scale_min = 0.1
+scale_max = 0.25
+color = Color(0.20833501, 0.1083, 0.57, 1)
+alpha_curve = SubResource("CurveTexture_c41mq")
+
+[sub_resource type="Curve" id="Curve_c41mq"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.30941707, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_diqa7"]
+curve = SubResource("Curve_c41mq")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_psufj"]
+particle_flag_align_y = true
+particle_flag_disable_z = true
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 20.0
+emission_ring_radius = 20.0
+emission_ring_inner_radius = 20.0
+emission_ring_cone_angle = 90.0
+direction = Vector3(0, 1, 0)
+spread = 0.0
+radial_velocity_min = 344.82996
+radial_velocity_max = 344.82996
+gravity = Vector3(0, 0, 0)
+radial_accel_min = 40.619995
+radial_accel_max = 40.619995
+scale_min = 0.099999994
+scale_max = 0.099999994
+color = Color(0.20833501, 0.1083, 0.57, 0.75686276)
+alpha_curve = SubResource("CurveTexture_diqa7")
+
+[node name="FalseCube" type="RigidBody2D" node_paths=PackedStringArray("gear_sprite")]
+collision_layer = 512
+physics_material_override = SubResource("PhysicsMaterial_diqa7")
+gravity_scale = 0.0
+lock_rotation = true
+continuous_cd = 2
+linear_damp = 1.0
+script = ExtResource("1_1e4l7")
+gear_sprite = NodePath("Gear")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+unique_name_in_owner = true
+shape = SubResource("RectangleShape2D_ymqhm")
+
+[node name="Back" type="Sprite2D" parent="."]
+texture = ExtResource("2_jdwkr")
+
+[node name="Gear" type="Sprite2D" parent="."]
+texture = ExtResource("3_c41mq")
+
+[node name="Front" type="Sprite2D" parent="."]
+texture = ExtResource("4_diqa7")
+
+[node name="Entered" type="GPUParticles2D" parent="."]
+unique_name_in_owner = true
+z_index = 2
+emitting = false
+amount = 15
+texture = SubResource("GradientTexture2D_vsimk")
+lifetime = 0.35000000000000003
+one_shot = true
+explosiveness = 0.9
+process_material = SubResource("ParticleProcessMaterial_diqa7")
+
+[node name="Entered2" type="GPUParticles2D" parent="."]
+unique_name_in_owner = true
+z_index = 2
+emitting = false
+amount = 256
+texture = SubResource("GradientTexture2D_vsimk")
+lifetime = 0.2
+one_shot = true
+explosiveness = 1.0
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_psufj")
+
+[node name="Sound" type="AudioStreamPlayer2D" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("5_diqa7")
+pitch_scale = 0.5
+
+[node name="Sound2" type="AudioStreamPlayer2D" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("6_psufj")
+volume_db = -10.0
+pitch_scale = 1.4

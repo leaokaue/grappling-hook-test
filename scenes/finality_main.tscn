@@ -1,0 +1,1547 @@
+[gd_scene load_steps=49 format=4 uid="uid://im52k0w1by26"]
+
+[ext_resource type="Texture2D" uid="uid://bv6fss7i2qors" path="res://sprites/bluescreen_bg.png" id="1_3jr2r"]
+[ext_resource type="Script" uid="uid://ccm61dxutrnc1" path="res://scenes/finality_main.gd" id="1_c27ck"]
+[ext_resource type="Texture2D" uid="uid://c10jphrgk4aly" path="res://sprites/glitched_bg.png" id="2_c27ck"]
+[ext_resource type="Texture2D" uid="uid://b8dbnae6oy4rk" path="res://sprites/Screenshot_3885.png" id="2_m8l2d"]
+[ext_resource type="Texture2D" uid="uid://dghutenmpp3mc" path="res://sprites/bg.jpg" id="4_3jr2r"]
+[ext_resource type="TileSet" uid="uid://w5rst4ax56w1" path="res://resources/WorldTiles.tres" id="4_oxa4u"]
+[ext_resource type="PackedScene" uid="uid://bacl7irhgnrr7" path="res://scenes/worm.tscn" id="5_ciqg1"]
+[ext_resource type="Script" uid="uid://cr1gleusj0kab" path="res://scripts/camera_manager.gd" id="6_8ny0j"]
+[ext_resource type="TileSet" uid="uid://dhn3s7evfpuvn" path="res://resources/BGTiles.tres" id="7_5cghi"]
+[ext_resource type="Script" uid="uid://e838voju3y6" path="res://scripts/dissapearing_tile_platform.gd" id="7_oxa4u"]
+[ext_resource type="Script" uid="uid://bdjrd2hrbpnxg" path="res://scripts/death_barrier.gd" id="7_trrh8"]
+[ext_resource type="PackedScene" uid="uid://b6b10pnth34j6" path="res://scenes/windmill_spinner_block.tscn" id="8_8sfo1"]
+[ext_resource type="AudioStream" uid="uid://blndgtqd12w6b" path="res://sounds/fate.mp3" id="8_ppjeo"]
+[ext_resource type="PackedScene" uid="uid://c4rnq4dmyj4b6" path="res://scenes/item.tscn" id="10_m8l2d"]
+[ext_resource type="Texture2D" uid="uid://bxqn226ou4fde" path="res://sprites/shard_1.png" id="11_8ny0j"]
+[ext_resource type="Script" uid="uid://cg4aw3b0hdbhv" path="res://scripts/background_shard.gd" id="11_ciqg1"]
+[ext_resource type="PackedScene" uid="uid://cgul46akh73fl" path="res://scenes/terminus_laser.tscn" id="13_trrh8"]
+[ext_resource type="Script" uid="uid://cgmw40a13d8jw" path="res://scripts/terminus_grappling_hook_item.gd" id="14_gvivl"]
+[ext_resource type="Texture2D" uid="uid://dsl3giocm0dc2" path="res://sprites/grappling_hook.png" id="14_kwc8v"]
+[ext_resource type="Texture2D" uid="uid://b2hpi4gi8412a" path="res://sprites/ball.png" id="16_od846"]
+
+[sub_resource type="Shader" id="Shader_ylpcy"]
+code = "shader_type canvas_item;
+
+// Amount of detail.
+uniform int octaves = 4;
+
+// Opacity of the output fog.
+uniform float starting_amplitude: hint_range(0.0, 0.5) = 0.5;
+
+// Rate of pattern within the fog.
+uniform float starting_frequency = 1.0;
+
+// Shift towards transparency (clamped) for sparser fog.
+uniform float shift: hint_range(-1.0, 0.0) = -0.2;
+
+// Direction and speed of travel.
+uniform vec2 velocity = vec2(1.0, 1.0);
+
+// Color of the fog.
+uniform vec4 fog_color: source_color = vec4(0.0, 0.0, 0.0, 1.0);
+
+// Noise texture; OpenSimplexNoise is great, but any filtered texture is fine.
+uniform sampler2D noise: repeat_enable;
+
+uniform vec2 camera_pos;
+
+uniform float camera_fog_speed = 0.002;
+
+float rand(vec2 uv) {
+    float amplitude = starting_amplitude;
+    float frequency = starting_frequency;
+    float output = 0.0;
+    for (int i = 0; i < octaves; i++) {
+        amplitude /= 2.0;
+        frequency *= 2.0;
+        output += texture(noise, (uv+(camera_pos*camera_fog_speed * 0.1)) * frequency).x * amplitude;
+    }
+    return clamp(output + shift, 0.0, 1.0);
+}
+
+void fragment() {
+    vec2 motion = vec2(rand(UV + TIME * starting_frequency * velocity));
+    COLOR = mix(vec4(0.0), fog_color, rand(SCREEN_UV + motion));
+}
+"
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_qo0bk"]
+noise_type = 2
+fractal_lacunarity = 1.925
+fractal_gain = 0.6
+cellular_distance_function = 2
+cellular_jitter = 2.995
+cellular_return_type = 0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_0ymxm"]
+noise = SubResource("FastNoiseLite_qo0bk")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kwc8v"]
+shader = SubResource("Shader_ylpcy")
+shader_parameter/octaves = 4
+shader_parameter/starting_amplitude = 0.5
+shader_parameter/starting_frequency = 0.235
+shader_parameter/shift = -0.1469999594825
+shader_parameter/velocity = Vector2(0.3, 0.3)
+shader_parameter/fog_color = Color(0, 0.2644999, 0.69, 0.43529412)
+shader_parameter/noise = SubResource("NoiseTexture2D_0ymxm")
+shader_parameter/camera_pos = Vector2(0, 0)
+shader_parameter/camera_fog_speed = 0.002
+
+[sub_resource type="Shader" id="Shader_inpyq"]
+code = "/*
+Shader from Godot Shaders - the free shader library.
+godotshaders.com/shader/VHS-and-CRT-monitor-effect
+
+This shader is under CC0 license. Feel free to use, improve and
+change this shader according to your needs and consider sharing
+the modified result to godotshaders.com.
+*/
+
+shader_type canvas_item;
+
+//*** IMPORTANT! ***/
+// - If you are using this shader to affect the node it is applied to set 'overlay' to false (unchecked in the instepctor).
+// - If you are using this shader as an overlay, and want the shader to affect the nodes below in the Scene hierarchy,
+//   set 'overlay' to true (checked in the inspector).
+// On Mac there is potentially a bug causing this to not work properly. If that is the case and you want to use the shader as an overlay
+// change all \"overlay ? SCREEN_TEXTURE : TEXTURE\" to only \"SCREEN_TEXTURE\" on lines 129-140, and \"vec2 uv = overlay ? warp(SCREEN_UV) : warp(UV);\"
+// to \"vec2 uv = warp(SCREEN_UV);\" on line 98.
+uniform bool overlay = false;
+
+uniform float scanlines_opacity : hint_range(0.0, 1.0) = 0.4;
+uniform float scanlines_width : hint_range(0.0, 0.5) = 0.25;
+uniform float grille_opacity : hint_range(0.0, 1.0) = 0.3;
+uniform vec2 resolution = vec2(640.0, 480.0); // Set the number of rows and columns the texture will be divided in. Scanlines and grille will make a square based on these values
+
+uniform bool pixelate = true; // Fill each square (\"pixel\") with a sampled color, creating a pixel look and a more accurate representation of how a CRT monitor would work.
+
+uniform bool roll = true;
+uniform float roll_speed = 8.0; // Positive values are down, negative are up
+uniform float roll_size : hint_range(0.0, 100.0) = 15.0;
+uniform float roll_variation : hint_range(0.1, 5.0) = 1.8; // This valie is not an exact science. You have to play around with the value to find a look you like. How this works is explained in the code below.
+uniform float distort_intensity : hint_range(0.0, 0.2) = 0.05; // The distortion created by the rolling effect.
+
+uniform float noise_opacity : hint_range(0.0, 1.0) = 0.4;
+uniform float noise_speed = 5.0; // There is a movement in the noise pattern that can be hard to see first. This sets the speed of that movement.
+
+uniform float static_noise_intensity : hint_range(0.0, 1.0) = 0.06;
+
+uniform float aberration : hint_range(-1.0, 1.0) = 0.03; // Chromatic aberration, a distortion on each color channel.
+uniform float brightness = 1.4; // When adding scanline gaps and grille the image can get very dark. Brightness tries to compensate for that.
+uniform bool discolor = true; // Add a discolor effect simulating a VHS
+
+uniform float warp_amount :hint_range(0.0, 5.0) = 1.0; // Warp the texture edges simulating the curved glass of a CRT monitor or old TV.
+uniform bool clip_warp = false;
+
+uniform float vignette_intensity = 0.4; // Size of the vignette, how far towards the middle it should go.
+uniform float vignette_opacity : hint_range(0.0, 1.0) = 0.5;
+
+uniform sampler2D SCREEN_TEXTURE : hint_screen_texture,filter_linear_mipmap;
+
+// Used by the noise functin to generate a pseudo random value between 0.0 and 1.0
+vec2 random(vec2 uv){
+    uv = vec2( dot(uv, vec2(127.1,311.7) ),
+               dot(uv, vec2(269.5,183.3) ) );
+    return -1.0 + 2.0 * fract(sin(uv) * 43758.5453123);
+}
+
+// Generate a Perlin noise used by the distortion effects
+float noise(vec2 uv) {
+    vec2 uv_index = floor(uv);
+    vec2 uv_fract = fract(uv);
+
+    vec2 blur = smoothstep(0.0, 1.0, uv_fract);
+
+    return mix( mix( dot( random(uv_index + vec2(0.0,0.0) ), uv_fract - vec2(0.0,0.0) ),
+                     dot( random(uv_index + vec2(1.0,0.0) ), uv_fract - vec2(1.0,0.0) ), blur.x),
+                mix( dot( random(uv_index + vec2(0.0,1.0) ), uv_fract - vec2(0.0,1.0) ),
+                     dot( random(uv_index + vec2(1.0,1.0) ), uv_fract - vec2(1.0,1.0) ), blur.x), blur.y) * 0.5 + 0.5;
+}
+
+// Takes in the UV and warps the edges, creating the spherized effect
+vec2 warp(vec2 uv){
+	vec2 delta = uv - 0.5;
+	float delta2 = dot(delta.xy, delta.xy);
+	float delta4 = delta2 * delta2;
+	float delta_offset = delta4 * warp_amount;
+
+	return uv + delta * delta_offset;
+}
+
+// Adds a black border to hide stretched pixel created by the warp effect
+float border (vec2 uv){
+	float radius = min(warp_amount, 0.08);
+	radius = max(min(min(abs(radius * 2.0), abs(1.0)), abs(1.0)), 1e-5);
+	vec2 abs_uv = abs(uv * 2.0 - 1.0) - vec2(1.0, 1.0) + radius;
+	float dist = length(max(vec2(0.0), abs_uv)) / radius;
+	float square = smoothstep(0.96, 1.0, dist);
+	return clamp(1.0 - square, 0.0, 1.0);
+}
+
+// Adds a vignette shadow to the edges of the image
+float vignette(vec2 uv){
+	uv *= 1.0 - uv.xy;
+	float vignette = uv.x * uv.y * 15.0;
+	return pow(vignette, vignette_intensity * vignette_opacity);
+}
+
+void fragment()
+{
+	vec2 uv = overlay ? warp(SCREEN_UV) : warp(UV); // Warp the uv. uv will be used in most cases instead of UV to keep the warping
+	vec2 text_uv = uv;
+	vec2 roll_uv = vec2(0.0);
+	float time = roll ? TIME : 0.0;
+
+
+	// Pixelate the texture based on the given resolution.
+	if (pixelate)
+	{
+		text_uv = ceil(uv * resolution) / resolution;
+	}
+
+	// Create the rolling effect. We need roll_line a bit later to make the noise effect.
+	// That is why this runs if roll is true OR noise_opacity is over 0.
+	float roll_line = 0.0;
+	if (roll || noise_opacity > 0.0)
+	{
+		// Create the areas/lines where the texture will be distorted.
+		roll_line = smoothstep(0.3, 0.9, sin(uv.y * roll_size - (time * roll_speed) ) );
+		// Create more lines of a different size and apply to the first set of lines. This creates a bit of variation.
+		roll_line *= roll_line * smoothstep(0.3, 0.9, sin(uv.y * roll_size * roll_variation - (time * roll_speed * roll_variation) ) );
+		// Distort the UV where where the lines are
+		roll_uv = vec2(( roll_line * distort_intensity * (1.-UV.x)), 0.0);
+	}
+
+	vec4 text;
+	if (roll)
+	{
+		// If roll is true distort the texture with roll_uv. The texture is split up into RGB to
+		// make some chromatic aberration. We apply the aberration to the red and green channels accorging to the aberration parameter
+		// and intensify it a bit in the roll distortion.
+		text.r = texture(SCREEN_TEXTURE, text_uv + roll_uv * 0.8 + vec2(aberration, 0.0) * .1).r;
+		text.g = texture(SCREEN_TEXTURE, text_uv + roll_uv * 1.2 - vec2(aberration, 0.0) * .1 ).g;
+		text.b = texture(SCREEN_TEXTURE, text_uv + roll_uv).b;
+		text.a = 1.0;
+	}
+	else
+	{
+		// If roll is false only apply the aberration without any distorion. The aberration values are very small so the .1 is only
+		// to make the slider in the Inspector less sensitive.
+		text.r = texture(SCREEN_TEXTURE, text_uv + vec2(aberration, 0.0) * .1).r;
+		text.g = texture(SCREEN_TEXTURE, text_uv - vec2(aberration, 0.0) * .1).g;
+		text.b = texture(SCREEN_TEXTURE, text_uv).b;
+		text.a = 1.0;
+	}
+
+	float r = text.r;
+	float g = text.g;
+	float b = text.b;
+
+	uv = warp(UV);
+
+	// CRT monitors don't have pixels but groups of red, green and blue dots or lines, called grille. We isolate the texture's color channels
+	// and divide it up in 3 offsetted lines to show the red, green and blue colors next to each other, with a small black gap between.
+	if (grille_opacity > 0.0){
+
+		float g_r = smoothstep(0.85, 0.95, abs(sin(uv.x * (resolution.x * 3.14159265))));
+		r = mix(r, r * g_r, grille_opacity);
+
+		float g_g = smoothstep(0.85, 0.95, abs(sin(1.05 + uv.x * (resolution.x * 3.14159265))));
+		g = mix(g, g * g_g, grille_opacity);
+
+		float b_b = smoothstep(0.85, 0.95, abs(sin(2.1 + uv.x * (resolution.x * 3.14159265))));
+		b = mix(b, b * b_b, grille_opacity);
+
+	}
+
+	// Apply the grille to the texture's color channels and apply Brightness. Since the grille and the scanlines (below) make the image very dark you
+	// can compensate by increasing the brightness.
+	text.r = clamp(r * brightness, 0.0, 1.0);
+	text.g = clamp(g * brightness, 0.0, 1.0);
+	text.b = clamp(b * brightness, 0.0, 1.0);
+
+	// Scanlines are the horizontal lines that make up the image on a CRT monitor.
+	// Here we are actual setting the black gap between each line, which I guess is not the right definition of the word, but you get the idea
+	float scanlines = 0.5;
+	if (scanlines_opacity > 0.0)
+	{
+		// Same technique as above, create lines with sine and applying it to the texture. Smoothstep to allow setting the line size.
+		scanlines = smoothstep(scanlines_width, scanlines_width + 0.5, abs(sin(uv.y * (resolution.y * 3.14159265))));
+		text.rgb = mix(text.rgb, text.rgb * vec3(scanlines), scanlines_opacity);
+	}
+
+	// Apply the banded noise.
+	if (noise_opacity > 0.0)
+	{
+		// Generate a noise pattern that is very stretched horizontally, and animate it with noise_speed
+		float noise = smoothstep(0.4, 0.5, noise(uv * vec2(2.0, 200.0) + vec2(10.0, (TIME * (noise_speed))) ) );
+
+		// We use roll_line (set above) to define how big the noise should be vertically (multiplying cuts off all black parts).
+		// We also add in some basic noise with random() to break up the noise pattern above. The noise is sized according to
+		// the resolution value set in the inspector. If you don't like this look you can
+		// change \"ceil(uv * resolution) / resolution\" to only \"uv\" to make it less pixelated. Or multiply resolution with som value
+		// greater than 1.0 to make them smaller.
+		roll_line *= noise * scanlines * clamp(random((ceil(uv * resolution) / resolution) + vec2(TIME * 0.8, 0.0)).x + 0.8, 0.0, 1.0);
+		// Add it to the texture based on noise_opacity
+		text.rgb = clamp(mix(text.rgb, text.rgb + roll_line, noise_opacity), vec3(0.0), vec3(1.0));
+	}
+
+	// Apply static noise by generating it over the whole screen in the same way as above
+	if (static_noise_intensity > 0.0)
+	{
+		text.rgb += clamp(random((ceil(uv * resolution) / resolution) + fract(TIME)).x, 0.0, 1.0) * static_noise_intensity;
+	}
+
+	// Apply a black border to hide imperfections caused by the warping.
+	// Also apply the vignette
+	text.rgb *= border(uv);
+	text.rgb *= vignette(uv);
+	// Hides the black border and make that area transparent. Good if you want to add the the texture on top an image of a TV or monitor.
+	if (clip_warp)
+	{
+		text.a = border(uv);
+	}
+
+	// Apply discoloration to get a VHS look (lower saturation and higher contrast)
+	// You can play with the values below or expose them in the Inspector.
+	float saturation = 0.5;
+	float contrast = 1.2;
+	if (discolor)
+	{
+		// Saturation
+		vec3 greyscale = vec3(text.r + text.g + text.b) / 3.;
+		text.rgb = mix(text.rgb, greyscale, saturation);
+
+		// Contrast
+		float midpoint = pow(0.5, 2.2);
+		text.rgb = (text.rgb - vec3(midpoint)) * contrast + midpoint;
+	}
+
+	COLOR = text;
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3jr2r"]
+shader = SubResource("Shader_inpyq")
+shader_parameter/overlay = true
+shader_parameter/scanlines_opacity = 0.182000008645
+shader_parameter/scanlines_width = 0.0
+shader_parameter/grille_opacity = 0.151
+shader_parameter/resolution = Vector2(1920, 1080)
+shader_parameter/pixelate = false
+shader_parameter/roll = true
+shader_parameter/roll_speed = 0.65
+shader_parameter/roll_size = 0.0
+shader_parameter/roll_variation = 1.4
+shader_parameter/distort_intensity = 0.0090000004275
+shader_parameter/noise_opacity = 0.10800000513
+shader_parameter/noise_speed = 0.0
+shader_parameter/static_noise_intensity = 0.045
+shader_parameter/aberration = 0.00300004764250005
+shader_parameter/brightness = 1.4
+shader_parameter/discolor = true
+shader_parameter/warp_amount = 0.0
+shader_parameter/clip_warp = false
+shader_parameter/vignette_intensity = 0.4
+shader_parameter/vignette_opacity = 0.172
+
+[sub_resource type="Shader" id="Shader_c27ck"]
+code = "shader_type canvas_item;
+
+uniform sampler2D dissolve_texture : source_color;
+uniform float dissolve_value : hint_range(0,1);
+uniform float burn_size: hint_range(0.0, 1.0, 0.01);
+uniform vec4 burn_color: source_color;
+
+void fragment(){
+    vec4 main_texture = texture(TEXTURE, UV);
+    vec4 noise_texture = texture(dissolve_texture, UV);
+
+	// This is needed to avoid keeping a small burn_color dot with dissolve being 0 or 1
+	// is there another way to do it?
+	float burn_size_step = burn_size * step(0.001, dissolve_value) * step(dissolve_value, 0.999);
+	float threshold = smoothstep(noise_texture.x-burn_size_step, noise_texture.x, dissolve_value);
+	float border = smoothstep(noise_texture.x, noise_texture.x + burn_size_step, dissolve_value);
+
+	COLOR.a *= threshold;
+	COLOR.rgb = mix(burn_color.rgb, main_texture.rgb, border);
+}"
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ciqg1"]
+noise_type = 2
+seed = 2
+fractal_octaves = 2
+fractal_lacunarity = 3.0
+fractal_gain = 0.13
+cellular_distance_function = 2
+cellular_jitter = 0.05
+cellular_return_type = 0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_8ny0j"]
+width = 1920
+height = 1080
+noise = SubResource("FastNoiseLite_ciqg1")
+seamless = true
+invert = true
+in_3d_space = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_m8l2d"]
+shader = SubResource("Shader_c27ck")
+shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_8ny0j")
+shader_parameter/dissolve_value = 0.0
+shader_parameter/burn_size = 0.00999999977648
+shader_parameter/burn_color = Color(0, 0, 0, 1)
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_c27ck"]
+light_mode = 2
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_oxa4u"]
+noise_type = 2
+seed = 2
+frequency = 0.1033
+offset = Vector3(-7, -7, 0)
+fractal_octaves = 1
+fractal_lacunarity = 0.0
+fractal_weighted_strength = 1.0
+cellular_distance_function = 2
+cellular_jitter = 0.0
+cellular_return_type = 0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_m8l2d"]
+width = 1080
+height = 1080
+noise = SubResource("FastNoiseLite_oxa4u")
+seamless = true
+invert = true
+in_3d_space = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ciqg1"]
+resource_local_to_scene = true
+shader = SubResource("Shader_c27ck")
+shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_m8l2d")
+shader_parameter/dissolve_value = 1.0
+shader_parameter/burn_size = 0.32999999262384
+shader_parameter/burn_color = Color(1, 1, 1, 1)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_oxa4u"]
+size = Vector2(148.5039, 1361.4264)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5cghi"]
+resource_local_to_scene = true
+shader = SubResource("Shader_c27ck")
+shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_m8l2d")
+shader_parameter/dissolve_value = 1.0
+shader_parameter/burn_size = 0.32999999262384
+shader_parameter/burn_color = Color(1, 1, 1, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_oxa4u"]
+resource_local_to_scene = true
+shader = SubResource("Shader_c27ck")
+shader_parameter/dissolve_texture = SubResource("NoiseTexture2D_m8l2d")
+shader_parameter/dissolve_value = 1.0
+shader_parameter/burn_size = 0.32999999262384
+shader_parameter/burn_color = Color(1, 1, 1, 1)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_y6qwe"]
+size = Vector2(360, 560)
+
+[sub_resource type="Curve" id="Curve_03b4m"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.231183, 1), 0.0, 0.0, 0, 0, Vector2(0.801075, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_efji5"]
+curve = SubResource("Curve_03b4m")
+
+[sub_resource type="Curve" id="Curve_o2p2a"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.629032, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_msdbv"]
+curve = SubResource("Curve_o2p2a")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_3gvof"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 35.1
+spread = 180.0
+initial_velocity_min = 148.65
+initial_velocity_max = 283.79
+gravity = Vector3(0, 98, 0)
+scale_min = 0.1
+scale_max = 0.1
+scale_curve = SubResource("CurveTexture_msdbv")
+color = Color(0.625501, 0.622979, 0.643724, 1)
+alpha_curve = SubResource("CurveTexture_efji5")
+
+[sub_resource type="Curve2D" id="Curve2D_gvivl"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 8430, -1316, -613.0665, -38.584606, 613.0665, 38.584606, 9390, -1484, 0, 0, 0, 0, 10050, -1260, 0, 0, 0, 0, 10050, -1260)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_go85k"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 10050, -1260, -49, -1, 49, 1, 10160.065, -1191.9846, -48.15425, 71.9898, 48.15425, -71.9898, 10324.337, -1356.2566, -69.25194, 111.125206, 69.25194, -111.125206, 10681.871, -1266.0681, 99.85163, 66.03092, -99.85163, -66.03092, 10544.979, -1673.5269, 25.333328, 153.94868, -25.333328, -153.94868, 10163.672, -2217.6245, 42.871788, -153.94868, -42.871788, 153.94868, 9870, -2212, 0, 0, 0, 0, 9630, -1932, 0, 0, 0, 0, 9570, -1764, 165.64099, 146.15382, -165.64099, -146.15382, 9317.928, -1615.4703, 87.69229, 89.64101, -87.69229, -89.64101, 8970, -1708, 120.82049, 48.71794, -120.82049, -48.71794, 8850, -1876, 0, 0, 0, 0, 7710, -1988)
+}
+point_count = 13
+
+[sub_resource type="Curve2D" id="Curve2D_od846"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 7710, -1988, 363.9753, -152.99847, -363.9753, 152.99847, 7054.9116, -2041.2832, 220.63991, 14.494592, -220.63991, -14.494592, 6357.561, -2036.4517, 46.704796, -88.578064, -46.704796, 88.578064, 5730, -2100, 117.567245, 14.494592, -117.567245, -14.494592, 5550, -2044, 17.715612, 86.96755, -17.715612, -86.96755, 5430, -2380, -49.925816, 64.42041, 49.925816, -64.42041, 5490, -2660, -124.009285, -14.494592, 124.009285, 14.494592, 5790, -2772, -117.567245, 0, 117.567245, 0, 6030, -2716, -122.39878, -27.378674, 122.39878, 27.378674, 6330, -2660, -99.85163, 9.663061, 99.85163, -9.663061, 6510, -2548, -88.578064, -19.326122, 88.578064, 19.326122, 6750, -2548, 0, 0, 0, 0, 6990, -2604)
+}
+point_count = 13
+
+[sub_resource type="Curve2D" id="Curve2D_17ldu"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 6990, -2604, -107.69, -3.63, 107.69, 3.63, 7350, -2660, -76.23, 3.63, 76.23, -3.63, 7687.4263, -2591.3677, -168.19, 4.84, 168.19, -4.84, 8208.937, -2747.458, -61.710003, 67.76, 61.710003, -67.76, 8654.217, -2614.358, 91.96001, 119.79, -91.96001, -119.79, 8661.477, -3183.0576, 259.29214, -40.262756, -259.29214, 40.262756, 8130, -3332, 0, 0, 0, 0, 7650, -3164)
+}
+point_count = 8
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_go85k"]
+size = Vector2(40784.4, 422.5537)
+
+[node name="finality_main" type="Node2D" node_paths=PackedStringArray("worm", "intro_rect", "ost")]
+script = ExtResource("1_c27ck")
+worm = NodePath("Worm")
+intro_rect = NodePath("FG/ColorRect")
+ost = NodePath("OST1")
+
+[node name="FG" type="CanvasLayer" parent="."]
+layer = 16
+
+[node name="Sprite2D2" type="ColorRect" parent="FG"]
+modulate = Color(1, 1, 1, 0.20392157)
+material = SubResource("ShaderMaterial_kwc8v")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -391.72223
+offset_bottom = -191.19443
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(1.5652174, 1.5652174)
+
+[node name="CRT" type="ColorRect" parent="FG"]
+material = SubResource("ShaderMaterial_3jr2r")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -415.36108
+offset_bottom = -233.36111
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(1.5652174, 1.5652174)
+
+[node name="ColorRect" type="TextureRect" parent="FG"]
+material = SubResource("ShaderMaterial_m8l2d")
+offset_right = 1151.5172
+offset_bottom = 647.4659
+texture = ExtResource("2_m8l2d")
+expand_mode = 1
+
+[node name="BG" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="Parallax2D" type="Parallax2D" parent="BG"]
+scroll_scale = Vector2(1.1, 1.1)
+repeat_size = Vector2(941.185, 398.565)
+autoscroll = Vector2(0.995, 0)
+repeat_times = 31
+
+[node name="BlueScreen" type="Sprite2D" parent="BG/Parallax2D"]
+visible = false
+modulate = Color(0.3553136, 0.35531354, 0.35531357, 1)
+texture_filter = 1
+scale = Vector2(1.8025, 1.8025)
+texture = ExtResource("1_3jr2r")
+centered = false
+
+[node name="Screen" type="Sprite2D" parent="BG"]
+modulate = Color(0.19685441, 0.1578348, 0.62428564, 1)
+scale = Vector2(1.8253164, 1.8253164)
+texture = ExtResource("2_c27ck")
+centered = false
+
+[node name="BgHappy" type="Sprite2D" parent="BG"]
+unique_name_in_owner = true
+z_index = 2
+material = SubResource("CanvasItemMaterial_c27ck")
+position = Vector2(0, -8)
+scale = Vector2(0.281731, 0.259354)
+texture = ExtResource("4_3jr2r")
+centered = false
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAD//wMAAQAMAAAAAAAAAAMAAQAMAAAAAAABAAMAAQAMAAAAAAALAAMAAQAMAAAAAAAMAAMAAQAMAAAAAAAMAAQAAQAMAAAAAAANAAMAAQAMAAAAAAANAAQAAQAMAAAAAAAOAAMAAQAMAAAAAAAOAAQAAQAMAAAAAAAPAAMAAQAMAAAAAAAPAAQAAQAMAAAAAADy/wIAAQAMAAAAAADy/wMAAQAMAAAAAADy/wQAAQAMAAAAAADy/wUAAQAMAAAAAADy/wYAAQAMAAAAAADz/wIAAQAMAAAAAADz/wMAAQAMAAAAAADz/wQAAQAMAAAAAADz/wUAAQAMAAAAAADz/wYAAQAMAAAAAAD0/wIAAQAMAAAAAAD0/wMAAQAMAAAAAAD0/wQAAQAMAAAAAAD0/wUAAQAMAAAAAAD0/wYAAQAMAAAAAAD1/wAAAQAMAAAAAAD1/wEAAQAMAAAAAAD1/wIAAQAMAAAAAAD1/wMAAQAMAAAAAAD1/wQAAQAMAAAAAAD1/wUAAQAMAAAAAAD1/wYAAQAMAAAAAAD2/wAAAQAMAAAAAAD2/wEAAQAMAAAAAAD2/wIAAQAMAAAAAAD2/wMAAQAMAAAAAAD2/wQAAQAMAAAAAAD2/wUAAQAMAAAAAAD2/wYAAQAMAAAAAAD3/wAAAQAMAAAAAAD3/wEAAQAMAAAAAAD3/wIAAQAMAAAAAAD3/wMAAQAMAAAAAAD3/wQAAQAMAAAAAAD3/wUAAQAMAAAAAAD4/wAAAQAMAAAAAAD4/wEAAQAMAAAAAAD4/wIAAQAMAAAAAAD4/wMAAQAMAAAAAAD4/wQAAQAMAAAAAAD4/wUAAQAMAAAAAAD5/wAAAQAMAAAAAAD5/wEAAQAMAAAAAAD5/wIAAQAMAAAAAAD5/wMAAQAMAAAAAAD5/wQAAQAMAAAAAAD6/wAAAQAMAAAAAAD6/wEAAQAMAAAAAAD6/wIAAQAMAAAAAAD6/wMAAQAMAAAAAAD9/wAAAQAMAAAAAAD9/wEAAQAMAAAAAAD+/wAAAQAMAAAAAAD+/wEAAQAMAAAAAAD+/wIAAQAMAAAAAAD//wAAAQAMAAAAAAD//wEAAQAMAAAAAAD//wIAAQAMAAAAAAAAAAAAAQAMAAAAAAAAAAEAAQAMAAAAAAAAAAIAAQAMAAAAAAABAAAAAQAMAAAAAAABAAEAAQAMAAAAAAABAAIAAQAMAAAAAAACAAAAAQAMAAAAAAACAAEAAQAMAAAAAAACAAIAAQAMAAAAAAAKAAAAAQAMAAAAAAAKAAEAAQAMAAAAAAAKAAIAAQAMAAAAAAALAAAAAQAMAAAAAAALAAEAAQAMAAAAAAALAAIAAQAMAAAAAAAMAAAAAQAMAAAAAAAMAAEAAQAMAAAAAAAMAAIAAQAMAAAAAAANAAAAAQAMAAAAAAANAAEAAQAMAAAAAAANAAIAAQAMAAAAAAAOAAAAAQAMAAAAAAAOAAEAAQAMAAAAAAAOAAIAAQAMAAAAAAAPAAAAAQAMAAAAAAAPAAEAAQAMAAAAAAAPAAIAAQAMAAAAAAAAAP//AAAAAAAABAADAAAAAQAMAAAAAAADAAEAAQAMAAAAAADx/wIAAQAMAAAAAADx/wMAAQAMAAAAAADx/wQAAQAMAAAAAADw/wQAAQAMAAAAAADw/wUAAQAMAAAAAADw/wYAAQAMAAAAAADx/wYAAQAMAAAAAADx/wUAAQAMAAAAAADw/wIAAQAMAAAAAADw/wMAAQAMAAAAAADw////AQAMAAAAAADv////AQAMAAAAAADv/wIAAQAMAAAAAADv/wMAAQAMAAAAAADv/wQAAQAMAAAAAADv/wUAAQAMAAAAAADv/wYAAQAMAAAAAADy////AQAMAAAAAADz////AQAMAAAAAADv//7/AQAMAAAAAADu//7/AQAMAAAAAADu////AQAMAAAAAADu/wIAAQAMAAAAAADu/wMAAQAMAAAAAADu/wQAAQAMAAAAAADt/wIAAQAMAAAAAADt//7/AQAMAAAAAADs//7/AQAMAAAAAADi//z/AQAMAAAAAADh//z/AQAMAAAAAADg//z/AQAMAAAAAADg//3/AQAMAAAAAADh//3/AQAMAAAAAAD0/wEAAQAMAAAAAADt////AQAMAAAAAADj//3/AQAMAAAAAADX/wEAAQAMAAAAAADX/wAAAQAMAAAAAADX////AQAMAAAAAADX//7/AQAMAAAAAADY//7/AQAMAAAAAADY//3/AQAMAAAAAADY//z/AQAMAAAAAADY//v/AQAMAAAAAADX//z/AQAMAAAAAADX//3/AQAMAAAAAADY////AQAMAAAAAADY/wAAAQAMAAAAAADX//v/AQAMAAAAAADX//r/AQAMAAAAAADW//r/AQAMAAAAAADW//v/AQAMAAAAAADW//z/AQAMAAAAAADW//3/AQAMAAAAAADW//7/AQAMAAAAAADW////AQAMAAAAAADW/wAAAQAMAAAAAADW/wIAAQAMAAAAAADW/wEAAQAMAAAAAADV////AQAMAAAAAADV/wAAAQAMAAAAAADV/wEAAQAMAAAAAADV/wIAAQAMAAAAAADV/wMAAQAMAAAAAADU/wMAAQAMAAAAAADU/wIAAQAMAAAAAADU/wEAAQAMAAAAAADU/wAAAQAMAAAAAADT/wAAAQAMAAAAAADT////AQAMAAAAAADS/wAAAQAMAAAAAADT/wEAAQAMAAAAAADU////AQAMAAAAAADS////AQAMAAAAAADR////AQAMAAAAAADR/wAAAQAMAAAAAADS/wEAAQAMAAAAAADT/wMAAQAMAAAAAADT/wIAAQAMAAAAAADR/wEAAQAMAAAAAADQ/wAAAQAMAAAAAADP//b/AQAMAAAAAADQ//b/AQAMAAAAAADa//b/AQAMAAAAAADf//T/AQAMAAAAAADk//j/AQAMAAAAAADl//f/AQAMAAAAAADt//r/AQAMAAAAAADZ//P/AQAMAAAAAADq//X/AQAMAAAAAADx//f/AQAMAAAAAADz//v/AQAMAAAAAAD1//T/AQAMAAAAAADv//L/AQAMAAAAAADZ//v/AQAMAAAAAADH////AQAMAAAAAADG////AQAMAAAAAADG/wAAAQAMAAAAAADH/wAAAQAMAAAAAADO//b/AQAMAAAAAADN//b/AQAMAAAAAADM//b/AQAMAAAAAADL//b/AQAMAAAAAADK//b/AQAMAAAAAADJ//b/AQAMAAAAAADI//b/AQAMAAAAAADH//b/AQAMAAAAAADG//b/AQAMAAAAAADG//f/AQAMAAAAAADG//7/AQAMAAAAAADQ//X/AQAMAAAAAADQ//T/AQAMAAAAAADP//T/AQAMAAAAAADP//P/AQAMAAAAAADO//P/AQAMAAAAAADN//P/AQAMAAAAAADM//P/AQAMAAAAAADL//P/AQAMAAAAAADK//P/AQAMAAAAAADJ//P/AQAMAAAAAADI//P/AQAMAAAAAADH//P/AQAMAAAAAADH//T/AQAMAAAAAADG//T/AQAMAAAAAADG//X/AQAMAAAAAADH//X/AQAMAAAAAADI//X/AQAMAAAAAADJ//X/AQAMAAAAAADK//T/AQAMAAAAAADK//X/AQAMAAAAAADI//T/AQAMAAAAAADI//f/AQAMAAAAAADH//f/AQAMAAAAAADL//X/AQAMAAAAAADM//X/AQAMAAAAAADN//X/AQAMAAAAAADO//X/AQAMAAAAAADP//X/AQAMAAAAAADJ//T/AQAMAAAAAADL//T/AQAMAAAAAADM//T/AQAMAAAAAADN//T/AQAMAAAAAADO//T/AQAMAAAAAADG/wEAAQAMAAAAAADD/wIAAQAMAAAAAADC/wIAAQAMAAAAAADH/wEAAQAMAAAAAADF/wEAAQAMAAAAAADE/wEAAQAMAAAAAADD/wEAAQAMAAAAAADC/wEAAQAMAAAAAADF//7/AQAMAAAAAADF////AQAMAAAAAADE////AQAMAAAAAADE/wAAAQAMAAAAAADD/wAAAQAMAAAAAADB/wIAAQAMAAAAAADA/wIAAQAMAAAAAADB/wEAAQAMAAAAAADC/wAAAQAMAAAAAADC////AQAMAAAAAADD//7/AQAMAAAAAADB/wAAAQAMAAAAAADE//7/AQAMAAAAAADD////AQAMAAAAAADF/wAAAQAMAAAAAAC2/+3/AQAMAAAAAAC2/+7/AQAMAAAAAAC2/+//AQAMAAAAAAC2//D/AQAMAAAAAAC2//H/AQAMAAAAAAC2//L/AQAMAAAAAAC2//P/AQAMAAAAAAC2//T/AQAMAAAAAAC2//X/AQAMAAAAAAC2//b/AQAMAAAAAAC2//f/AQAMAAAAAAC2//j/AQAMAAAAAAC2//n/AQAMAAAAAAC2//r/AQAMAAAAAAC2//v/AQAMAAAAAAC2//z/AQAMAAAAAAC2//3/AQAMAAAAAAC2//7/AQAMAAAAAAC2////AQAMAAAAAAC2/wAAAQAMAAAAAAC2/wEAAQAMAAAAAAC2/wIAAQAMAAAAAAC2/wMAAQAMAAAAAAC3/+3/AQAMAAAAAAC3/+7/AQAMAAAAAAC3/+//AQAMAAAAAAC3//D/AQAMAAAAAAC3//H/AQAMAAAAAAC3//L/AQAMAAAAAAC3//P/AQAMAAAAAAC3//T/AQAMAAAAAAC3//X/AQAMAAAAAAC3//b/AQAMAAAAAAC3//f/AQAMAAAAAAC3//j/AQAMAAAAAAC3//n/AQAMAAAAAAC3//r/AQAMAAAAAAC3//v/AQAMAAAAAAC3//z/AQAMAAAAAAC3//3/AQAMAAAAAAC3//7/AQAMAAAAAAC3////AQAMAAAAAAC3/wAAAQAMAAAAAAC3/wEAAQAMAAAAAAC3/wIAAQAMAAAAAAC3/wMAAQAMAAAAAAC4/+3/AQAMAAAAAAC4/+7/AQAMAAAAAAC4/+//AQAMAAAAAAC4//D/AQAMAAAAAAC4//H/AQAMAAAAAAC4//L/AQAMAAAAAAC4//P/AQAMAAAAAAC4//T/AQAMAAAAAAC4//X/AQAMAAAAAAC4//b/AQAMAAAAAAC4//f/AQAMAAAAAAC4//j/AQAMAAAAAAC4//n/AQAMAAAAAAC4//r/AQAMAAAAAAC4//v/AQAMAAAAAAC4//z/AQAMAAAAAAC4//3/AQAMAAAAAAC4//7/AQAMAAAAAAC4////AQAMAAAAAAC4/wAAAQAMAAAAAAC4/wEAAQAMAAAAAAC4/wIAAQAMAAAAAAC4/wMAAQAMAAAAAAC5/+3/AQAMAAAAAAC5/+7/AQAMAAAAAAC5/+//AQAMAAAAAAC5//D/AQAMAAAAAAC5//H/AQAMAAAAAAC5//L/AQAMAAAAAAC5//P/AQAMAAAAAAC5//T/AQAMAAAAAAC5//X/AQAMAAAAAAC5//b/AQAMAAAAAAC5//f/AQAMAAAAAAC5//j/AQAMAAAAAAC5//n/AQAMAAAAAAC5//r/AQAMAAAAAAC5//v/AQAMAAAAAAC5//z/AQAMAAAAAAC5//3/AQAMAAAAAAC5//7/AQAMAAAAAAC5////AQAMAAAAAAC5/wAAAQAMAAAAAAC5/wEAAQAMAAAAAAC5/wIAAQAMAAAAAAC5/wMAAQAMAAAAAAC6/+3/AQAMAAAAAAC6/+7/AQAMAAAAAAC6/+//AQAMAAAAAAC6//D/AQAMAAAAAAC6//H/AQAMAAAAAAC6//L/AQAMAAAAAAC6//P/AQAMAAAAAAC6//T/AQAMAAAAAAC6//X/AQAMAAAAAAC6//b/AQAMAAAAAAC6//f/AQAMAAAAAAC6//j/AQAMAAAAAAC6//n/AQAMAAAAAAC6//r/AQAMAAAAAAC6//v/AQAMAAAAAAC6//z/AQAMAAAAAAC6//3/AQAMAAAAAAC6//7/AQAMAAAAAAC6////AQAMAAAAAAC6/wAAAQAMAAAAAAC6/wEAAQAMAAAAAAC6/wIAAQAMAAAAAAC6/wMAAQAMAAAAAAC7/+3/AQAMAAAAAAC7/+7/AQAMAAAAAAC7/+//AQAMAAAAAAC7//D/AQAMAAAAAAC7//H/AQAMAAAAAAC7//L/AQAMAAAAAAC7//P/AQAMAAAAAAC7//T/AQAMAAAAAAC7//X/AQAMAAAAAAC7//b/AQAMAAAAAAC7//f/AQAMAAAAAAC7//j/AQAMAAAAAAC7//n/AQAMAAAAAAC7//r/AQAMAAAAAAC7//v/AQAMAAAAAAC7//z/AQAMAAAAAAC7//3/AQAMAAAAAAC7//7/AQAMAAAAAAC7////AQAMAAAAAAC7/wAAAQAMAAAAAAC7/wEAAQAMAAAAAAC7/wIAAQAMAAAAAAC8/+3/AQAMAAAAAAC8/+7/AQAMAAAAAAC8/+//AQAMAAAAAAC8//D/AQAMAAAAAAC8//H/AQAMAAAAAAC8//L/AQAMAAAAAAC8//P/AQAMAAAAAAC8//T/AQAMAAAAAAC8//X/AQAMAAAAAAC8//b/AQAMAAAAAAC8//f/AQAMAAAAAAC8//j/AQAMAAAAAAC8//n/AQAMAAAAAAC8//r/AQAMAAAAAAC8//v/AQAMAAAAAAC8//z/AQAMAAAAAAC8//3/AQAMAAAAAAC8//7/AQAMAAAAAAC8////AQAMAAAAAAC8/wAAAQAMAAAAAAC8/wEAAQAMAAAAAAC8/wIAAQAMAAAAAAC9/+3/AQAMAAAAAAC9/+7/AQAMAAAAAAC9/+//AQAMAAAAAAC9//D/AQAMAAAAAAC9//H/AQAMAAAAAAC9//L/AQAMAAAAAAC9//P/AQAMAAAAAAC9//T/AQAMAAAAAAC9//X/AQAMAAAAAAC9//b/AQAMAAAAAAC9//v/AQAMAAAAAAC9//z/AQAMAAAAAAC9//3/AQAMAAAAAAC9//7/AQAMAAAAAAC9////AQAMAAAAAAC9/wAAAQAMAAAAAAC9/wEAAQAMAAAAAAC9/wIAAQAMAAAAAAC+/+3/AQAMAAAAAAC+/+7/AQAMAAAAAAC+/+//AQAMAAAAAAC+//D/AQAMAAAAAAC+//H/AQAMAAAAAAC+//L/AQAMAAAAAAC+//P/AQAMAAAAAAC+//T/AQAMAAAAAAC+//X/AQAMAAAAAAC+//v/AQAMAAAAAAC+//z/AQAMAAAAAAC+//3/AQAMAAAAAAC+//7/AQAMAAAAAAC+////AQAMAAAAAAC+/wAAAQAMAAAAAAC+/wEAAQAMAAAAAAC+/wIAAQAMAAAAAAC//+3/AQAMAAAAAAC//+7/AQAMAAAAAAC//+//AQAMAAAAAAC///D/AQAMAAAAAAC///H/AQAMAAAAAAC///L/AQAMAAAAAAC///P/AQAMAAAAAAC///T/AQAMAAAAAAC///X/AQAMAAAAAAC///v/AQAMAAAAAAC///z/AQAMAAAAAAC///3/AQAMAAAAAAC///7/AQAMAAAAAAC/////AQAMAAAAAAC//wAAAQAMAAAAAAC//wEAAQAMAAAAAAC//wIAAQAMAAAAAADA/+3/AQAMAAAAAADA/+7/AQAMAAAAAADA/+//AQAMAAAAAADA//D/AQAMAAAAAADA//H/AQAMAAAAAADA//L/AQAMAAAAAADA//P/AQAMAAAAAADA//T/AQAMAAAAAADA//X/AQAMAAAAAADA//z/AQAMAAAAAADA//3/AQAMAAAAAADA//7/AQAMAAAAAADA////AQAMAAAAAADA/wAAAQAMAAAAAADA/wEAAQAMAAAAAADB/+3/AQAMAAAAAADB/+7/AQAMAAAAAADB/+//AQAMAAAAAADB//D/AQAMAAAAAADB//H/AQAMAAAAAADB//L/AQAMAAAAAADB//P/AQAMAAAAAADB//T/AQAMAAAAAADB//X/AQAMAAAAAADB//b/AQAMAAAAAADB////AQAMAAAAAADC/+3/AQAMAAAAAADC/+7/AQAMAAAAAADC/+//AQAMAAAAAADC//D/AQAMAAAAAADC//H/AQAMAAAAAADC//L/AQAMAAAAAADC//P/AQAMAAAAAADC//T/AQAMAAAAAADC//X/AQAMAAAAAADC//b/AQAMAAAAAADC//f/AQAMAAAAAADD/+3/AQAMAAAAAADD/+7/AQAMAAAAAADD/+//AQAMAAAAAADD//D/AQAMAAAAAADD//H/AQAMAAAAAADD//L/AQAMAAAAAADD//P/AQAMAAAAAADD//T/AQAMAAAAAADD//X/AQAMAAAAAADD//b/AQAMAAAAAADD//f/AQAMAAAAAADE/+3/AQAMAAAAAADE/+7/AQAMAAAAAADE/+//AQAMAAAAAADE//D/AQAMAAAAAADE//H/AQAMAAAAAADE//L/AQAMAAAAAADE//P/AQAMAAAAAADE//T/AQAMAAAAAADE//X/AQAMAAAAAADE//b/AQAMAAAAAADE//f/AQAMAAAAAADE//j/AQAMAAAAAADF/+3/AQAMAAAAAADF/+7/AQAMAAAAAADF/+//AQAMAAAAAADF//D/AQAMAAAAAADF//H/AQAMAAAAAADF//L/AQAMAAAAAADF//P/AQAMAAAAAADF//T/AQAMAAAAAADF//X/AQAMAAAAAADF//b/AQAMAAAAAADF//f/AQAMAAAAAADF//j/AQAMAAAAAADG//H/AQAMAAAAAADG//L/AQAMAAAAAADG//P/AQAMAAAAAADB//f/AQAMAAAAAADA//b/AQAMAAAAAAC///b/AQAMAAAAAAC+//b/AQAMAAAAAAC9//f/AQAMAAAAAADA//v/AQAMAAAAAAD7/wAAAQAMAAAAAAD7/wEAAQAMAAAAAADZ//z/AQAMAAAAAADi//3/AQAMAAAAAADi//7/AQAMAAAAAADF//3/AAAAAAAABADV//7/AQAMAAAAAADU//7/AQAMAAAAAADT//7/AQAMAAAAAADV//3/AQAMAAAAAADU//3/AQAMAAAAAADs/wIAAQAMAAAAAADr/wIAAQAMAAAAAADs/wMAAQAMAAAAAADt/wMAAQAMAAAAAADt/wQAAQAMAAAAAAAQAAAAAQAMAAAAAAAQAAEAAQAMAAAAAAARAAEAAQAMAAAAAAARAAIAAQAMAAAAAAARAAMAAQAMAAAAAAAQAAMAAQAMAAAAAAAQAAIAAQAMAAAAAAARAAAAAQAMAAAAAAASAAIAAQAMAAAAAAASAAEAAQAMAAAAAAASAAAAAQAMAAAAAAATAAAAAQAMAAAAAAATAAEAAQAMAAAAAAATAAIAAQAMAAAAAAAUAAIAAQAMAAAAAAAUAAEAAQAMAAAAAAAUAAAAAQAMAAAAAAAVAAAAAQAMAAAAAAAVAAEAAQAMAAAAAAASAP//AQAMAAAAAAATAP//AQAMAAAAAAAUAP//AQAMAAAAAAAVAP//AQAMAAAAAAAWAAAAAQAMAAAAAAAWAAEAAQAMAAAAAAAWAP//AQAMAAAAAAAXAP//AQAMAAAAAAAYAP//AQAMAAAAAAAZAP//AQAMAAAAAAAZAAAAAQAMAAAAAAAaAAAAAQAMAAAAAAAaAAEAAQAMAAAAAAAaAAIAAQAMAAAAAAAXAAEAAQAMAAAAAAAXAAAAAQAMAAAAAAAYAAAAAQAMAAAAAAAYAAEAAQAMAAAAAAAZAAEAAQAMAAAAAAAZAAIAAQAMAAAAAAAbAAAAAQAMAAAAAAAbAAEAAQAMAAAAAAAbAAIAAQAMAAAAAAAbAAMAAQAMAAAAAAAcAAMAAQAMAAAAAAAcAAIAAQAMAAAAAAAcAAEAAQAMAAAAAAAcAAAAAQAMAAAAAAAdAAAAAQAMAAAAAAAdAAEAAQAMAAAAAAAeAAEAAQAMAAAAAAAeAAIAAQAMAAAAAAAeAAMAAQAMAAAAAAAdAAMAAQAMAAAAAAAdAAQAAQAMAAAAAAAeAAAAAQAMAAAAAAAdAAIAAQAMAAAAAAAeAP//AQAMAAAAAAAfAAAAAQAMAAAAAAAfAAEAAQAMAAAAAAAfAAIAAQAMAAAAAAAfAAMAAQAMAAAAAAAfAAQAAQAMAAAAAAAeAAQAAQAMAAAAAAAgAAEAAQAMAAAAAAAgAAAAAQAMAAAAAAAgAAIAAQAMAAAAAAAgAAMAAQAMAAAAAAAgAAQAAQAMAAAAAAAgAP//AQAMAAAAAAAhAAAAAQAMAAAAAAAhAAEAAQAMAAAAAAAhAAIAAQAMAAAAAAAhAAMAAQAMAAAAAAAhAAQAAQAMAAAAAAAgAAUAAQAMAAAAAAAhAAUAAQAMAAAAAAAcAP//AQAMAAAAAAAaAP//AQAMAAAAAAAiAP//AQAMAAAAAAAiAAAAAQAMAAAAAAAiAAEAAQAMAAAAAAAiAAIAAQAMAAAAAAAiAAMAAQAMAAAAAAAiAAQAAQAMAAAAAAAiAAUAAQAMAAAAAAAdAP//AQAMAAAAAAAbAP//AQAMAAAAAADI////AQAMAAAAAADI/wAAAQAMAAAAAADQ////AQAMAAAAAADS/wIAAQAMAAAAAADP////AQAMAAAAAADO////AQAMAAAAAADN////AQAMAAAAAADM////AQAMAAAAAADP/wAAAQAMAAAAAADP/wEAAQAMAAAAAADO/wEAAQAMAAAAAADN/wEAAQAMAAAAAADN/wAAAQAMAAAAAADQ/wEAAQAMAAAAAADO/wAAAQAMAAAAAAAhAP//AQAMAAAAAAAfAP//AQAMAAAAAAAjAP7/AQAMAAAAAAAjAP//AQAMAAAAAAAjAAAAAQAMAAAAAAAjAAEAAQAMAAAAAAAjAAIAAQAMAAAAAAAjAAMAAQAMAAAAAAAjAAUAAQAMAAAAAAAjAAQAAQAMAAAAAAAiAP7/AQAMAAAAAAAfAPz/AQAMAAAAAAAlAP7/AQAMAAAAAAAnAAMAAQAMAAAAAAAmAAIAAQAMAAAAAAAmAAEAAQAMAAAAAAAlAAEAAQAMAAAAAAAlAAAAAQAMAAAAAAAkAAAAAQAMAAAAAAAkAP//AQAMAAAAAAAkAAEAAQAMAAAAAAAkAAIAAQAMAAAAAAAkAAMAAQAMAAAAAAAkAAQAAQAMAAAAAAAlAAIAAQAMAAAAAAAmAP//AQAMAAAAAAAmAAAAAQAMAAAAAAAmAAMAAQAMAAAAAAAmAAQAAQAMAAAAAAAlAAQAAQAMAAAAAAAlAAMAAQAMAAAAAAAlAP//AQAMAAAAAAAnAAEAAQAMAAAAAAAnAAAAAQAMAAAAAAAnAAIAAQAMAAAAAAAbAP7/AQAMAAAAAAAgAPz/AQAMAAAAAAAgAP3/AQAMAAAAAAAgAP7/AQAMAAAAAAAhAP7/AQAMAAAAAAAhAP3/AQAMAAAAAAAkAPn/AQAMAAAAAAAsAPz/AQAMAAAAAAAtAPv/AQAMAAAAAAAuAPv/AQAMAAAAAAAvAPv/AQAMAAAAAAAwAPv/AQAMAAAAAAAwAPz/AQAMAAAAAAAxAPz/AQAMAAAAAAAvAPz/AQAMAAAAAAAsAPv/AQAMAAAAAAArAPv/AQAMAAAAAAAqAPr/AQAMAAAAAAApAPr/AQAMAAAAAAAoAPn/AQAMAAAAAAApAPn/AQAMAAAAAAAqAPn/AQAMAAAAAAArAPn/AQAMAAAAAAAsAPn/AQAMAAAAAAAtAPn/AQAMAAAAAAAuAPr/AQAMAAAAAAAvAPr/AQAMAAAAAAAwAPr/AQAMAAAAAAAxAPr/AQAMAAAAAAAyAPr/AQAMAAAAAAAyAPn/AQAMAAAAAAAxAPn/AQAMAAAAAAAwAPn/AQAMAAAAAAAvAPn/AQAMAAAAAAAuAPn/AQAMAAAAAAAqAPv/AQAMAAAAAAApAPv/AQAMAAAAAAAoAPr/AQAMAAAAAAArAPr/AQAMAAAAAAAsAPr/AQAMAAAAAAAtAPz/AQAMAAAAAAAuAPz/AQAMAAAAAAAtAPr/AQAMAAAAAAAxAPv/AQAMAAAAAAAyAPz/AQAMAAAAAAAyAPv/AQAMAAAAAAAzAPn/AQAMAAAAAAAzAPr/AQAMAAAAAAAzAPv/AQAMAAAAAAAzAPz/AQAMAAAAAAA0APn/AQAMAAAAAAA0APr/AQAMAAAAAAA0APv/AQAMAAAAAAA1APn/AQAMAAAAAAA1APr/AQAMAAAAAAA1APv/AQAMAAAAAAA2APv/AQAMAAAAAAA3APr/AQAMAAAAAAA3APn/AQAMAAAAAAA4APn/AQAMAAAAAAA4APr/AQAMAAAAAAA2APn/AQAMAAAAAAA2APr/AQAMAAAAAAA0APz/AQAMAAAAAAA1APz/AQAMAAAAAAA2APz/AQAMAAAAAAA3APv/AQAMAAAAAAA4APv/AQAMAAAAAAA5APn/AQAMAAAAAAA5APr/AQAMAAAAAAA6APv/AQAMAAAAAAA6APr/AQAMAAAAAAA7APr/AQAMAAAAAAA8APn/AQAMAAAAAAA7APn/AQAMAAAAAAA6APn/AQAMAAAAAAA8APr/AQAMAAAAAAA5APv/AQAMAAAAAAA7APv/AQAMAAAAAAA8APv/AQAMAAAAAAA9APr/AQAMAAAAAAA9APn/AQAMAAAAAAA+APn/AQAMAAAAAAA/APn/AQAMAAAAAAA8APj/AQAMAAAAAAAvAPj/AQAMAAAAAAA+APr/AQAMAAAAAAA/APr/AQAMAAAAAABAAPr/AQAMAAAAAABBAPr/AQAMAAAAAABBAPn/AQAMAAAAAABCAPn/AQAMAAAAAABDAPn/AQAMAAAAAABEAPn/AQAMAAAAAABFAPn/AQAMAAAAAABAAPn/AQAMAAAAAABCAPr/AQAMAAAAAABDAPr/AQAMAAAAAABEAPr/AQAMAAAAAABFAPr/AQAMAAAAAABGAPr/AQAMAAAAAABGAPn/AQAMAAAAAABHAPr/AQAMAAAAAABHAPn/AQAMAAAAAABIAPn/AQAMAAAAAABIAPr/AQAMAAAAAABDAPj/AAAAAAAABABJAPn/AQAMAAAAAABKAPr/AQAMAAAAAABLAPr/AQAMAAAAAABLAPn/AQAMAAAAAABKAPn/AQAMAAAAAABJAPr/AQAMAAAAAABJAOv/AQAMAAAAAABKAOv/AQAMAAAAAABKAOr/AQAMAAAAAABJAOr/AQAMAAAAAABLAOv/AQAMAAAAAABMAPn/AQAMAAAAAABNAPn/AQAMAAAAAABNAPr/AQAMAAAAAABOAPr/AQAMAAAAAABPAPr/AQAMAAAAAABMAPr/AQAMAAAAAABOAPn/AQAMAAAAAABPAPn/AQAMAAAAAABQAPn/AQAMAAAAAABRAPn/AQAMAAAAAABPAPv/AQAMAAAAAABQAPv/AQAMAAAAAABQAPr/AQAMAAAAAABRAPr/AQAMAAAAAABRAPv/AQAMAAAAAABSAPv/AQAMAAAAAABSAPr/AQAMAAAAAABTAPr/AQAMAAAAAABTAPv/AQAMAAAAAABSAPn/AQAMAAAAAABTAPn/AQAMAAAAAABUAPn/AQAMAAAAAABVAPn/AQAMAAAAAABVAPr/AQAMAAAAAABVAPv/AQAMAAAAAABUAPv/AQAMAAAAAABUAPr/AQAMAAAAAABWAPn/AQAMAAAAAABWAPr/AQAMAAAAAABXAPr/AQAMAAAAAABXAPv/AQAMAAAAAABWAPv/AQAMAAAAAABXAPn/AQAMAAAAAABYAPn/AQAMAAAAAABYAPr/AQAMAAAAAABYAPv/AQAMAAAAAABLAOr/AQAMAAAAAABIAOr/AQAMAAAAAABMAOr/AQAMAAAAAABZAPn/AQAMAAAAAABZAPr/AQAMAAAAAABZAPv/AQAMAAAAAABaAPv/AQAMAAAAAABaAPr/AQAMAAAAAABaAPn/AQAMAAAAAABbAPn/AQAMAAAAAABbAPr/AQAMAAAAAABbAPv/AQAMAAAAAABcAPn/AQAMAAAAAABcAPr/AQAMAAAAAABcAPv/AQAMAAAAAABdAPr/AQAMAAAAAABdAPv/AQAMAAAAAABeAPr/AQAMAAAAAABeAPv/AQAMAAAAAABfAPv/AQAMAAAAAABfAPr/AQAMAAAAAABgAPv/AQAMAAAAAABgAPr/AQAMAAAAAABdAPL/AQAMAAAAAABeAPL/AQAMAAAAAABfAPL/AQAMAAAAAABfAPH/AQAMAAAAAABeAPH/AQAMAAAAAABYAPb/AQAMAAAAAABZAPb/AQAMAAAAAABbAPP/AQAMAAAAAABgAPH/AQAMAAAAAABhAPH/AQAMAAAAAABiAPH/AQAMAAAAAABgAPD/AQAMAAAAAABhAPD/AQAMAAAAAABiAPD/AQAMAAAAAABjAPH/AQAMAAAAAABhAPv/AQAMAAAAAABkAPH/AQAMAAAAAABlAPH/AQAMAAAAAABmAPH/AQAMAAAAAABjAPD/AQAMAAAAAABkAPD/AQAMAAAAAABlAPD/AQAMAAAAAABqAO//AQAMAAAAAABqAO7/AQAMAAAAAABqAO3/AQAMAAAAAABqAOz/AQAMAAAAAABqAPH/AQAMAAAAAABqAPD/AQAMAAAAAABqAOv/AQAMAAAAAABqAOr/AQAMAAAAAABqAOn/AQAMAAAAAABqAOj/AQAMAAAAAABqAOf/AQAMAAAAAABqAOb/AQAMAAAAAABqAOX/AQAMAAAAAABqAOT/AQAMAAAAAABqAOP/AQAMAAAAAABqAOL/AQAMAAAAAABqAOH/AQAMAAAAAABpAPH/AQAMAAAAAABpAPD/AQAMAAAAAABpAO//AQAMAAAAAABpAO7/AQAMAAAAAABpAO3/AQAMAAAAAABpAOz/AQAMAAAAAABpAOv/AQAMAAAAAABpAOr/AQAMAAAAAABpAOn/AQAMAAAAAABpAOj/AQAMAAAAAABpAOf/AQAMAAAAAABpAOb/AQAMAAAAAABpAOX/AQAMAAAAAABpAOT/AQAMAAAAAABpAOP/AQAMAAAAAABpAOL/AQAMAAAAAABpAOH/AQAMAAAAAABpAPL/AQAMAAAAAABqAPL/AQAMAAAAAABqAAAAAQAMAAAAAABqAAEAAQAMAAAAAABpAAEAAQAMAAAAAABpAAAAAQAMAAAAAABkAP7/AQAMAAAAAABmAAAAAQAMAAAAAABmAAEAAQAMAAAAAABlAAEAAQAMAAAAAABlAAAAAQAMAAAAAABkAAAAAQAMAAAAAABkAP//AQAMAAAAAABjAP7/AQAMAAAAAABjAP3/AQAMAAAAAABhAPz/AQAMAAAAAABiAP3/AQAMAAAAAABiAP7/AQAMAAAAAABjAP//AQAMAAAAAABiAPz/AQAMAAAAAABhAP3/AQAMAAAAAABgAPz/AQAMAAAAAABgAP3/AQAMAAAAAABhAP7/AQAMAAAAAABiAP//AQAMAAAAAABiAAAAAQAMAAAAAABjAAAAAQAMAAAAAABjAAEAAQAMAAAAAABkAAEAAQAMAAAAAABfAPz/AQAMAAAAAABeAPz/AQAMAAAAAABgAP7/AQAMAAAAAABfAP3/AQAMAAAAAABdAPz/AQAMAAAAAABcAPz/AQAMAAAAAABbAPz/AQAMAAAAAABUAPz/AQAMAAAAAABVAPz/AQAMAAAAAABWAPz/AQAMAAAAAABXAPz/AQAMAAAAAABYAPz/AQAMAAAAAABZAPz/AQAMAAAAAABaAPz/AQAMAAAAAABbAP3/AQAMAAAAAABcAP3/AQAMAAAAAABdAP3/AQAMAAAAAABeAP3/AQAMAAAAAABeAP7/AQAMAAAAAABfAP7/AQAMAAAAAABhAP//AQAMAAAAAABgAP//AQAMAAAAAABdAP7/AQAMAAAAAABcAP7/AQAMAAAAAABaAP3/AQAMAAAAAABZAP3/AQAMAAAAAAA9APv/AQAMAAAAAABrAAAAAQAMAAAAAABsAAAAAQAMAAAAAABtAAAAAQAMAAAAAABuAAAAAQAMAAAAAABvAAAAAQAMAAAAAABwAAAAAQAMAAAAAABxAAAAAQAMAAAAAAByAAAAAQAMAAAAAABzAAAAAQAMAAAAAABzAAEAAQAMAAAAAAByAAEAAQAMAAAAAABxAAEAAQAMAAAAAABwAAEAAQAMAAAAAABvAAEAAQAMAAAAAABuAAEAAQAMAAAAAABtAAEAAQAMAAAAAABsAAEAAQAMAAAAAABrAAEAAQAMAAAAAABqAAIAAQAMAAAAAABpAAIAAQAMAAAAAABoAAIAAQAMAAAAAABnAAIAAQAMAAAAAABmAAIAAQAMAAAAAABlAAIAAQAMAAAAAABkAAIAAQAMAAAAAABoAAMAAQAMAAAAAABpAAMAAQAMAAAAAABqAAMAAQAMAAAAAABrAAMAAQAMAAAAAABsAAMAAQAMAAAAAABtAAIAAQAMAAAAAABuAAIAAQAMAAAAAABsAAIAAQAMAAAAAABrAAIAAQAMAAAAAABnAAMAAQAMAAAAAABmAAMAAQAMAAAAAABlAAMAAQAMAAAAAABzAAIAAQAMAAAAAABzAAMAAQAMAAAAAABzAAQAAQAMAAAAAABzAAUAAQAMAAAAAAB0AAUAAQAMAAAAAAB1AAUAAQAMAAAAAAB2AAUAAQAMAAAAAAB2AAQAAQAMAAAAAAB2AAMAAQAMAAAAAAB2AAIAAQAMAAAAAAB2AAEAAQAMAAAAAAB2AAAAAQAMAAAAAABxAAMAAQAMAAAAAABxAAIAAQAMAAAAAABwAAIAAQAMAAAAAABvAAIAAQAMAAAAAAByAAMAAQAMAAAAAAByAAIAAQAMAAAAAAB3AAMAAQAMAAAAAAB3AAIAAQAMAAAAAAB3AAEAAQAMAAAAAAB3AAAAAQAMAAAAAAB4AAAAAQAMAAAAAAB4AAEAAQAMAAAAAAB4AAIAAQAMAAAAAAB4AAMAAQAMAAAAAAB3AAQAAQAMAAAAAAB5AAAAAQAMAAAAAAB5AAEAAQAMAAAAAABwAAMAAQAMAAAAAABpAPP/AQAMAAAAAABpAPT/AQAMAAAAAABqAPX/AQAMAAAAAABqAPb/AQAMAAAAAABpAPX/AQAMAAAAAABpAPb/AQAMAAAAAABpAPf/AQAMAAAAAABpAPj/AQAMAAAAAABpAPn/AQAMAAAAAABqAPj/AQAMAAAAAABqAPf/AQAMAAAAAABqAPT/AQAMAAAAAABqAPP/AQAMAAAAAAB0AAQAAQAMAAAAAAB1AAQAAQAMAAAAAAByAAQAAQAMAAAAAABpAOD/AQAMAAAAAABqAOD/AQAMAAAAAABrAOD/AQAMAAAAAABqAN7/AQAMAAAAAABqAN//AQAMAAAAAABpAN//AQAMAAAAAABoAN//AQAMAAAAAABnAN7/AQAMAAAAAABmAN7/AQAMAAAAAABmAN3/AQAMAAAAAABlAN3/AQAMAAAAAABkAN3/AQAMAAAAAABjAN3/AQAMAAAAAABiANz/AQAMAAAAAABiAN3/AQAMAAAAAABkAN7/AQAMAAAAAABlAN7/AQAMAAAAAABnAN//AQAMAAAAAABoAOD/AQAMAAAAAABkANz/AQAMAAAAAABjANz/AQAMAAAAAABnANz/AQAMAAAAAABoANz/AQAMAAAAAABrAN7/AQAMAAAAAABsAN7/AQAMAAAAAABnAN3/AQAMAAAAAABmANz/AQAMAAAAAABlANz/AQAMAAAAAABtAN7/AQAMAAAAAABtAN//AQAMAAAAAABsAN//AQAMAAAAAABrAN//AQAMAAAAAABuAN//AQAMAAAAAABvAN//AQAMAAAAAABwAN//AQAMAAAAAABwAN7/AQAMAAAAAABxAN7/AQAMAAAAAAByAN7/AQAMAAAAAABzAN7/AQAMAAAAAABzAN//AQAMAAAAAAByAN//AQAMAAAAAABxAN//AQAMAAAAAABzAOD/AQAMAAAAAAByAOD/AQAMAAAAAAByAOH/AQAMAAAAAABxAOH/AQAMAAAAAABxAOL/AQAMAAAAAABwAOP/AQAMAAAAAABwAOT/AQAMAAAAAABvAOT/AQAMAAAAAABvAOX/AQAMAAAAAABvAOb/AQAMAAAAAABuAOb/AQAMAAAAAABuAOf/AQAMAAAAAABuAOj/AQAMAAAAAABtAOj/AQAMAAAAAABtAOn/AQAMAAAAAABtAOr/AQAMAAAAAABtAOv/AQAMAAAAAABsAOv/AQAMAAAAAABsAOz/AQAMAAAAAABsAO3/AQAMAAAAAABsAO7/AQAMAAAAAABrAO7/AQAMAAAAAABrAO//AQAMAAAAAABrAPD/AQAMAAAAAABrAPH/AQAMAAAAAABrAO3/AQAMAAAAAABrAOz/AQAMAAAAAABrAOv/AQAMAAAAAABsAOr/AQAMAAAAAABsAOn/AQAMAAAAAABsAOj/AQAMAAAAAABsAOf/AQAMAAAAAABsAOb/AQAMAAAAAABtAOX/AQAMAAAAAABtAOT/AQAMAAAAAABtAOP/AQAMAAAAAABtAOL/AQAMAAAAAABtAOH/AQAMAAAAAABuAOD/AQAMAAAAAABtAOD/AQAMAAAAAABsAOL/AQAMAAAAAABsAOP/AQAMAAAAAABsAOT/AQAMAAAAAABrAOX/AQAMAAAAAABrAOb/AQAMAAAAAABrAOf/AQAMAAAAAABrAOT/AQAMAAAAAABrAOP/AQAMAAAAAABrAOL/AQAMAAAAAABrAOH/AQAMAAAAAABrAOj/AQAMAAAAAABsAOH/AQAMAAAAAABrAOn/AQAMAAAAAABrAOr/AQAMAAAAAABuAOP/AQAMAAAAAABuAOT/AQAMAAAAAABuAOX/AQAMAAAAAABtAOb/AQAMAAAAAABuAOL/AQAMAAAAAABuAOH/AQAMAAAAAABsAOX/AQAMAAAAAABsAOD/AQAMAAAAAABtAOf/AQAMAAAAAABvAOP/AQAMAAAAAABvAOL/AQAMAAAAAABwAOL/AQAMAAAAAABwAOH/AQAMAAAAAABwAOD/AQAMAAAAAABvAOH/AQAMAAAAAABvAOD/AQAMAAAAAABxAOD/AQAMAAAAAAB2AN7/AQAMAAAAAAB2AN//AQAMAAAAAAB2AOD/AQAMAAAAAAB3AOD/AQAMAAAAAAB3AOH/AQAMAAAAAAB4AOH/AQAMAAAAAAB4AOL/AQAMAAAAAAB5AOL/AQAMAAAAAAB5AOP/AQAMAAAAAAB6AOP/AQAMAAAAAAB6AOT/AQAMAAAAAAB7AOX/AQAMAAAAAAB+AOv/AQAMAAAAAAB/AOv/AQAMAAAAAAB/AOz/AQAMAAAAAAB/AO3/AQAMAAAAAACAAO3/AQAMAAAAAACFAO3/AQAMAAAAAACEAOz/AQAMAAAAAACEAOv/AQAMAAAAAACEAOP/AQAMAAAAAACEAOL/AQAMAAAAAACEAOH/AQAMAAAAAACEAOD/AQAMAAAAAACKANj/AQAMAAAAAACLANj/AQAMAAAAAACLANf/AQAMAAAAAACMANf/AQAMAAAAAACNANb/AQAMAAAAAACOANb/AQAMAAAAAACSANL/AQAMAAAAAACSANH/AQAMAAAAAACSAM//AQAMAAAAAABdAM7/AQAMAAAAAABcAM7/AQAMAAAAAABbAM7/AQAMAAAAAABaAM7/AQAMAAAAAABZAM7/AQAMAAAAAABYAM7/AQAMAAAAAABYAM//AQAMAAAAAABXAM//AQAMAAAAAABWAM//AQAMAAAAAABVAM//AQAMAAAAAABYAND/AQAMAAAAAABZAND/AQAMAAAAAABhANz/AQAMAAAAAABcANb/AQAMAAAAAABZANT/AQAMAAAAAABZANP/AQAMAAAAAABYANP/AQAMAAAAAABXANP/AQAMAAAAAABWANP/AQAMAAAAAABWANL/AQAMAAAAAABVANL/AQAMAAAAAABUANL/AQAMAAAAAABTANL/AQAMAAAAAABSANL/AQAMAAAAAABSANH/AQAMAAAAAABRANH/AQAMAAAAAABRAND/AQAMAAAAAABSAND/AQAMAAAAAABTAND/AQAMAAAAAABTAM//AQAMAAAAAABUAM//AQAMAAAAAABZAM//AQAMAAAAAABaAM//AQAMAAAAAABSAM//AQAMAAAAAABRAM//AQAMAAAAAABRAM7/AQAMAAAAAABSAM7/AQAMAAAAAABTAM7/AQAMAAAAAABUAM7/AQAMAAAAAABVAM7/AQAMAAAAAABWAM7/AQAMAAAAAABXAM7/AQAMAAAAAABWAND/AQAMAAAAAABVAND/AQAMAAAAAABUAND/AQAMAAAAAABXAND/AQAMAAAAAABZANH/AQAMAAAAAABYANH/AQAMAAAAAABXANH/AQAMAAAAAABWANH/AQAMAAAAAABVANH/AQAMAAAAAABUANH/AQAMAAAAAABTANH/AQAMAAAAAABZANL/AQAMAAAAAABYANL/AQAMAAAAAABXANL/AQAMAAAAAABzANP/AQAMAAAAAABzANT/AQAMAAAAAABzANX/AQAMAAAAAABzANb/AQAMAAAAAAB2ANP/AQAMAAAAAAB2ANT/AQAMAAAAAAB2ANX/AQAMAAAAAAB2ANb/AQAMAAAAAAB3ANb/AQAMAAAAAAB3ANX/AQAMAAAAAAB3ANT/AQAMAAAAAAB3ANP/AQAMAAAAAABoANb/AQAMAAAAAABoANX/AQAMAAAAAABoANT/AQAMAAAAAABpANT/AQAMAAAAAABpANX/AQAMAAAAAABpANb/AQAMAAAAAABpANf/AQAMAAAAAABpANj/AQAMAAAAAABqANj/AQAMAAAAAABqANf/AQAMAAAAAABqANb/AQAMAAAAAABqANX/AQAMAAAAAABqANT/AQAMAAAAAABrANP/AQAMAAAAAABrANT/AQAMAAAAAABrANX/AQAMAAAAAABrANb/AQAMAAAAAABrANf/AQAMAAAAAABsANb/AQAMAAAAAABsANX/AQAMAAAAAABsANT/AQAMAAAAAABsANP/AQAMAAAAAABtANP/AQAMAAAAAABtANT/AQAMAAAAAABtANX/AQAMAAAAAABtANb/AQAMAAAAAABuANb/AQAMAAAAAABuANX/AQAMAAAAAABuANT/AQAMAAAAAABuANP/AQAMAAAAAABvANP/AQAMAAAAAABvANT/AQAMAAAAAABvANX/AQAMAAAAAABvANb/AQAMAAAAAABvAN7/AQAMAAAAAABuAN7/AQAMAAAAAABwANb/AQAMAAAAAABwANX/AQAMAAAAAABwANT/AQAMAAAAAABwANP/AQAMAAAAAABxANP/AQAMAAAAAABxANT/AQAMAAAAAABxANX/AQAMAAAAAABxANb/AQAMAAAAAAByANb/AQAMAAAAAAByANX/AQAMAAAAAAByANT/AQAMAAAAAAByANP/AQAMAAAAAAB8ANT/AQAMAAAAAAB8ANP/AQAMAAAAAAB4ANP/AQAMAAAAAAB4ANT/AQAMAAAAAAB4ANX/AQAMAAAAAAB4ANb/AQAMAAAAAAB5ANb/AQAMAAAAAAB5ANX/AQAMAAAAAAB5ANT/AQAMAAAAAAB5ANP/AQAMAAAAAAB6ANP/AQAMAAAAAAB6ANT/AQAMAAAAAAB6ANX/AQAMAAAAAAB6ANb/AQAMAAAAAAB7ANb/AQAMAAAAAAB7ANX/AQAMAAAAAAB7ANT/AQAMAAAAAAB7ANP/AQAMAAAAAAB8ANX/AQAMAAAAAAB8ANb/AQAMAAAAAAB9ANb/AQAMAAAAAAB9ANX/AQAMAAAAAAB9ANT/AQAMAAAAAAB9ANP/AQAMAAAAAAB+ANf/AQAMAAAAAAB/ANf/AQAMAAAAAACAANP/AQAMAAAAAACAANT/AQAMAAAAAACAANX/AQAMAAAAAACAANb/AQAMAAAAAACAANf/AQAMAAAAAACBANf/AQAMAAAAAACBANb/AQAMAAAAAACBANX/AQAMAAAAAACBANT/AQAMAAAAAACBANP/AQAMAAAAAACCANb/AQAMAAAAAACCANf/AQAMAAAAAACDANf/AQAMAAAAAACDANb/AQAMAAAAAACEANT/AQAMAAAAAACEANb/AQAMAAAAAACEANf/AQAMAAAAAACFANb/AQAMAAAAAACFANX/AQAMAAAAAACFANT/AQAMAAAAAACGANb/AQAMAAAAAACGANf/AQAMAAAAAACGANj/AQAMAAAAAACHANf/AQAMAAAAAACHANb/AQAMAAAAAACIANP/AQAMAAAAAACIANT/AQAMAAAAAACIANX/AQAMAAAAAACIANb/AQAMAAAAAACIANf/AQAMAAAAAACIANj/AQAMAAAAAACJANf/AQAMAAAAAACJANb/AQAMAAAAAACJANX/AQAMAAAAAACJANT/AQAMAAAAAACJANP/AQAMAAAAAACKANf/AQAMAAAAAACMANP/AQAMAAAAAACMANT/AQAMAAAAAACMANX/AQAMAAAAAACMANb/AQAMAAAAAACNANX/AQAMAAAAAACSAND/AQAMAAAAAACMANj/AQAMAAAAAACMANn/AQAMAAAAAACIAOH/AQAMAAAAAACIAOL/AQAMAAAAAACHAOP/AQAMAAAAAACHAOT/AQAMAAAAAACFAOv/AQAMAAAAAACCAOD/AQAMAAAAAACBAOD/AQAMAAAAAACAAOD/AQAMAAAAAAB3AN7/AQAMAAAAAAB3AN//AQAMAAAAAAB4AN//AQAMAAAAAAB4AN7/AQAMAAAAAAB5AN7/AQAMAAAAAAB5AN//AQAMAAAAAAB5AOD/AQAMAAAAAAB4AOD/AQAMAAAAAAB5AOH/AQAMAAAAAAB6AOH/AQAMAAAAAAB6AOD/AQAMAAAAAAB6AN//AQAMAAAAAAB6AN7/AQAMAAAAAAB7AN7/AQAMAAAAAAB7AN//AQAMAAAAAAB7AOD/AQAMAAAAAAB7AOH/AQAMAAAAAAB7AOL/AQAMAAAAAAB6AOL/AQAMAAAAAAB7AOP/AQAMAAAAAAB7AOT/AQAMAAAAAAB8AOT/AQAMAAAAAAB8AOP/AQAMAAAAAAB8AOL/AQAMAAAAAAB8AOH/AQAMAAAAAAB8AOD/AQAMAAAAAAB8AN//AQAMAAAAAAB8AN7/AQAMAAAAAAB9AN7/AQAMAAAAAAB9AN//AQAMAAAAAAB9AOD/AQAMAAAAAAB9AOH/AQAMAAAAAAB9AOL/AQAMAAAAAAB9AOP/AQAMAAAAAAB9AOT/AQAMAAAAAAB9AOX/AQAMAAAAAAB8AOX/AQAMAAAAAAB+AOX/AQAMAAAAAAB+AOT/AQAMAAAAAAB+AOP/AQAMAAAAAAB+AOL/AQAMAAAAAAB+AOH/AQAMAAAAAAB+AOD/AQAMAAAAAAB+AN//AQAMAAAAAAB/AN//AQAMAAAAAAB/AOD/AQAMAAAAAAB/AOH/AQAMAAAAAAB/AOL/AQAMAAAAAAB/AOP/AQAMAAAAAAB/AOT/AQAMAAAAAAB/AOX/AQAMAAAAAACAAOX/AQAMAAAAAACAAOT/AQAMAAAAAACAAOP/AQAMAAAAAACAAOL/AQAMAAAAAACAAOH/AQAMAAAAAACBAOH/AQAMAAAAAACBAOL/AQAMAAAAAACBAOP/AQAMAAAAAACBAOT/AQAMAAAAAACBAOX/AQAMAAAAAACBAOv/AQAMAAAAAACAAOv/AQAMAAAAAACAAOz/AQAMAAAAAACBAOz/AQAMAAAAAACBAO3/AQAMAAAAAACCAO3/AQAMAAAAAACCAOz/AQAMAAAAAACCAOv/AQAMAAAAAACCAOT/AQAMAAAAAACCAOP/AQAMAAAAAACCAOL/AQAMAAAAAACCAOH/AQAMAAAAAACDAOH/AQAMAAAAAACDAOD/AQAMAAAAAACDAOL/AQAMAAAAAACDAOP/AQAMAAAAAACDAOT/AQAMAAAAAACDAOX/AQAMAAAAAACDAOv/AQAMAAAAAACDAOz/AQAMAAAAAACDAO3/AQAMAAAAAACEAO3/AQAMAAAAAACFAOD/AQAMAAAAAACFAOH/AQAMAAAAAACFAOL/AQAMAAAAAACFAOP/AQAMAAAAAACFAOT/AQAMAAAAAACGAOP/AQAMAAAAAACGAOL/AQAMAAAAAACGAOH/AQAMAAAAAACGAOD/AQAMAAAAAACHAOD/AQAMAAAAAACHAOH/AQAMAAAAAACHAOL/AQAMAAAAAACFAOz/AQAMAAAAAABQAM7/AQAMAAAAAABRANL/AQAMAAAAAABVANP/AQAMAAAAAABUANP/AQAMAAAAAABTANP/AQAMAAAAAABSANP/AQAMAAAAAABRANP/AQAMAAAAAABQAM3/AQAMAAAAAABRAM3/AQAMAAAAAACSAM7/AQAMAAAAAACSANP/AQAMAAAAAACTANP/AQAMAAAAAACTAM7/AQAMAAAAAABzAOH/AQAMAAAAAAByAOL/AQAMAAAAAAByAOP/AQAMAAAAAABxAOP/AQAMAAAAAABxAOT/AQAMAAAAAABxAOX/AQAMAAAAAABvAOn/AQAMAAAAAABvAOr/AQAMAAAAAABuAOr/AQAMAAAAAABuAOv/AQAMAAAAAABvAOj/AQAMAAAAAABwAOX/AQAMAAAAAABvAOf/AQAMAAAAAABuAOn/AQAMAAAAAAB2AOH/AQAMAAAAAAB2AOL/AQAMAAAAAAB3AOL/AQAMAAAAAAB3AOP/AQAMAAAAAAB4AOT/AQAMAAAAAAB5AOT/AQAMAAAAAAB4AOP/AQAMAAAAAAB9AOv/AQAMAAAAAAB9AOz/AQAMAAAAAAB+AOz/AQAMAAAAAAB+AO3/AQAMAAAAAACSAM3/AQAMAAAAAABQANP/AQAMAAAAAABQANT/AQAMAAAAAABRANT/AQAMAAAAAABTAM3/AQAMAAAAAABTANT/AQAMAAAAAACTAM3/AQAMAAAAAACTANT/AQAMAAAAAACSANT/AQAMAAAAAABtAO7/AQAMAAAAAABuAO7/AQAMAAAAAABuAO3/AQAMAAAAAABvAO3/AQAMAAAAAABwAO3/AQAMAAAAAABxAO3/AQAMAAAAAAByAO3/AQAMAAAAAABzAO3/AQAMAAAAAAB2AO3/AQAMAAAAAAB3AO3/AQAMAAAAAAB4AO3/AQAMAAAAAAB5AO3/AQAMAAAAAAB6AO3/AQAMAAAAAAB7AO3/AQAMAAAAAAB7AOz/AQAMAAAAAAB8AO3/AQAMAAAAAAB9AO3/AQAMAAAAAAB8AOz/AQAMAAAAAAB6AOz/AQAMAAAAAACGAO3/AQAMAAAAAACHAO3/AQAMAAAAAACIAO3/AQAMAAAAAACJAO3/AQAMAAAAAACKAO3/AQAMAAAAAACKAOz/AQAMAAAAAACLAOz/AQAMAAAAAACSAOP/AQAMAAAAAACTAOH/AQAMAAAAAACSANj/AQAMAAAAAACSANf/AQAMAAAAAACSANb/AQAMAAAAAACSANX/AQAMAAAAAACPANf/AQAMAAAAAACPANb/AQAMAAAAAACQANb/AQAMAAAAAACNANj/AQAMAAAAAACNANf/AQAMAAAAAACOANf/AQAMAAAAAACOANj/AQAMAAAAAACOANn/AQAMAAAAAACOAOH/AQAMAAAAAACOAOL/AQAMAAAAAACOAOP/AQAMAAAAAACMAOP/AQAMAAAAAACMAOL/AQAMAAAAAACJAOH/AQAMAAAAAACJAOL/AQAMAAAAAACJAOP/AQAMAAAAAACIAOP/AQAMAAAAAACGAOv/AQAMAAAAAACGAOz/AQAMAAAAAACHAOz/AQAMAAAAAACHAOv/AQAMAAAAAACIAOv/AQAMAAAAAACJAOT/AQAMAAAAAACKAOP/AQAMAAAAAACKAOL/AQAMAAAAAACKAOH/AQAMAAAAAACLAOH/AQAMAAAAAACLAOL/AQAMAAAAAACLAOP/AQAMAAAAAACJAOz/AQAMAAAAAACIAOz/AQAMAAAAAACLAOv/AQAMAAAAAACPAOP/AQAMAAAAAACPAOL/AQAMAAAAAACPAOH/AQAMAAAAAACQANj/AQAMAAAAAACQANf/AQAMAAAAAACRANf/AQAMAAAAAACRANb/AQAMAAAAAACQAOH/AQAMAAAAAACQAOL/AQAMAAAAAACQAOP/AQAMAAAAAACRAOP/AQAMAAAAAACRAOL/AQAMAAAAAACRAOH/AQAMAAAAAACSAOH/AQAMAAAAAACSAOL/AQAMAAAAAABtAO3/AQAMAAAAAABtAOz/AQAMAAAAAABuAOz/AQAMAAAAAABvAOv/AQAMAAAAAABwAOv/AQAMAAAAAABwAOz/AQAMAAAAAABvAOz/AQAMAAAAAAByAOT/AQAMAAAAAABzAOP/AQAMAAAAAABzAOL/AQAMAAAAAAB1AOH/AQAMAAAAAAB0AOH/AQAMAAAAAAB0AOL/AQAMAAAAAAB0AOD/AQAMAAAAAAB1AOD/AQAMAAAAAAB0AN7/AQAMAAAAAAB1AN//AQAMAAAAAAB1AN7/AQAMAAAAAAB0AN//AQAMAAAAAAB1ANb/AQAMAAAAAAB1ANX/AQAMAAAAAAB1ANT/AQAMAAAAAAB1ANP/AQAMAAAAAAB0ANT/AQAMAAAAAAB0ANP/AQAMAAAAAAB0ANX/AQAMAAAAAAB0ANb/AQAMAAAAAAB0AOP/AQAMAAAAAAB1AOL/AQAMAAAAAAB1AOP/AQAMAAAAAAB2AOP/AQAMAAAAAAB0AOT/AAAAAAAACQB1AOT/AAAAAAAACQBxAOz/AQAMAAAAAABwAOr/AQAMAAAAAABwAOf/AQAMAAAAAABwAOb/AQAMAAAAAABxAO7/AQAMAAAAAAByAO7/AQAMAAAAAABwAO7/AQAMAAAAAABvAO7/AQAMAAAAAABuAO//AQAMAAAAAABtAO//AQAMAAAAAABtAPD/AQAMAAAAAABsAPD/AQAMAAAAAABsAPH/AQAMAAAAAABrAPL/AQAMAAAAAABrAPP/AQAMAAAAAABrAPT/AQAMAAAAAABsAO//AQAMAAAAAABrAPX/AQAMAAAAAABsAPT/AQAMAAAAAABsAPP/AQAMAAAAAABsAPL/AQAMAAAAAABtAPL/AQAMAAAAAABtAPH/AQAMAAAAAABvAO//AQAMAAAAAABwAO//AQAMAAAAAABxAO//AQAMAAAAAAB3AO7/AQAMAAAAAAB4AO7/AQAMAAAAAAB5AO7/AQAMAAAAAAB6AO7/AQAMAAAAAAB9AO7/AQAMAAAAAAB+AO7/AQAMAAAAAAB/AO7/AQAMAAAAAACAAO7/AQAMAAAAAACBAO7/AQAMAAAAAACCAO7/AQAMAAAAAACDAO7/AQAMAAAAAACHAO7/AQAMAAAAAAB9AO//AQAMAAAAAAB+AO//AQAMAAAAAAB/AO//AQAMAAAAAACAAO//AQAMAAAAAACBAO//AQAMAAAAAACCAO//AQAMAAAAAACDAO//AQAMAAAAAACNAOP/AQAMAAAAAACNAOL/AQAMAAAAAACNAOH/AQAMAAAAAACMAOH/AQAMAAAAAACVAOz/AQAMAAAAAAClAOv/AQAMAAAAAACmAOv/AQAMAAAAAACnAOv/AQAMAAAAAAClAN//AQAMAAAAAACmAN//AQAMAAAAAACnAN//AQAMAAAAAACBAN//AQAMAAAAAACAAN//AQAMAAAAAACMAOv/AQAMAAAAAACMAOz/AQAMAAAAAACNAOz/AQAMAAAAAACJAO7/AQAMAAAAAACIAO7/AQAMAAAAAACKAO7/AQAMAAAAAACNAOv/AQAMAAAAAACOAOv/AQAMAAAAAACPAOv/AQAMAAAAAACPAOz/AQAMAAAAAACOAOz/AQAMAAAAAACNAO3/AQAMAAAAAACQAOT/AQAMAAAAAACPAOT/AQAMAAAAAACRAOT/AQAMAAAAAACSAOT/AQAMAAAAAACTAOP/AQAMAAAAAACLAOr/AQAMAAAAAACMAOr/AQAMAAAAAACNAOr/AQAMAAAAAACKAOv/AQAMAAAAAACJAOv/AQAMAAAAAACQAOv/AQAMAAAAAACoAOv/AQAMAAAAAACpAOz/AQAMAAAAAACoAOz/AQAMAAAAAACnAOz/AQAMAAAAAACmAOz/AQAMAAAAAACkAOv/AQAMAAAAAACkAN//AQAMAAAAAACoAN//AQAMAAAAAACpAN//AQAMAAAAAACqAN//AQAMAAAAAACpAOD/AQAMAAAAAACoAOD/AQAMAAAAAACnAOD/AQAMAAAAAACmAOD/AQAMAAAAAACrAN//AQAMAAAAAACpAOH/AQAMAAAAAACkAOz/AQAMAAAAAACqAOz/AQAMAAAAAACrAOz/AQAMAAAAAACqAO3/AQAMAAAAAACpAO3/AQAMAAAAAACrAO3/AQAMAAAAAACpAO7/AQAMAAAAAACBAPD/AQAMAAAAAACBAPH/AQAMAAAAAACCAPH/AQAMAAAAAACCAPD/AQAMAAAAAACDAPD/AQAMAAAAAACDAPH/AQAMAAAAAAB6AO//AQAMAAAAAAB5AO//AQAMAAAAAABuAPL/AQAMAAAAAGBuAPP/AQAMAAAAAGBtAPP/AQAMAAAAAGCSANn/AQAMAAAAAACTANn/AQAMAAAAAACSANr/AQAMAAAAAACTANj/AQAMAAAAAACMANr/AQAMAAAAAABhAN3/AQAMAAAAAABgAN3/AQAMAAAAAABfAN3/AQAMAAAAAABeAN3/AQAMAAAAAABdAN3/AQAMAAAAAABdANz/AQAMAAAAAABcANz/AQAMAAAAAABbANz/AQAMAAAAAABZANX/AQAMAAAAAABZANb/AQAMAAAAAABZANf/AQAMAAAAAABZANj/AQAMAAAAAABZANn/AQAMAAAAAABZANr/AQAMAAAAAABZANv/AQAMAAAAAABZANz/AQAMAAAAAABZAN3/AQAMAAAAAABaAN3/AQAMAAAAAABbAN3/AQAMAAAAAABcAN3/AQAMAAAAAABeAN7/AQAMAAAAAABfAN7/AQAMAAAAAABgAN7/AQAMAAAAAABhAN7/AQAMAAAAAABiAN7/AQAMAAAAAABjAN7/AQAMAAAAAABeANz/AQAMAAAAAABaANz/AQAMAAAAAABaANv/AQAMAAAAAABcANn/AQAMAAAAAABcANr/AQAMAAAAAABdANr/AQAMAAAAAABfANz/AQAMAAAAAABdANn/AQAMAAAAAABgANz/AQAMAAAAAABZAN7/AQAMAAAAAABaAN7/AQAMAAAAAABYANT/AQAMAAAAAABYANX/AQAMAAAAAABYANb/AQAMAAAAAABYANf/AQAMAAAAAACKANn/AQAMAAAAAABfAM3/AQAMAAAAAABgAM3/AQAMAAAAAABhAM3/AQAMAAAAAABiAM3/AQAMAAAAAABjAM3/AQAMAAAAAABkAM3/AQAMAAAAAABlAM3/AQAMAAAAAABmAM3/AQAMAAAAAABnAM3/AQAMAAAAAABoAM3/AQAMAAAAAABpAM3/AQAMAAAAAABqAM3/AQAMAAAAAABrAM3/AQAMAAAAAABsAM3/AQAMAAAAAABtAM3/AQAMAAAAAABuAM3/AQAMAAAAAABvAM3/AQAMAAAAAABwAM3/AQAMAAAAAABxAM3/AQAMAAAAAAByAM3/AQAMAAAAAABzAM3/AQAMAAAAAAB0AM3/AQAMAAAAAAB1AM3/AQAMAAAAAAB2AM3/AQAMAAAAAAB3AM3/AQAMAAAAAAB4AM3/AQAMAAAAAAB7AM3/AQAMAAAAAAB8AM3/AQAMAAAAAACSAMz/AQAMAAAAAACTAMz/AQAMAAAAAACTAMv/AQAMAAAAAACSAMv/AQAMAAAAAABSAMz/AQAMAAAAAABSAM3/AQAMAAAAAABRAMz/AQAMAAAAAABQAMz/AQAMAAAAAABTAMz/AQAMAAAAAABUAMz/AQAMAAAAAABUAM3/AQAMAAAAAABTAMv/AQAMAAAAAABSAMv/AQAMAAAAAABRAMv/AQAMAAAAAABQAMv/AQAMAAAAAABUAMv/AQAMAAAAAABTAMr/AQAMAAAAAABSAMr/AQAMAAAAAABRAMr/AQAMAAAAAABQAMr/AQAMAAAAAABUAMr/AQAMAAAAAAB8AMz/AQAMAAAAAAB7AMz/AQAMAAAAAAB6AMz/AQAMAAAAAAB5AMz/AQAMAAAAAAB4AMz/AQAMAAAAAAB3AMz/AQAMAAAAAAB2AMz/AQAMAAAAAAB1AMz/AQAMAAAAAAB0AMz/AQAMAAAAAABzAMz/AQAMAAAAAAByAMz/AQAMAAAAAABxAMz/AQAMAAAAAABwAMz/AQAMAAAAAABvAMz/AQAMAAAAAABuAMz/AQAMAAAAAABtAMz/AQAMAAAAAABsAMz/AQAMAAAAAABrAMz/AQAMAAAAAABqAMz/AQAMAAAAAABpAMz/AQAMAAAAAABoAMz/AQAMAAAAAABnAMz/AQAMAAAAAABmAMz/AQAMAAAAAABlAMz/AQAMAAAAAABkAMz/AQAMAAAAAABjAMz/AQAMAAAAAABiAMz/AQAMAAAAAABhAMz/AQAMAAAAAABgAMz/AQAMAAAAAABfAMz/AQAMAAAAAABeAM3/AQAMAAAAAABdAM3/AQAMAAAAAABcAM3/AQAMAAAAAACHAMv/AQAMAAAAAACGAMv/AQAMAAAAAACDAMv/AQAMAAAAAAB/AOr/AAAAAAAABACDAN//AAAAAAAABABvANL/AAAAAAAABACkAOH/AQAMAAAAAACkAOL/AQAMAAAAAAClAOD/AQAMAAAAAAClAOH/AQAMAAAAAACMAOf/AQAMAAAAAACKAOT/AQAMAAAAAACdAOz/AQAMAAAAAACkAN7/AQAMAAAAAACkAN3/AQAMAAAAAACkANz/AQAMAAAAAACkANv/AQAMAAAAAACoAN7/AQAMAAAAAACoAN3/AQAMAAAAAACcAOz/AQAMAAAAAACdAO3/AQAMAAAAAACeAOz/AQAMAAAAAACcAO3/AQAMAAAAAACbAOz/AQAMAAAAAACWAN//AQAMAAAAAACXAN//AQAMAAAAAACYAN//AQAMAAAAAACYAOD/AQAMAAAAAACTAOD/AQAMAAAAAACUANn/AQAMAAAAAACUANr/AQAMAAAAAACqAOv/AAAAAAAABACAANz/AQAMAAAAAAB9ANf/AQAMAAAAAABoAN3/AQAMAAAAAABoAN7/AQAMAAAAAABpAN7/AQAMAAAAAABmAN//AQAMAAAAAABmAOD/AQAMAAAAAABlAOD/AQAMAAAAAABlAN//AQAMAAAAAABnAOD/AQAMAAAAAABkAN//AQAMAAAAAABjAN//AQAMAAAAAABoAOH/AQAMAAAAAABoANj/AQAMAAAAAABoANn/AQAMAAAAAABnANr/AQAMAAAAAABnANn/AQAMAAAAAABoANf/AQAMAAAAAABhANX/AQAMAAAAAABYANj/AQAMAAAAAABYANn/AQAMAAAAAABYANr/AQAMAAAAAABYANv/AQAMAAAAAABXANv/AQAMAAAAAABXANr/AQAMAAAAAABXANn/AQAMAAAAAABXANj/AQAMAAAAAABXANf/AQAMAAAAAABXANb/AQAMAAAAAABXANX/AQAMAAAAAABWANX/AQAMAAAAAABWANT/AQAMAAAAAABXANT/AQAMAAAAAABVANT/AQAMAAAAAABWANb/AQAMAAAAAABWANf/AQAMAAAAAABWANj/AQAMAAAAAABWANn/AQAMAAAAAABVANb/AQAMAAAAAABVANX/AQAMAAAAAABbAM3/AQAMAAAAAABaAM3/AQAMAAAAAABZAM3/AQAMAAAAAABYAM3/AQAMAAAAAABXAM3/AQAMAAAAAABWAM3/AQAMAAAAAABVAM3/AQAMAAAAAABVAMz/AQAMAAAAAABWAMz/AQAMAAAAAABXAMz/AQAMAAAAAABYAMz/AQAMAAAAAABZAMz/AQAMAAAAAABaAMz/AQAMAAAAAABbAMz/AQAMAAAAAABcAMz/AQAMAAAAAABdAMz/AQAMAAAAAABeAMz/AQAMAAAAAACCAMv/AQAMAAAAAAB/AMv/AQAMAAAAAAB+AMv/AQAMAAAAAAB9AMv/AQAMAAAAAAB8AMv/AQAMAAAAAAB7AMv/AQAMAAAAAAB6AMv/AQAMAAAAAAB5AMv/AQAMAAAAAAB4AMv/AQAMAAAAAAB3AMv/AQAMAAAAAAB2AMv/AQAMAAAAAAB1AMv/AQAMAAAAAAB0AMv/AQAMAAAAAABzAMv/AQAMAAAAAAByAMv/AQAMAAAAAABxAMv/AQAMAAAAAABwAMv/AQAMAAAAAABvAMv/AQAMAAAAAABuAMv/AQAMAAAAAABtAMv/AQAMAAAAAABsAMv/AQAMAAAAAABrAMv/AQAMAAAAAABqAMv/AQAMAAAAAABpAMv/AQAMAAAAAABoAMv/AQAMAAAAAABnAMv/AQAMAAAAAABfAMv/AQAMAAAAAABeAMv/AQAMAAAAAABdAMv/AQAMAAAAAABcAMv/AQAMAAAAAABgAMv/AQAMAAAAAABhAMv/AQAMAAAAAABiAMv/AQAMAAAAAABjAMv/AQAMAAAAAABkAMv/AQAMAAAAAABlAMv/AQAMAAAAAABmAMv/AQAMAAAAAABbAMv/AQAMAAAAAABaAMv/AQAMAAAAAABZAMv/AQAMAAAAAABYAMv/AQAMAAAAAABXAMv/AQAMAAAAAABWAMv/AQAMAAAAAABVAMv/AQAMAAAAAABcANX/AQAMAAAAAABdANX/AQAMAAAAAABpANL/AQAMAAAAAABqANP/AQAMAAAAAABoANP/AQAMAAAAAABpANP/AQAMAAAAAACvAN3/AQAMAAAAAACwAN3/AQAMAAAAAACxAN3/AQAMAAAAAACuAOT/AQAMAAAAAACsAOT/AQAMAAAAAACsAOX/AAAAAAAACQCtAOX/AAAAAAAACQCuAOX/AAAAAAAACQCsAOP/AAAAAAAACQCuAOP/AAAAAAAACQCxAN7/AAAAAAAACQCwAN7/AAAAAAAACQCvAN7/AAAAAAAACQCvANz/AAAAAAAACQCwANz/AAAAAAAACQCxANz/AAAAAAAACQCuANb/AQAMAAAAAACtANb/AQAMAAAAAACsANb/AQAMAAAAAABoANL/AQAMAAAAAABoANH/AQAMAAAAAABmAM7/AQAMAAAAAABlAM7/AQAMAAAAAABnAM7/AQAMAAAAAABcANH/AQAMAAAAAABdANH/AQAMAAAAAABeANH/AQADAAAAAABfANH/AQADAAAAAABgANH/AQADAAAAAABhANH/AQADAAAAAABiANH/AQADAAAAAABjANH/AQADAAAAAABkANH/AQADAAAAAABlANH/AQADAAAAAABmANH/AQADAAAAAABnANH/AQADAAAAAABbANn/AQADAAAAAABaANn/AQADAAAAAABbANf/AQADAAAAAABaANf/AQADAAAAAABaANX/AQADAAAAAABbANP/AQADAAAAAABaANP/AQADAAAAAABbANX/AQADAAAAAABbANL/AQADAAAAAABoAM7/AQAMAAAAAABpAM7/AQAMAAAAAABqAM7/AQAMAAAAAABrAM7/AQAMAAAAAABsAM7/AQAMAAAAAABtAM7/AQAMAAAAAABuAM7/AQAMAAAAAABuAM//AQAMAAAAAABvAM//AQAMAAAAAABvAM7/AQAMAAAAAABwAM7/AQAMAAAAAABwAM//AQAMAAAAAABuAND/AQAMAAAAAABvAND/AQAMAAAAAABbANT/AQADAAAAAABbANb/AQADAAAAAABbANj/AQADAAAAAABaANj/AQADAAAAAABaANb/AQADAAAAAABaANT/AQADAAAAAABaANL/AQADAAAAAABbANH/AQADAAAAAABaANH/AQADAAAAAABbANr/AQADAAAAAABaANr/AQADAAAAAABcANL/AQAMAAAAAABxAM7/AQAMAAAAAAB3AM7/AQAMAAAAAAB4AM7/AQAMAAAAAACEANP/AQAMAAAAAACFANP/AQAMAAAAAACKAMv/AQAMAAAAAACLAMv/AQAMAAAAAAB7AM7/AQAMAAAAAACNANT/AQAMAAAAAACNANP/AQAMAAAAAACEANX/AQAMAAAAAAB/ANb/AQAMAAAAAAB+ANb/AQAMAAAAAACKANb/AQAMAAAAAACLANb/AQAMAAAAAACNAMr/AQAMAAAAAACMAMr/AQAMAAAAAACLAMr/AQAMAAAAAACKAMr/AQAMAAAAAACJAMr/AQAMAAAAAACIAMr/AQAMAAAAAACHAMr/AQAMAAAAAACGAMr/AQAMAAAAAACFAMr/AQAMAAAAAACEAMr/AQAMAAAAAACDAMr/AQAMAAAAAACCAMr/AQAMAAAAAACBAMr/AQAMAAAAAACAAMr/AQAMAAAAAAB/AMr/AQAMAAAAAAB+AMr/AQAMAAAAAAB9AMr/AQAMAAAAAACOAMv/AQAMAAAAAACOAMz/AQAMAAAAAACOAMr/AQAMAAAAAACOANT/AQAMAAAAAACOANX/AQAMAAAAAACOANP/AQAMAAAAAACPAMr/AQAMAAAAAACPAMv/AQAMAAAAAACPAMz/AQAMAAAAAACPANX/AQAMAAAAAACPANT/AQAMAAAAAACPANP/AQAMAAAAAAB8AM7/AQAMAAAAAAB/AMz/AAAAAAAACQB+AMz/AAAAAAAACQCDAMz/AAAAAAAACQCCAMz/AAAAAAAACQCGAMz/AAAAAAAACQCHAMz/AAAAAAAACQCKAMz/AAAAAAAACQCLAMz/AAAAAAAACQB6AM3/AQAMAAAAAAB5AM3/AQAMAAAAAAB5AM7/AQAMAAAAAAB6AM7/AQAMAAAAAACSAMr/AQAMAAAAAACSAMn/AQAMAAAAAACTAMn/AQAMAAAAAACTAMr/AQAMAAAAAABNAML/AQAMAAAAAABNAMP/AQAMAAAAAABOAML/AQAMAAAAAABOAMP/AQAMAAAAAABOAMT/AQAMAAAAAABPAML/AQAMAAAAAABPAMP/AQAMAAAAAABQAML/AQAMAAAAAABQAMP/AQAMAAAAAABRAML/AQAMAAAAAABRAMP/AQAMAAAAAABRAMT/AAAAAAAACQBSAML/AQAMAAAAAABSAMP/AQAMAAAAAABPAMT/AQAMAAAAAABSAMT/AAAAAAAACQBTAML/AQAMAAAAAABTAMP/AQAMAAAAAABUAML/AQAMAAAAAABUAMP/AQAMAAAAAABUAMT/AQAMAAAAAABVAML/AQAMAAAAAABVAMP/AQAMAAAAAABVAMT/AQAMAAAAAABWAML/AQAMAAAAAABWAMP/AQAMAAAAAAB/AMn/AQAMAAAAAACAAMn/AQAMAAAAAACBAMn/AQAMAAAAAACCAMn/AQAMAAAAAACDAMn/AQAMAAAAAACEAMn/AQAMAAAAAACFAMn/AQAMAAAAAACGAMn/AQAMAAAAAACHAMn/AQAMAAAAAACIAMn/AQAMAAAAAACJAMn/AQAMAAAAAACKAMn/AQAMAAAAAACLAMn/AQAMAAAAAACMAMn/AQAMAAAAAACNAMn/AQAMAAAAAACOAMn/AQAMAAAAAACPAMn/AQAMAAAAAAB8AMr/AQAMAAAAAAB+AMn/AQAMAAAAAABUAMn/AQAMAAAAAABTAMn/AQAMAAAAAABSAMn/AQAMAAAAAABRAMn/AQAMAAAAAABQAMn/AQAMAAAAAABWAMr/AQAMAAAAAABVAMr/AQAMAAAAAAB2AM7/AQAMAAAAAAByAM7/AQAMAAAAAAB/AMj/AQAMAAAAAACOAMj/AQAMAAAAAACNAMj/AQAMAAAAAAB+AMj/AQAMAAAAAAB+AMf/AQAMAAAAAAB+AMb/AQAMAAAAAAB+AMX/AQAMAAAAAACAAMj/AQAMAAAAAACBAMf/AQADAAAAAAB9AMX/AQAMAAAAAAB9AMb/AQAMAAAAAAB9AMf/AQAMAAAAAAB8AMb/AQAMAAAAAAB8AMX/AQAMAAAAAAB7AMX/AQAMAAAAAAB6AMX/AQAMAAAAAAB7AMb/AQAMAAAAAACEAMT/AQAMAAAAAACFAMT/AQAMAAAAAACGAMT/AQAMAAAAAACBAMP/AQAMAAAAAACAAML/AQAMAAAAAAB/AML/AQAMAAAAAACDAMT/AQAMAAAAAACCAMT/AQAMAAAAAACCAMP/AQAMAAAAAACBAML/AQAMAAAAAACHAMT/AQAMAAAAAACIAMT/AQAMAAAAAACJAMT/AQAMAAAAAACKAMT/AQAMAAAAAACDAMX/AQAMAAAAAACEAMX/AQAMAAAAAACFAMX/AQAMAAAAAACGAMX/AQAMAAAAAACHAMX/AQAMAAAAAACIAMX/AQAMAAAAAACJAMX/AQAMAAAAAACKAMX/AQAMAAAAAACLAMX/AQAMAAAAAACLAMT/AQAMAAAAAACMAMT/AQAMAAAAAACMAMX/AQAMAAAAAACNAMX/AQAMAAAAAACNAMT/AQAMAAAAAACOAMT/AQAMAAAAAACOAMX/AQAMAAAAAACPAMT/AQAMAAAAAACTAMX/AQAMAAAAAACTAMb/AQAMAAAAAACTAMf/AQAMAAAAAACTAMj/AQAMAAAAAACTAMT/AQAMAAAAAACSAMT/AQAMAAAAAACSAL3/AQAMAAAAAACTAL3/AQAMAAAAAACTALz/AQAMAAAAAACSALz/AQAMAAAAAACTALv/AQAMAAAAAACSALv/AQAMAAAAAACUAMT/AQAMAAAAAACVAMT/AQAMAAAAAACWAMT/AQAMAAAAAACWAMX/AQAMAAAAAACVAMX/AQAMAAAAAACUAMX/AQAMAAAAAACUAMb/AQAMAAAAAACUALz/AQAMAAAAAACUAL3/AQAMAAAAAACVAL3/AQAMAAAAAACWAL3/AQAMAAAAAAB/AMH/AQAMAAAAAACAAMH/AQAMAAAAAACBAMH/AQAMAAAAAACCAMH/AQAMAAAAAACCAML/AQAMAAAAAACDAML/AQAMAAAAAACDAMP/AQAMAAAAAACEAMP/AQAMAAAAAAB+AML/AQAMAAAAAACQAMT/AQAMAAAAAACRAMT/AQAMAAAAAACUAMf/AQAMAAAAAACUAMj/AQAMAAAAAACVAMb/AQAMAAAAAACWAMb/AQAMAAAAAACXAMX/AQAMAAAAAACXAMT/AQAMAAAAAACYAMT/AQAMAAAAAACRAMX/AAAAAAAACQCQAMX/AAAAAAAACQA=")
+tile_set = ExtResource("4_oxa4u")
+
+[node name="Lasers" type="Node2D" parent="."]
+
+[node name="Tutorial" type="Node2D" parent="Lasers"]
+
+[node name="TerminusLaser3" parent="Lasers/Tutorial" instance=ExtResource("13_trrh8")]
+position = Vector2(1890, -84)
+rotation = -1.5707964
+laser_range = 264.883
+
+[node name="TerminusLaser6" parent="Lasers/Tutorial" instance=ExtResource("13_trrh8")]
+position = Vector2(2190, -84)
+laser_range = 281.35
+
+[node name="TerminusLaser7" parent="Lasers/Tutorial" instance=ExtResource("13_trrh8")]
+position = Vector2(2910, -420)
+rotation = -4.712389
+laser_range = 703.58
+
+[node name="TerminusLaser8" parent="Lasers/Tutorial" instance=ExtResource("13_trrh8")]
+position = Vector2(3570, -420)
+rotation = -1.5707964
+laser_range = 727.085
+
+[node name="TerminusLaser9" parent="Lasers/Tutorial" instance=ExtResource("13_trrh8")]
+position = Vector2(4530, -1092)
+rotation = -3.1415927
+laser_range = 797.39
+
+[node name="TerminusLaser10" parent="Lasers/Tutorial" instance=ExtResource("13_trrh8")]
+position = Vector2(4470, -1092)
+rotation = -3.1415927
+laser_range = 797.39
+
+[node name="TerminusLaser12" parent="Lasers/Tutorial" instance=ExtResource("13_trrh8")]
+position = Vector2(4410, -1092)
+rotation = -3.1415927
+laser_range = 797.39
+
+[node name="TerminusLaser13" parent="Lasers/Tutorial" instance=ExtResource("13_trrh8")]
+position = Vector2(5610, -364)
+rotation = -6.2831855
+laser_range = 420.44
+cube_mode = 3
+
+[node name="TerminusLaser14" parent="Lasers/Tutorial" instance=ExtResource("13_trrh8")]
+position = Vector2(5670, -364)
+rotation = -6.2831855
+laser_range = 420.44
+cube_mode = 3
+
+[node name="TerminusLaser15" parent="Lasers/Tutorial" instance=ExtResource("13_trrh8")]
+position = Vector2(5730, -364)
+rotation = -6.2831855
+laser_range = 420.44
+cube_mode = 3
+
+[node name="TerminusLaser16" parent="Lasers/Tutorial" instance=ExtResource("13_trrh8")]
+position = Vector2(6210, 84)
+rotation = -6.2831855
+laser_range = 1920.475
+cube_mode = 2
+cube_move_force = 100.0
+
+[node name="TerminusLaser17" parent="Lasers/Tutorial" instance=ExtResource("13_trrh8")]
+position = Vector2(6270, 84)
+rotation = -6.2831855
+laser_range = 1920.475
+cube_mode = 2
+cube_move_force = 100.0
+
+[node name="TerminusLaser18" parent="Lasers/Tutorial" instance=ExtResource("13_trrh8")]
+position = Vector2(6990, 196)
+rotation = -6.2831855
+laser_range = 1817.845
+cube_mode = 1
+
+[node name="TerminusLaser19" parent="Lasers/Tutorial" instance=ExtResource("13_trrh8")]
+position = Vector2(7050, 196)
+rotation = -6.2831855
+laser_range = 1817.845
+cube_mode = 1
+
+[node name="HookIsland" type="Node2D" parent="Lasers"]
+
+[node name="Guardbeams" type="Node2D" parent="Lasers/HookIsland"]
+
+[node name="TerminusLaser" parent="Lasers/HookIsland/Guardbeams" instance=ExtResource("13_trrh8")]
+position = Vector2(4830, -2716)
+rotation = -1.5707964
+laser_range = 30000.0
+cube_mode = 3
+
+[node name="TerminusLaser2" parent="Lasers/HookIsland/Guardbeams" instance=ExtResource("13_trrh8")]
+position = Vector2(4830, -2660)
+rotation = -1.5707964
+laser_range = 30000.0
+cube_mode = 3
+
+[node name="TerminusLaser3" parent="Lasers/HookIsland/Guardbeams" instance=ExtResource("13_trrh8")]
+position = Vector2(4830, -2604)
+rotation = -1.5707964
+laser_range = 30000.0
+cube_mode = 3
+
+[node name="TerminusLaser8" parent="Lasers/HookIsland/Guardbeams" instance=ExtResource("13_trrh8")]
+position = Vector2(4830, -2548)
+rotation = -1.5707964
+laser_range = 30000.0
+cube_mode = 3
+
+[node name="TerminusLaser4" parent="Lasers/HookIsland/Guardbeams" instance=ExtResource("13_trrh8")]
+position = Vector2(8850, -2548)
+rotation = -4.712389
+laser_range = 30000.0
+cube_mode = 3
+
+[node name="TerminusLaser5" parent="Lasers/HookIsland/Guardbeams" instance=ExtResource("13_trrh8")]
+position = Vector2(8850, -2604)
+rotation = -4.712389
+laser_range = 30000.0
+cube_mode = 3
+
+[node name="TerminusLaser6" parent="Lasers/HookIsland/Guardbeams" instance=ExtResource("13_trrh8")]
+position = Vector2(8850, -2660)
+rotation = -4.712389
+laser_range = 30000.0
+cube_mode = 3
+
+[node name="TerminusLaser7" parent="Lasers/HookIsland/Guardbeams" instance=ExtResource("13_trrh8")]
+position = Vector2(8850, -2716)
+rotation = -4.712389
+laser_range = 30000.0
+cube_mode = 3
+
+[node name="Section1" type="Node2D" parent="Lasers/HookIsland"]
+
+[node name="TerminusLaser" parent="Lasers/HookIsland/Section1" instance=ExtResource("13_trrh8")]
+position = Vector2(7830, -1484)
+rotation = -3.1415927
+laser_range = 500.0
+cube_mode = 3
+intervals_enabled = true
+activated_interval = 1.5
+disabled_interval = 1.5
+
+[node name="TerminusLaser2" parent="Lasers/HookIsland/Section1" instance=ExtResource("13_trrh8")]
+position = Vector2(7950, -1540)
+rotation = -3.1415927
+laser_range = 500.0
+cube_mode = 3
+intervals_enabled = true
+initial_offset = 1.5
+activated_interval = 1.5
+disabled_interval = 1.5
+
+[node name="TerminusLaser3" parent="Lasers/HookIsland/Section1" instance=ExtResource("13_trrh8")]
+position = Vector2(8070, -1540)
+rotation = -3.1415927
+laser_range = 500.0
+cube_mode = 3
+intervals_enabled = true
+activated_interval = 1.5
+disabled_interval = 1.5
+
+[node name="TerminusLaser4" parent="Lasers/HookIsland/Section1" instance=ExtResource("13_trrh8")]
+position = Vector2(8190, -1540)
+rotation = -3.1415927
+laser_range = 500.0
+cube_mode = 3
+intervals_enabled = true
+initial_offset = 1.5
+activated_interval = 1.5
+disabled_interval = 1.5
+
+[node name="Section2" type="Node2D" parent="Lasers/HookIsland"]
+
+[node name="TerminusLaser5" parent="Lasers/HookIsland/Section2" instance=ExtResource("13_trrh8")]
+position = Vector2(9810, -1932)
+rotation = -1.5707966
+laser_range = 535.705
+cube_mode = 2
+activated_interval = 3.0
+disabled_interval = 2.0
+
+[node name="TerminusLaser8" parent="Lasers/HookIsland/Section2" instance=ExtResource("13_trrh8")]
+position = Vector2(10410, -532)
+laser_range = 800.0
+cube_mode = 1
+cube_move_force = 125.0
+activated_interval = 3.0
+disabled_interval = 2.0
+
+[node name="TerminusLaser9" parent="Lasers/HookIsland/Section2" instance=ExtResource("13_trrh8")]
+position = Vector2(10590, -924)
+laser_range = 800.0
+cube_mode = 1
+cube_move_force = 125.0
+activated_interval = 3.0
+disabled_interval = 2.0
+
+[node name="TerminusLaser10" parent="Lasers/HookIsland/Section2" instance=ExtResource("13_trrh8")]
+position = Vector2(10410, -1540)
+laser_range = 600.0
+cube_mode = 1
+cube_move_force = 125.0
+activated_interval = 3.0
+disabled_interval = 2.0
+
+[node name="TerminusLaser" parent="Lasers/HookIsland/Section2" instance=ExtResource("13_trrh8")]
+position = Vector2(8850, -1652)
+rotation = -4.712389
+laser_range = 1050.0
+cube_mode = 3
+
+[node name="TerminusLaser2" parent="Lasers/HookIsland/Section2" instance=ExtResource("13_trrh8")]
+position = Vector2(9870, -1764)
+rotation = -7.853982
+laser_range = 750.0
+cube_mode = 3
+
+[node name="TerminusLaser3" parent="Lasers/HookIsland/Section2" instance=ExtResource("13_trrh8")]
+position = Vector2(9270, -812)
+rotation = -6.2831855
+laser_range = 1500.0
+
+[node name="TerminusLaser6" parent="Lasers/HookIsland/Section2" instance=ExtResource("13_trrh8")]
+position = Vector2(9690, -812)
+rotation = -6.2831855
+laser_range = 1500.0
+
+[node name="TerminusLaser7" parent="Lasers/HookIsland/Section2" instance=ExtResource("13_trrh8")]
+position = Vector2(8850, -2100)
+rotation = -9.424778
+laser_range = 400.0
+
+[node name="TerminusLaser4" parent="Lasers/HookIsland/Section2" instance=ExtResource("13_trrh8")]
+position = Vector2(9990, -1876)
+rotation = -6.2831855
+laser_range = 651.175
+cube_mode = 3
+intervals_enabled = true
+activated_interval = 3.0
+disabled_interval = 2.0
+
+[node name="Section3" type="Node2D" parent="Lasers/HookIsland"]
+
+[node name="TerminusLaser" parent="Lasers/HookIsland/Section3" instance=ExtResource("13_trrh8")]
+position = Vector2(8730, -2212)
+rotation = -3.1415927
+laser_range = 500.0
+cube_mode = 3
+intervals_enabled = true
+activated_interval = 1.5
+disabled_interval = 1.5
+
+[node name="TerminusLaser2" parent="Lasers/HookIsland/Section3" instance=ExtResource("13_trrh8")]
+position = Vector2(8610, -2212)
+rotation = -3.1415927
+laser_range = 500.0
+cube_mode = 3
+intervals_enabled = true
+initial_offset = 0.25
+activated_interval = 1.5
+disabled_interval = 1.5
+
+[node name="TerminusLaser3" parent="Lasers/HookIsland/Section3" instance=ExtResource("13_trrh8")]
+position = Vector2(8490, -2156)
+rotation = -3.1415927
+laser_range = 500.0
+cube_mode = 3
+intervals_enabled = true
+initial_offset = 0.5
+activated_interval = 1.5
+disabled_interval = 1.5
+
+[node name="TerminusLaser4" parent="Lasers/HookIsland/Section3" instance=ExtResource("13_trrh8")]
+position = Vector2(8370, -2156)
+rotation = -3.1415927
+laser_range = 500.0
+cube_mode = 3
+intervals_enabled = true
+initial_offset = 0.75
+activated_interval = 1.5
+disabled_interval = 1.5
+
+[node name="TerminusLaser5" parent="Lasers/HookIsland/Section3" instance=ExtResource("13_trrh8")]
+position = Vector2(8250, -2212)
+rotation = -3.1415927
+laser_range = 500.0
+cube_mode = 3
+intervals_enabled = true
+initial_offset = 1.0
+activated_interval = 1.5
+disabled_interval = 1.5
+
+[node name="TerminusLaser6" parent="Lasers/HookIsland/Section3" instance=ExtResource("13_trrh8")]
+position = Vector2(8130, -2212)
+rotation = -3.1415927
+laser_range = 500.0
+cube_mode = 3
+intervals_enabled = true
+initial_offset = 1.25
+activated_interval = 1.5
+disabled_interval = 1.5
+
+[node name="TerminusLaser7" parent="Lasers/HookIsland/Section3" instance=ExtResource("13_trrh8")]
+position = Vector2(8010, -2268)
+rotation = -3.1415927
+laser_range = 500.0
+cube_mode = 3
+intervals_enabled = true
+initial_offset = 1.5
+activated_interval = 1.5
+disabled_interval = 1.5
+
+[node name="Section4" type="Node2D" parent="Lasers/HookIsland"]
+
+[node name="TerminusLaser8" parent="Lasers/HookIsland/Section4" instance=ExtResource("13_trrh8")]
+position = Vector2(7470, -2268)
+rotation = 3.1415925
+laser_range = 500.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser9" parent="Lasers/HookIsland/Section4" instance=ExtResource("13_trrh8")]
+position = Vector2(7410, -2268)
+rotation = 3.1415925
+laser_range = 500.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser10" parent="Lasers/HookIsland/Section4" instance=ExtResource("13_trrh8")]
+position = Vector2(7350, -2268)
+rotation = 3.1415925
+laser_range = 500.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser11" parent="Lasers/HookIsland/Section4" instance=ExtResource("13_trrh8")]
+position = Vector2(7290, -2268)
+rotation = 3.1415925
+laser_range = 500.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser12" parent="Lasers/HookIsland/Section4" instance=ExtResource("13_trrh8")]
+position = Vector2(7230, -2268)
+rotation = 3.1415925
+laser_range = 500.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser13" parent="Lasers/HookIsland/Section4" instance=ExtResource("13_trrh8")]
+position = Vector2(7170, -2268)
+rotation = 3.1415925
+laser_range = 500.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser14" parent="Lasers/HookIsland/Section4" instance=ExtResource("13_trrh8")]
+position = Vector2(7110, -2268)
+rotation = 3.1415925
+laser_range = 500.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser15" parent="Lasers/HookIsland/Section4" instance=ExtResource("13_trrh8")]
+position = Vector2(7050, -2268)
+rotation = 3.1415925
+laser_range = 500.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser16" parent="Lasers/HookIsland/Section4" instance=ExtResource("13_trrh8")]
+position = Vector2(6990, -2268)
+rotation = 3.1415925
+laser_range = 500.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser17" parent="Lasers/HookIsland/Section4" instance=ExtResource("13_trrh8")]
+position = Vector2(6930, -2268)
+rotation = 3.1415925
+laser_range = 500.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser18" parent="Lasers/HookIsland/Section4" instance=ExtResource("13_trrh8")]
+position = Vector2(6870, -2268)
+rotation = 3.1415925
+laser_range = 500.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser19" parent="Lasers/HookIsland/Section4" instance=ExtResource("13_trrh8")]
+position = Vector2(6810, -2268)
+rotation = 3.1415925
+laser_range = 500.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser20" parent="Lasers/HookIsland/Section4" instance=ExtResource("13_trrh8")]
+position = Vector2(6750, -2268)
+rotation = 3.1415925
+laser_range = 500.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser21" parent="Lasers/HookIsland/Section4" instance=ExtResource("13_trrh8")]
+position = Vector2(6690, -2268)
+rotation = 3.1415925
+laser_range = 500.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser22" parent="Lasers/HookIsland/Section4" instance=ExtResource("13_trrh8")]
+position = Vector2(6630, -2268)
+rotation = 3.1415925
+laser_range = 500.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser23" parent="Lasers/HookIsland/Section4" instance=ExtResource("13_trrh8")]
+position = Vector2(6570, -2268)
+rotation = 3.1415925
+laser_range = 500.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser24" parent="Lasers/HookIsland/Section4" instance=ExtResource("13_trrh8")]
+position = Vector2(6450, -2212)
+rotation = 1.5707964
+laser_range = 1110.0
+cube_mode = 2
+cube_move_force = 110.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="Section5" type="Node2D" parent="Lasers/HookIsland"]
+
+[node name="WindmillSpinner" parent="Lasers/HookIsland/Section5" node_paths=PackedStringArray("notifier") instance=ExtResource("8_8sfo1")]
+position = Vector2(5850, -2380)
+spin_speed = 30.0
+notifier = NodePath("VisibleOnScreenNotifier2D")
+
+[node name="TerminusLaser8" parent="Lasers/HookIsland/Section5/WindmillSpinner" instance=ExtResource("13_trrh8")]
+position = Vector2(0, 56)
+rotation = 3.1415925
+laser_range = 600.585
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser9" parent="Lasers/HookIsland/Section5/WindmillSpinner" instance=ExtResource("13_trrh8")]
+position = Vector2(60, 0)
+rotation = 1.5707964
+laser_range = 600.585
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser10" parent="Lasers/HookIsland/Section5/WindmillSpinner" instance=ExtResource("13_trrh8")]
+position = Vector2(0, -56)
+laser_range = 600.585
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser11" parent="Lasers/HookIsland/Section5/WindmillSpinner" instance=ExtResource("13_trrh8")]
+position = Vector2(-60, 0)
+rotation = -1.5707964
+laser_range = 600.585
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser12" parent="Lasers/HookIsland/Section5/WindmillSpinner" instance=ExtResource("13_trrh8")]
+rotation = -2.3561945
+laser_range = 600.585
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser13" parent="Lasers/HookIsland/Section5/WindmillSpinner" instance=ExtResource("13_trrh8")]
+rotation = -3.926991
+laser_range = 600.585
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser14" parent="Lasers/HookIsland/Section5/WindmillSpinner" instance=ExtResource("13_trrh8")]
+rotation = -5.4977875
+laser_range = 600.585
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser15" parent="Lasers/HookIsland/Section5/WindmillSpinner" instance=ExtResource("13_trrh8")]
+rotation = -7.0685835
+laser_range = 600.585
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="Lasers/HookIsland/Section5/WindmillSpinner"]
+rect = Rect2(-780, -780, 1560, 1560)
+
+[node name="TerminusLaser8" parent="Lasers/HookIsland/Section5" instance=ExtResource("13_trrh8")]
+position = Vector2(6570, -2702.838)
+rotation = 4.712389
+laser_range = 323.825
+cube_mode = 2
+cube_move_force = 350.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser9" parent="Lasers/HookIsland/Section5" instance=ExtResource("13_trrh8")]
+position = Vector2(6570, -2660)
+rotation = 4.712389
+laser_range = 323.825
+cube_mode = 2
+cube_move_force = 350.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="Section6" type="Node2D" parent="Lasers/HookIsland"]
+
+[node name="TerminusLaser8" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(7600.345, -2380)
+rotation = 6.2831855
+laser_range = 575.0
+cube_mode = 1
+cube_move_force = 125.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser9" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(7650, -2380)
+rotation = 6.2831855
+laser_range = 575.0
+cube_mode = 1
+cube_move_force = 125.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser10" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(7830, -2380)
+rotation = 6.2831855
+laser_range = 575.0
+cube_mode = 1
+cube_move_force = 125.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser11" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(7890, -2380)
+rotation = 6.2831855
+laser_range = 575.0
+cube_mode = 1
+cube_move_force = 125.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser12" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(8070, -2380)
+rotation = 6.2831855
+laser_range = 575.0
+cube_mode = 1
+cube_move_force = 125.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser13" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(8130, -2380)
+rotation = 6.2831855
+laser_range = 575.0
+cube_mode = 1
+cube_move_force = 125.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser14" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(8310, -2380)
+rotation = 6.2831855
+laser_range = 575.0
+cube_mode = 1
+cube_move_force = 125.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser15" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(8370, -2380)
+rotation = 6.2831855
+laser_range = 575.0
+cube_mode = 1
+cube_move_force = 125.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser16" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(8670, -2380)
+rotation = 6.2831855
+laser_range = 800.0
+cube_mode = 1
+cube_move_force = 125.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser17" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(8730, -2380)
+rotation = 6.2831855
+laser_range = 800.0
+cube_mode = 1
+cube_move_force = 125.0
+activated_interval = 1.2
+disabled_interval = 1.2
+
+[node name="TerminusLaser18" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(8430, -2940)
+rotation = 9.424778
+laser_range = 500.0
+cube_mode = 3
+cube_move_force = 350.0
+intervals_enabled = true
+activated_interval = 3.0
+disabled_interval = 3.0
+
+[node name="TerminusLaser19" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(8490, -2940)
+rotation = 9.424778
+laser_range = 500.0
+cube_mode = 3
+cube_move_force = 350.0
+intervals_enabled = true
+activated_interval = 3.0
+disabled_interval = 3.0
+
+[node name="TerminusLaser20" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(8190, -2940)
+rotation = 9.424778
+laser_range = 500.0
+cube_mode = 3
+cube_move_force = 350.0
+intervals_enabled = true
+activated_interval = 3.0
+disabled_interval = 3.0
+
+[node name="TerminusLaser21" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(8250, -2940)
+rotation = 9.424778
+laser_range = 500.0
+cube_mode = 3
+cube_move_force = 350.0
+intervals_enabled = true
+activated_interval = 3.0
+disabled_interval = 3.0
+
+[node name="TerminusLaser22" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(7950, -2940)
+rotation = 9.424778
+laser_range = 500.0
+cube_mode = 3
+cube_move_force = 350.0
+intervals_enabled = true
+activated_interval = 3.0
+disabled_interval = 3.0
+
+[node name="TerminusLaser23" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(8010, -2940)
+rotation = 9.424778
+laser_range = 500.0
+cube_mode = 3
+cube_move_force = 350.0
+intervals_enabled = true
+activated_interval = 3.0
+disabled_interval = 3.0
+
+[node name="TerminusLaser24" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(7710, -2940)
+rotation = 9.424778
+laser_range = 500.0
+cube_mode = 3
+cube_move_force = 350.0
+intervals_enabled = true
+activated_interval = 3.0
+disabled_interval = 3.0
+
+[node name="TerminusLaser25" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(7770, -2940)
+rotation = 9.424778
+laser_range = 500.0
+cube_mode = 3
+cube_move_force = 350.0
+intervals_enabled = true
+activated_interval = 3.0
+disabled_interval = 3.0
+
+[node name="TerminusLaser26" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(8550, -2828)
+rotation = 9.424778
+laser_range = 350.0
+cube_move_force = 350.0
+activated_interval = 3.0
+disabled_interval = 3.0
+
+[node name="TerminusLaser27" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(8610, -2828)
+rotation = 9.424778
+laser_range = 350.0
+cube_move_force = 350.0
+activated_interval = 3.0
+disabled_interval = 3.0
+
+[node name="TerminusLaser" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(7230, -2716)
+rotation = -3.1415927
+laser_range = 500.0
+cube_mode = 3
+intervals_enabled = true
+activated_interval = 1.5
+disabled_interval = 1.5
+
+[node name="TerminusLaser2" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(7290, -2716)
+rotation = -3.1415927
+laser_range = 500.0
+cube_mode = 3
+intervals_enabled = true
+initial_offset = 0.25
+activated_interval = 1.5
+disabled_interval = 1.5
+
+[node name="TerminusLaser3" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(7350, -2716)
+rotation = -3.1415927
+laser_range = 500.0
+cube_mode = 3
+intervals_enabled = true
+initial_offset = 0.5
+activated_interval = 1.5
+disabled_interval = 1.5
+
+[node name="TerminusLaser4" parent="Lasers/HookIsland/Section6" instance=ExtResource("13_trrh8")]
+position = Vector2(7410, -2716)
+rotation = -3.1415927
+laser_range = 500.0
+cube_mode = 3
+intervals_enabled = true
+initial_offset = 0.75
+activated_interval = 1.5
+disabled_interval = 1.5
+
+[node name="Section7" type="Node2D" parent="Lasers/HookIsland"]
+
+[node name="TerminusLaser19" parent="Lasers/HookIsland/Section7" instance=ExtResource("13_trrh8")]
+position = Vector2(7530, -3052)
+rotation = 10.995575
+laser_range = 2500.0
+cube_mode = 3
+cube_move_force = 350.0
+activated_interval = 3.0
+disabled_interval = 3.0
+
+[node name="TerminusLaser22" parent="Lasers/HookIsland/Section7" instance=ExtResource("13_trrh8")]
+position = Vector2(5190, -2996)
+rotation = 7.853982
+laser_range = 2500.0
+cube_mode = 3
+cube_move_force = 350.0
+activated_interval = 3.0
+disabled_interval = 3.0
+
+[node name="TerminusLaser23" parent="Lasers/HookIsland/Section7" instance=ExtResource("13_trrh8")]
+position = Vector2(7650, -3164)
+rotation = 7.853982
+laser_range = 800.0
+cube_mode = 2
+cube_move_force = 350.0
+activated_interval = 3.0
+disabled_interval = 3.0
+
+[node name="TerminusLaser24" parent="Lasers/HookIsland/Section7" instance=ExtResource("13_trrh8")]
+position = Vector2(7650, -3220)
+rotation = 7.853982
+laser_range = 800.0
+cube_mode = 2
+cube_move_force = 350.0
+activated_interval = 3.0
+disabled_interval = 3.0
+
+[node name="TerminusLaser25" parent="Lasers/HookIsland/Section7" instance=ExtResource("13_trrh8")]
+position = Vector2(7770, -3108)
+rotation = 7.853982
+laser_range = 767.37
+cube_mode = 3
+cube_move_force = 350.0
+intervals_enabled = true
+activated_interval = 0.8
+disabled_interval = 3.0
+
+[node name="Section8" type="Node2D" parent="Lasers/HookIsland"]
+
+[node name="Section9" type="Node2D" parent="Lasers/HookIsland"]
+
+[node name="BGTiles" type="TileMapLayer" parent="."]
+z_index = -5
+tile_map_data = PackedByteArray("AAABAP//AQAMAAAAAAAAAP7/AQAMAAAAAAAAAP//AQAMAAAAAAD+////AQAMAAAAAAAAAP3/AQAMAAAAAAD+//7/AQAMAAAAAADq//7/AQAMAAAAAADq//3/AQAMAAAAAADp//3/AQAMAAAAAADo//3/AQAMAAAAAADo//7/AQAMAAAAAADn//7/AQAMAAAAAADn//3/AQAMAAAAAADm//3/AQAMAAAAAADd//z/AQAMAAAAAADc//z/AQAMAAAAAADc//v/AQAMAAAAAADI/wEAAQAMAAAAAADJ/wEAAQAMAAAAAADK/wEAAQAMAAAAAADJ/wAAAQAMAAAAAADJ////AQAMAAAAAADK////AQAMAAAAAADL////AQAMAAAAAADL/wAAAQAMAAAAAADL/wEAAQAMAAAAAADK/wAAAQAMAAAAAADM////AQAMAAAAAADM/wAAAQAMAAAAAADM/wEAAQAMAAAAAADN/wEAAQAMAAAAAADE//3/AQAMAAAAAADE//z/AQAMAAAAAADE//v/AQAMAAAAAADG//z/AQAMAAAAAADG//3/AQAMAAAAAADC//7/AQAMAAAAAADC////AQAMAAAAAADG//j/AQAMAAAAAADG//n/AQAMAAAAAAC+//v/AQAMAAAAAAC+//r/AQAMAAAAAADA//f/AQAMAAAAAADA//j/AQAMAAAAAAC+//f/AQAMAAAAAADN//7/AQAMAAAAAADN//3/AQAMAAAAAADN//z/AQAMAAAAAADI//7/AQAMAAAAAADP//7/AQAMAAAAAADP//3/AQAMAAAAAADR//7/AQAMAAAAAADQ//f/AQAMAAAAAADQ//j/AQAMAAAAAADQ//n/AQAMAAAAAADO//f/AQAMAAAAAADO//j/AQAMAAAAAADM//f/AQAMAAAAAAD5////AQAMAAAAAAD5//7/AQAMAAAAAAD3////AQAMAAAAAAD3//7/AQAMAAAAAAD3//3/AQAMAAAAAADw/wAAAQAMAAAAAADw/wEAAQAMAAAAAADv/wEAAQAMAAAAAADu/wEAAQAMAAAAAADu/wAAAQAMAAAAAADt/wAAAQAMAAAAAADt/wEAAQAMAAAAAADv/wAAAQAMAAAAAADt//3/AQAMAAAAAADt//z/AQAMAAAAAADz//7/AQAMAAAAAADz//3/AQAMAAAAAADg//v/AQAMAAAAAADg//r/AQAMAAAAAADg//n/AQAMAAAAAADi//v/AQAMAAAAAADi//r/AQAMAAAAAAA=")
+tile_set = ExtResource("7_5cghi")
+
+[node name="Worm" parent="." instance=ExtResource("5_ciqg1")]
+position = Vector2(2.2000122, -21.399994)
+finality_mode = true
+
+[node name="Camera2D" type="Camera2D" parent="Worm"]
+zoom = Vector2(0.8, 0.8)
+process_callback = 0
+limit_bottom = 3120
+position_smoothing_enabled = true
+position_smoothing_speed = 6.0
+editor_draw_limits = true
+script = ExtResource("6_8ny0j")
+
+[node name="TilePlatforms" type="Node2D" parent="."]
+
+[node name="TilePlatform2" type="TileMapLayer" parent="TilePlatforms" node_paths=PackedStringArray("area")]
+material = SubResource("ShaderMaterial_ciqg1")
+tile_map_data = PackedByteArray("AADq//7/AQAMAAAAAADq//3/AQAMAAAAAADp//3/AQAMAAAAAADo//3/AQAMAAAAAADn//3/AQAMAAAAAADm//3/AQAMAAAAAADo//7/AQAMAAAAAADn//7/AQAMAAAAAAA=")
+tile_set = ExtResource("4_oxa4u")
+script = ExtResource("7_oxa4u")
+area = NodePath("Area2D")
+
+[node name="Area2D" type="Area2D" parent="TilePlatforms/TilePlatform2"]
+position = Vector2(-1867.1643, -321.0256)
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TilePlatforms/TilePlatform2/Area2D"]
+position = Vector2(64.25195, -558.31445)
+shape = SubResource("RectangleShape2D_oxa4u")
+
+[node name="TilePlatform1" type="TileMapLayer" parent="TilePlatforms" node_paths=PackedStringArray("area")]
+material = SubResource("ShaderMaterial_5cghi")
+tile_map_data = PackedByteArray("AADc//v/AQAMAAAAAADc//z/AQAMAAAAAADd//z/AQAMAAAAAAA=")
+tile_set = ExtResource("4_oxa4u")
+script = ExtResource("7_oxa4u")
+area = NodePath("Area2D")
+
+[node name="Area2D" type="Area2D" parent="TilePlatforms/TilePlatform1"]
+position = Vector2(-2418.6514, -389.23068)
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TilePlatforms/TilePlatform1/Area2D"]
+position = Vector2(64.25195, -354.68765)
+shape = SubResource("RectangleShape2D_oxa4u")
+
+[node name="TilePlatform3" type="TileMapLayer" parent="TilePlatforms" node_paths=PackedStringArray("area")]
+material = SubResource("ShaderMaterial_oxa4u")
+tile_map_data = PackedByteArray("AADI/wEAAQAMAAAAAADJ/wEAAQAMAAAAAADK/wEAAQAMAAAAAADL/wEAAQAMAAAAAADL/wAAAQAMAAAAAADK/wAAAQAMAAAAAADJ/wAAAQAMAAAAAADJ////AQAMAAAAAADK////AQAMAAAAAADL////AQAMAAAAAADM/wAAAQAMAAAAAADM/wEAAQAMAAAAAAA=")
+tile_set = ExtResource("4_oxa4u")
+script = ExtResource("7_oxa4u")
+area = NodePath("Area2D")
+
+[node name="Area2D" type="Area2D" parent="TilePlatforms/TilePlatform3"]
+position = Vector2(-3394.959, -278.15378)
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TilePlatforms/TilePlatform3/Area2D"]
+position = Vector2(64.25195, -354.68765)
+shape = SubResource("RectangleShape2D_oxa4u")
+
+[node name="Props" type="Node2D" parent="."]
+
+[node name="Item" parent="Props" instance=ExtResource("10_m8l2d")]
+position = Vector2(-3533.7898, -233.86139)
+current_item = 16
+
+[node name="GrapplingHookItem" type="Node2D" parent="Props" node_paths=PackedStringArray("paths")]
+position = Vector2(8430, -1316)
+script = ExtResource("14_gvivl")
+paths = [NodePath("../Path1/PathFollow2D"), NodePath("../Path2/PathFollow2D"), NodePath("../Path3/PathFollow2D"), NodePath("../Path4/PathFollow2D")]
+
+[node name="DetectArea" type="Area2D" parent="Props/GrapplingHookItem"]
+unique_name_in_owner = true
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Props/GrapplingHookItem/DetectArea"]
+shape = SubResource("RectangleShape2D_y6qwe")
+
+[node name="Item2" type="TextureRect" parent="Props/GrapplingHookItem"]
+unique_name_in_owner = true
+offset_left = -40.0
+offset_top = -48.397972
+offset_right = 40.0
+offset_bottom = 31.602028
+texture = ExtResource("14_kwc8v")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="Light" type="Polygon2D" parent="Props/GrapplingHookItem/Item2"]
+unique_name_in_owner = true
+z_index = -1
+position = Vector2(40, 38)
+rotation = 3141.563
+color = Color(1, 1, 1, 0.247059)
+offset = Vector2(-10.305, -5.42459)
+polygon = PackedVector2Array(-19.5989, -25.8905, -10.5079, -32.3985, 7.68471, -5.60239, 12.1557, -5.50311, 17.4707, -43.4076, 25.8862, -39.6422, 17.1037, -6.73521, 35.6331, -35.3998, 40.909, -31.2568, 19.2399, -2.21454, 43, -21, 47, -17, 20.8993, 3.63752, 53, -2, 54, 9, 23.4627, 9.06232, 50, 27, 42, 39, 20.7007, 12.5796, 31, 39, 24, 43, 17, 16, 11, 60, -4, 60, 10, 17, -21, 49, -31, 37, 4.14795, 12.6594, -36, 20, -35.9921, 7.29482, 2.91584, 7.71144, -32.1273, -5.59177, -24.7454, -15.7163, 3.54165, -0.326496)
+
+[node name="collect" type="GPUParticles2D" parent="Props/GrapplingHookItem"]
+emitting = false
+amount = 32
+texture = ExtResource("16_od846")
+lifetime = 0.4
+one_shot = true
+explosiveness = 0.9
+process_material = SubResource("ParticleProcessMaterial_3gvof")
+
+[node name="Path1" type="Path2D" parent="Props"]
+curve = SubResource("Curve2D_gvivl")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Props/Path1"]
+position = Vector2(8430, -1316)
+rotation = -0.5370736
+
+[node name="Path2" type="Path2D" parent="Props"]
+curve = SubResource("Curve2D_go85k")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Props/Path2"]
+position = Vector2(10050, -1260)
+rotation = 0.8318194
+
+[node name="Path3" type="Path2D" parent="Props"]
+curve = SubResource("Curve2D_od846")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Props/Path3"]
+position = Vector2(7710, -1988)
+rotation = -2.5251207
+
+[node name="Path4" type="Path2D" parent="Props"]
+curve = SubResource("Curve2D_17ldu")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Props/Path4"]
+position = Vector2(6990, -2604)
+rotation = -0.23207742
+
+[node name="Path5" type="Path2D" parent="Props"]
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Props/Path5"]
+position = Vector2(8430, -1316)
+rotation = -0.5370736
+
+[node name="BackgroundShards" type="Node2D" parent="."]
+
+[node name="BackgroundShard" type="PointLight2D" parent="BackgroundShards"]
+position = Vector2(858.8365, -160.32875)
+rotation = 0.6341551
+scale = Vector2(0.2763491, 0.2763491)
+energy = 0.0
+range_layer_min = -8
+range_layer_max = 8
+texture = ExtResource("11_8ny0j")
+script = ExtResource("11_ciqg1")
+
+[node name="DeathBarrier" type="Area2D" parent="."]
+position = Vector2(-161, 467)
+collision_mask = 2
+script = ExtResource("7_trrh8")
+metadata/_custom_type_script = "uid://bdjrd2hrbpnxg"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DeathBarrier"]
+position = Vector2(1031.5, 554.86316)
+shape = SubResource("RectangleShape2D_go85k")
+
+[node name="OST1" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_ppjeo")
+volume_db = -10.0
+pitch_scale = 0.99

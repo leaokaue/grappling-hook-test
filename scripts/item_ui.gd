@@ -8,11 +8,14 @@ extends Control
 
 @onready var jetpack_bar : TextureProgressBar = %JetpackBar
 
+@onready var cube_bar : TextureProgressBar = %CubeBar
+
 func _ready() -> void:
 	Global.player.emit_dash_cooldown.connect(update_dash)
 	Global.player.emit_fish_cooldown.connect(update_fish)
 	Global.player.emit_hover_cooldown.connect(update_hover)
 	Global.player.emit_jetpack_cooldown.connect(update_jetpack)
+	Global.player.emit_cube_cooldown.connect(update_cube)
 
 func _process(delta: float) -> void:
 	update_bar_visibility()
@@ -29,6 +32,9 @@ func update_dash(value : float):
 func update_fish(value : float):
 	tambaqui_bar.value = value
 
+func update_cube(value : float):
+	cube_bar.value = value
+
 func update_bar_visibility():
 	var e := Global.EQUIPMENTS
 	
@@ -36,6 +42,7 @@ func update_bar_visibility():
 	tambaqui_bar.get_parent().hide()
 	jetpack_bar.get_parent().hide()
 	hover_bar.get_parent().hide()
+	cube_bar.get_parent().hide()
 	self.show()
 	
 	match Global.current_equipment:
@@ -52,3 +59,5 @@ func update_bar_visibility():
 		e.Jetpack:
 			jetpack_bar.get_parent().show()
 			#jetpack.hide()
+		e.ErrorCube:
+			cube_bar.get_parent().show()

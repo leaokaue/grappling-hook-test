@@ -170,7 +170,8 @@ text = "A/D - Move Left and Right"
 layout_mode = 2
 theme_override_font_sizes/font_size = 9
 text = "Moving like this cancels your horizontal momentum while in freefall.
-Don't hold the movement keys during freefall to retain your horizontal momentum."
+Don't hold the movement keys during freefall to retain your horizontal momentum.
+Holding S while grounded stops your momentum."
 
 [node name="Label8" type="Label" parent="CanvasLayer/Control/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2

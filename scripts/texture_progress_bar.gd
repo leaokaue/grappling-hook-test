@@ -2,11 +2,18 @@ extends TextureProgressBar
 
 var has_played_sound : bool = true
 
+@export var holder : Node2D
+
 func _ready() -> void:
 	pass
 
 func _process(delta: float) -> void:
 	var p := Global.player
+	
+	if Global.has_grappling_hook:
+		holder.show()
+	else:
+		holder.hide()
 	
 	if not is_instance_valid(p):
 		return

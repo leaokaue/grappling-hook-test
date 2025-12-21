@@ -38,6 +38,10 @@ signal game_autosaved
 
 signal disable_music
 
+signal toggle_worm_control(can_control : bool)
+
+signal reset_glitched
+
 var player : Worm
 
 var background : BackgroundManager
@@ -131,7 +135,7 @@ var waypoints_unlocked : Dictionary = {
 	 
 }
 
-var current_equipment : int = 0
+var current_equipment : int = 5
 
 var can_switch_equipments : bool = false
 
@@ -310,11 +314,28 @@ enum COIN_TYPES {
 	Angel,
 }
 
-var collected_coins_list : Array[COIN_TYPES] = [0,0,0,0,0,1]
+var collected_coins_list : Array[COIN_TYPES] = []
+
+var glitch_coins_collected : int = 5
+
+var purified : bool = true
+
+var last_finality_x : float
+
+var last_finality_y : float 
+
+var is_in_finality : bool = false
+
+var end_coins : int = 0
+
+var grappling_hook_scrapped : bool = false
+
+var finality_coins : int = 0
 
 #endregion
 
 func _ready() -> void:
+	self.process_mode = Node.PROCESS_MODE_ALWAYS
 	save_base_vars()
 
 #func _notification(what: int) -> void:
@@ -392,6 +413,11 @@ func unlock_item(item : Item.ITEMS, unlock : bool):
 			has_poison_resist = unlock
 		i.Trash:
 			has_trash_bag = unlock
+		i.ErrorCube:
+			has_error_cube= unlock
+			
+			if unlock:
+				current_equipment = EQUIPMENTS.ErrorCube
 
 func scrap_item(item : Item.ITEMS, scrap : bool):
 	var i := Item.ITEMS

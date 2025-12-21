@@ -26,6 +26,10 @@ func toggle_rain(on : bool):
 	t.tween_property(self,"modulate:a",alpha,0.8)
 
 func set_fps_label():
+	if Global.is_in_finality:
+		%Label.hide()
+	else:
+		%Label.show()
 	var t := "FPS: "
 	var fps := Engine.get_frames_per_second()
 	%Label.text =  t + str(fps)

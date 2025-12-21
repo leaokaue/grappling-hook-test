@@ -17,12 +17,17 @@ var grappled_body : CollisionObject2D
 
 var body_offset : Vector2 
 
+var cube : FalseCube2D
+
 @onready var send := %Send
 @onready var hits := %Hit
 
 func _ready() -> void:
 	if is_instance_valid($Send):
 		$Send.play()
+	var p := func():
+		print("entering tree")
+	tree_entered.connect(p)
 	#look_at_dir()
 	self.body_shape_entered.connect(_on_body_collision)
 	#self.body_entered.connect(_on_body_collision)
@@ -48,88 +53,46 @@ func _physics_process(delta: float) -> void:
 func _on_body_collision(body_rid : RID,body : Node,_bsp : int,lsi : int):
 	if not grappled:
 		grappled = true
+	else:
+		return
+	
+	if body is TileMapLayer:
+		var c := PhysicsServer2D.body_get_collision_layer(body_rid)
+		if c == 9:
+			player.destroy_grapple()
+			#print("destroing grapple - tilemaplayer")
+			return
+	
+	elif body is CollisionObject2D:
+		grappled_body = body
+		body_offset = self.global_position - body.global_position
 		
-		if body is TileMapLayer:
-			var c := PhysicsServer2D.body_get_collision_layer(body_rid)
-			if c == 9:
-				player.destroy_grapple()
-				#print("destroing grapple - tilemaplayer")
-				return
+		if ((body is AnimatableBody2D) or (body is StaticBody2D) or (body is FalseCube2D)):
+			self.call_deferred("reparent",body)
+			
+			if body is FalseCube2D:
+				cube = body
+				body.dissapeared.connect(Global.player.destroy_grapple)
 		
-		elif body is CollisionObject2D:
-			
-			grappled_body = body
-			#print(grappled_body)
-			body_offset = self.global_position - body.global_position
-			
-			if body is AnimatableBody2D or body is StaticBody2D:
-				#self.reparent(body)
-				
-				var reparent_node := body
-				
-				#if body is StaticBody2D:
-					#while reparent_node is not AnimatableBody2D:
-						#reparent_node = reparent_node.get_parent()
-				#
-				self.call_deferred("reparent",body)
-				await get_tree().physics_frame
-				await get_tree().physics_frame
-				await get_tree().physics_frame
-				
-				var i : GrappleHook
-				
-				for s in body.get_children():
-					if s is GrappleHook:
-						i = s
-						#print(i)
-						if is_instance_valid(Global.player.global_joint):
-							Global.player.global_joint.node_a = i.get_path()
-			
-			
-			
-			if body.get_collision_layer_value(4):
-				#print("dying")
-				player.destroy_grapple()
-				return
-		
-		if is_instance_valid($Hit):
-			$Hit.play()
-		looks = false
-		#self.global_position = locked_position
-		frozen = true
-		set_deferred("freeze",true)
-		#self.lock_rotation = true
-		Global.hooks_hit += 1
-		hit.emit()
-		#self.call_deferred("reparent",body)
+		if body.get_collision_layer_value(4):
+			player.destroy_grapple()
+			return
+	
+	if is_instance_valid($Hit):
+		$Hit.play()
+	
+	looks = false
+	frozen = true
+	Global.hooks_hit += 1
+	set_deferred("freeze",true)
+	call_deferred("emit_signal","hit")
 
-#func _on_body_collision(body : Node2D):
-	##print("BALLS")
-	#if not grappled:
-		#
-		##print(body)
-		#
-		#if body is CollisionObject2D:
-			#
-			#grappled_body = body
-			#body_offset = self.global_position - body.global_position
-			#
-			#if body.get_collision_layer_value(4):
-				##print("dying")
-				#player.destroy_grapple()
-				#return
-		#
-		#$Hit.play()
-		#looks = false
-		##self.global_position = locked_position
-		#grappled = true
-		#frozen = true
-		#set_deferred("freeze",true)
-		##self.lock_rotation = true
-		#hit.emit()
-		##self.call_deferred("reparent",body)
 
 func die():
+	if cube:
+		if cube.dissapeared.is_connected(Global.player.destroy_grapple):
+			cube.dissapeared.disconnect(Global.player.destroy_grapple)
+	
 	if is_instance_valid(send):
 		var t := send.create_tween()
 		t.tween_interval(2.0)

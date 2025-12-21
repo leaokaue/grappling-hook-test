@@ -1,0 +1,287 @@
+[gd_scene load_steps=24 format=3 uid="uid://cgul46akh73fl"]
+
+[ext_resource type="Script" uid="uid://cc3l7ajmbg2bb" path="res://scripts/terminus_laser.gd" id="1_o3gqp"]
+[ext_resource type="Texture2D" uid="uid://dnmjdk8x6ygfd" path="res://sprites/atlas/texture_atlas.png" id="2_2ke3w"]
+[ext_resource type="Shader" uid="uid://qjj1akix5pal" path="res://shaders/cloudscroll.gdshader" id="2_4ntn1"]
+[ext_resource type="Texture2D" uid="uid://c4tr1gneaqlus" path="res://sprites/laser_impact0.png" id="2_6k8pl"]
+[ext_resource type="Texture2D" uid="uid://dflc5rpjx17ft" path="res://sprites/terminus_laser_1.png" id="2_aulbl"]
+[ext_resource type="Texture2D" uid="uid://s8xhbq05ksg6" path="res://sprites/laser_impact1.png" id="3_un6th"]
+[ext_resource type="Texture2D" uid="uid://dg5f37pjag5yd" path="res://sprites/laser_impact2.png" id="4_4ntn1"]
+[ext_resource type="Script" uid="uid://bdjrd2hrbpnxg" path="res://scripts/death_barrier.gd" id="5_aulbl"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6tdlb"]
+size = Vector2(39.027756, 48.11779)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_aulbl"]
+resource_local_to_scene = true
+shader = ExtResource("2_4ntn1")
+shader_parameter/scroll_speed = 12.606000598785
+shader_parameter/angle_degrees = 0.0
+shader_parameter/repeat_x = 1.0
+shader_parameter/repeat_y = 1.0
+shader_parameter/row_offset = 1.0
+shader_parameter/texture_to_scroll = ExtResource("2_aulbl")
+
+[sub_resource type="Gradient" id="Gradient_4ntn1"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_aulbl"]
+gradient = SubResource("Gradient_4ntn1")
+width = 16
+height = 16
+fill = 2
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0, 0)
+metadata/_snap_enabled = true
+metadata/_snap_count = 2
+
+[sub_resource type="Gradient" id="Gradient_fvdoa"]
+offsets = PackedFloat32Array(0, 0.09137056, 0.8324873, 1)
+colors = PackedColorArray(0.53, 0.53, 0.53, 0, 0.57209617, 0.5720961, 0.5720961, 1, 0.92111266, 0.92111266, 0.92111266, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_p0865"]
+gradient = SubResource("Gradient_fvdoa")
+
+[sub_resource type="Curve" id="Curve_cncb5"]
+_data = [Vector2(0, 0.5842697), 0.0, 0.0, 0, 0, Vector2(0.19282514, 1), 0.0, 0.0, 0, 0, Vector2(0.7802691, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.6741574), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_f1ivn"]
+curve = SubResource("Curve_cncb5")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_2g3yv"]
+particle_flag_align_y = true
+particle_flag_rotate_y = true
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(18.565, 1, 1)
+angle_min = -44.99999
+angle_max = -44.99999
+direction = Vector3(0, -1, 0)
+spread = 20.714
+initial_velocity_min = 95.79
+initial_velocity_max = 137.94
+gravity = Vector3(0, 98, 0)
+scale_curve = SubResource("CurveTexture_f1ivn")
+color_ramp = SubResource("GradientTexture1D_p0865")
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_6tdlb"]
+
+[sub_resource type="Gradient" id="Gradient_6tdlb"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_fvdoa"]
+gradient = SubResource("Gradient_6tdlb")
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_p0865"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_6k8pl")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_un6th")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_4ntn1")
+}],
+"loop": true,
+"name": &"default",
+"speed": 12.0
+}]
+
+[sub_resource type="SegmentShape2D" id="SegmentShape2D_cncb5"]
+resource_local_to_scene = true
+b = Vector2(0, -100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8sfo1"]
+atlas = ExtResource("2_2ke3w")
+region = Rect2(720, -0.052700043, 60, 56.447395)
+filter_clip = true
+
+[node name="TerminusLaser" type="Node2D"]
+script = ExtResource("1_o3gqp")
+laser_range = 1000.0
+cube_move_force = 200.0
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(0, 3.8043814)
+shape = SubResource("RectangleShape2D_6tdlb")
+
+[node name="LaserLine" type="Line2D" parent="."]
+unique_name_in_owner = true
+z_index = -1
+texture_repeat = 2
+material = SubResource("ShaderMaterial_aulbl")
+points = PackedVector2Array(0, -20, 0, -100)
+width = 61.0
+texture = ExtResource("2_aulbl")
+texture_mode = 1
+
+[node name="End" type="GPUParticles2D" parent="LaserLine"]
+unique_name_in_owner = true
+position = Vector2(0, -14.842304)
+emitting = false
+amount = 12
+texture = SubResource("GradientTexture2D_aulbl")
+lifetime = 0.6
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_2g3yv")
+
+[node name="Constant" type="GPUParticles2D" parent="LaserLine"]
+unique_name_in_owner = true
+position = Vector2(0, -14.842304)
+rotation = -0.005531469
+scale = Vector2(1.173346, 1.173346)
+emitting = false
+amount = 6
+texture = SubResource("GradientTexture2D_aulbl")
+lifetime = 0.3
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_2g3yv")
+
+[node name="LaserPoint" type="Node2D" parent="."]
+unique_name_in_owner = true
+material = SubResource("CanvasItemMaterial_6tdlb")
+position = Vector2(0.23995972, -99.88767)
+
+[node name="LaserCover" type="Sprite2D" parent="LaserPoint"]
+clip_children = 1
+position = Vector2(-0.68675977, 9.3418045)
+rotation = 1.5707964
+scale = Vector2(0.33877712, 1)
+texture = SubResource("GradientTexture2D_fvdoa")
+
+[node name="LaserImpact" type="AnimatedSprite2D" parent="LaserPoint/LaserCover"]
+position = Vector2(7.383789, 0.3891588)
+rotation = 1.5707959
+scale = Vector2(0.16778316, 0.4952612)
+sprite_frames = SubResource("SpriteFrames_p0865")
+autoplay = "default"
+frame_progress = 0.9343258
+
+[node name="DeathBarrier" type="Area2D" parent="."]
+collision_mask = 6
+collision_priority = 4.015
+priority = 2
+script = ExtResource("5_aulbl")
+scream_type = 4
+metadata/_custom_type_script = "uid://bdjrd2hrbpnxg"
+
+[node name="Segment" type="CollisionShape2D" parent="DeathBarrier"]
+unique_name_in_owner = true
+position = Vector2(-13.868416, 0)
+shape = SubResource("SegmentShape2D_cncb5")
+
+[node name="Segment2" type="CollisionShape2D" parent="DeathBarrier"]
+unique_name_in_owner = true
+position = Vector2(13.70491, 0)
+shape = SubResource("SegmentShape2D_cncb5")
+
+[node name="Segment3" type="CollisionShape2D" parent="DeathBarrier"]
+unique_name_in_owner = true
+position = Vector2(-0.21763611, 0)
+shape = SubResource("SegmentShape2D_cncb5")
+
+[node name="Sprite" type="Node2D" parent="."]
+modulate = Color(0.71, 0.71, 0.71, 1)
+z_index = -1
+
+[node name="Sprite2D" type="NinePatchRect" parent="Sprite"]
+texture_filter = 1
+offset_left = -20.772095
+offset_top = -20.548779
+offset_right = 43.60022
+offset_bottom = 38.80204
+scale = Vector2(0.6400391, 0.8171449)
+texture = SubResource("AtlasTexture_8sfo1")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Sprite2D4" type="NinePatchRect" parent="Sprite"]
+texture_filter = 1
+offset_left = -28.142857
+offset_top = 5.807255
+offset_right = 59.261684
+offset_bottom = 32.904266
+scale = Vector2(0.6400391, 0.8171449)
+texture = SubResource("AtlasTexture_8sfo1")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Sprite2D6" type="NinePatchRect" parent="Sprite"]
+texture_filter = 1
+offset_left = -28.142857
+offset_top = 2.6802673
+offset_right = 59.261684
+offset_bottom = 29.777279
+scale = Vector2(0.6400391, 0.8171449)
+texture = SubResource("AtlasTexture_8sfo1")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Sprite2D7" type="NinePatchRect" parent="Sprite"]
+texture_filter = 1
+offset_left = -28.142857
+offset_top = -0.11168671
+offset_right = 59.261684
+offset_bottom = 26.985325
+scale = Vector2(0.6400391, 0.8171449)
+texture = SubResource("AtlasTexture_8sfo1")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Sprite2D8" type="NinePatchRect" parent="Sprite"]
+texture_filter = 1
+offset_left = -28.142857
+offset_top = -2.7919617
+offset_right = 59.261684
+offset_bottom = 24.30505
+scale = Vector2(0.6400391, 0.8171449)
+texture = SubResource("AtlasTexture_8sfo1")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Sprite2D5" type="NinePatchRect" parent="Sprite"]
+texture_filter = 1
+offset_left = -16.081806
+offset_top = -13.178024
+offset_right = 33.63426
+offset_bottom = 37.152664
+scale = Vector2(0.6400391, 0.8171449)
+texture = SubResource("AtlasTexture_8sfo1")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Sprite2D2" type="Sprite2D" parent="Sprite"]
+visible = false
+position = Vector2(0, 22.375008)
+scale = Vector2(0.91582674, 0.33279043)
+texture = SubResource("AtlasTexture_8sfo1")
+
+[node name="Sprite2D3" type="Sprite2D" parent="Sprite"]
+visible = false
+position = Vector2(0, 15.68375)
+scale = Vector2(0.46009147, 0.8204827)
+texture = SubResource("AtlasTexture_8sfo1")
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+unique_name_in_owner = true
+target_position = Vector2(0, -100)
+collision_mask = 513

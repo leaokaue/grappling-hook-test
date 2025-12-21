@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://bqxxkjkro4ssn"]
+[gd_scene load_steps=17 format=3 uid="uid://bqxxkjkro4ssn"]
 
 [ext_resource type="Script" uid="uid://csih2ldh825jc" path="res://scripts/3D/3dplayer.gd" id="1_2s5h8"]
 [ext_resource type="AudioStream" uid="uid://ct5ks8g7duwqm" path="res://sounds/footstep/dirt_footstep_0.mp3" id="2_2wquo"]
@@ -7,10 +7,17 @@
 [ext_resource type="AudioStream" uid="uid://hdjieb7s2j68" path="res://sounds/footstep/dirt_footstep_3.mp3" id="5_4acon"]
 [ext_resource type="AudioStream" uid="uid://c2jvfn1qv10t4" path="res://sounds/flashlight.mp3" id="6_lvdve"]
 [ext_resource type="AudioStream" uid="uid://gmu2fba8lusm" path="res://sounds/inside-old-train-169418.mp3" id="7_4acon"]
+[ext_resource type="Texture2D" uid="uid://cmq5hqjapl4i4" path="res://sprites/flashlight_bar_over.png" id="7_wen2k"]
+[ext_resource type="Texture2D" uid="uid://blqegjneusne4" path="res://sprites/flashlight_bar_fill.png" id="8_50qbu"]
 [ext_resource type="AudioStream" uid="uid://gesri0kc4d2y" path="res://sounds/deep_metal_hit_2.mp3" id="8_o617v"]
+[ext_resource type="Texture2D" uid="uid://umjm64f76xqr" path="res://scenes/nightmare_coin.png" id="9_50qbu"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_yy7gn"]
 radius = 0.17089844
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_4acon"]
+height = 21.84439
+radius = 2.2929688
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_2wquo"]
 random_pitch = 1.4
@@ -19,6 +26,33 @@ stream_0/stream = ExtResource("2_2wquo")
 stream_1/stream = ExtResource("3_lvdve")
 stream_2/stream = ExtResource("4_27wlx")
 stream_3/stream = ExtResource("5_4acon")
+
+[sub_resource type="Shader" id="Shader_50qbu"]
+code = "shader_type canvas_item;
+
+uniform float inner_radius = 0.1;
+uniform float outer_radius = 1;
+uniform float vignette_strength = 1.0;
+uniform float dither_strength = 0.03;
+uniform vec4 vignette_color: source_color;
+
+
+void fragment() {
+	float dist = distance(UV, vec2(0.5));
+
+	float vignette = smoothstep(inner_radius, outer_radius, dist) * vignette_strength;
+	float dither = fract(sin(dot(UV, vec2(12.9898, 78.233))) * 43758.5453123) * dither_strength;
+
+	COLOR = vec4(vignette_color.rgb, vignette + dither);
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wen2k"]
+shader = SubResource("Shader_50qbu")
+shader_parameter/inner_radius = 0.38
+shader_parameter/outer_radius = 0.725
+shader_parameter/vignette_strength = 0.0
+shader_parameter/dither_strength = 0.03
+shader_parameter/vignette_color = Color(1, 0.13, 0.13, 1)
 
 [node name="Player3D" type="CharacterBody3D"]
 script = ExtResource("1_2s5h8")
@@ -38,6 +72,16 @@ spot_range = 39.83525
 spot_angle = 48.20886
 spot_angle_attenuation = 1.46408
 
+[node name="FlashlightArea" type="Area3D" parent="Flashlight"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="FlashlightCollision" type="CollisionShape3D" parent="Flashlight/FlashlightArea"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 4.7680535e-07, -10.908035)
+shape = SubResource("CylinderShape3D_4acon")
+disabled = true
+
 [node name="Camera" type="Camera3D" parent="."]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.571271, 0)
@@ -46,7 +90,7 @@ current = true
 
 [node name="InteractCast" type="RayCast3D" parent="Camera"]
 unique_name_in_owner = true
-target_position = Vector3(0, 0, -2.5)
+target_position = Vector3(0, 0, -1.5)
 collide_with_areas = true
 
 [node name="Footstep" type="AudioStreamPlayer3D" parent="."]
@@ -68,6 +112,22 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="FlashlightBar" type="TextureProgressBar" parent="InteractUI/Control"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 0
+offset_left = 957.0
+offset_top = 570.0
+offset_right = 1136.0
+offset_bottom = 634.0
+scale = Vector2(0.5, 0.5)
+pivot_offset = Vector2(179, 64)
+step = 20.0
+value = 100.0
+fill_mode = 1
+texture_over = ExtResource("7_wen2k")
+texture_progress = ExtResource("8_50qbu")
+
 [node name="MarginContainer" type="MarginContainer" parent="InteractUI/Control"]
 layout_mode = 1
 anchors_preset = 15
@@ -78,10 +138,20 @@ grow_vertical = 2
 mouse_filter = 2
 theme_override_constants/margin_top = 500
 
-[node name="InteractLabel" type="Label" parent="InteractUI/Control/MarginContainer"]
+[node name="InteractLabel" type="RichTextLabel" parent="InteractUI/Control/MarginContainer"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
+bbcode_enabled = true
+text = "[E]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Dialogue" type="RichTextLabel" parent="InteractUI/Control/MarginContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+bbcode_enabled = true
 text = "[E]"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -124,6 +194,39 @@ theme_override_font_sizes/font_size = 24
 text = "Aborting user."
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="RedVignette" type="ColorRect" parent="InteractUI"]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_wen2k")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="KilledRect" type="ColorRect" parent="InteractUI"]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Nightmare" type="TextureRect" parent="InteractUI/KilledRect"]
+unique_name_in_owner = true
+show_behind_parent = true
+layout_mode = 0
+offset_left = 256.0
+offset_top = -170.0
+offset_right = 710.0
+offset_bottom = 493.0
+scale = Vector2(1.4817333, 1.4817333)
+mouse_filter = 2
+texture = ExtResource("9_50qbu")
 
 [node name="Machine" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("7_4acon")

@@ -19,6 +19,7 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("grapple"):
 		Global.set_player_control(true)
 		self.queue_free()
+	
 
 func set_item_name(i_name : String):
 	var c1 := "[center]"

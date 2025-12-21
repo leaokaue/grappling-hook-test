@@ -162,6 +162,7 @@ interact={
 
 2d_physics/layer_1="Terrain"
 2d_physics/layer_2="Player"
+3d_physics/layer_2="Hitbox"
 2d_physics/layer_3="HookOnly"
 2d_physics/layer_4="Unhookable"
 2d_physics/layer_5="Liquid"
@@ -169,6 +170,8 @@ interact={
 2d_physics/layer_7="Windmill"
 2d_physics/layer_8="Water"
 2d_physics/layer_9="Poison"
+2d_physics/layer_10="Cube"
+2d_physics/layer_11="Cloud"
 
 [physics]
 
@@ -177,8 +180,8 @@ interact={
 [rendering]
 
 textures/canvas_textures/default_texture_filter=2
-lights_and_shadows/directional_shadow/size=2048
-lights_and_shadows/directional_shadow/soft_shadow_filter_quality=0
+lights_and_shadows/directional_shadow/soft_shadow_filter_quality=3
 anti_aliasing/quality/msaa_2d=2
+anti_aliasing/quality/msaa_3d=2
 anti_aliasing/quality/use_debanding=true
 mesh_lod/lod_change/threshold_pixels=4.0

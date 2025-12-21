@@ -40,7 +40,11 @@ var quest_completed : bool = false
 
 var terminal_finished : bool = false
 
-var can_run : bool = false
+var flashlight_flickering : bool = false
+
+var flicker_timer : float = 0.1
+
+var afraid : bool = false
 
 var physics_paused : bool = false
 
@@ -48,12 +52,22 @@ var physics_paused : bool = false
 @onready var camera : Camera3D = %Camera
 @onready var flashlight : SpotLight3D = %Flashlight
 @onready var interact_cast : RayCast3D = %InteractCast
+@onready var dialogue_label : RichTextLabel = %Dialogue
+@onready var flashlight_bar : TextureProgressBar = %FlashlightBar
+
+var flashlight_power : float = 5.0
+
+var max_flashlight_power : float = 5.0
+
+var dialoguing : float = 0.0
 
 var current_interactable : Interactable3D
 
 var hide_interact_prompt : bool = false
 
 func _ready() -> void:
+	flashlight_bar.modulate.a = 0.0
+	hide_red_vignette()
 	get_tree().set_auto_accept_quit(true)
 	initial_position = self.global_position
 	initial_rotation = camera.rotation
@@ -62,6 +76,9 @@ func _ready() -> void:
 	#begin_intro()
 
 func _unhandled_input(event: InputEvent) -> void:
+	
+	if Input.is_action_just_pressed("interact"):
+		_try_interact()
 	
 	if player_paused: return
 	
@@ -74,14 +91,30 @@ func _unhandled_input(event: InputEvent) -> void:
 		if flashlight_active:
 			disable_flashlight()
 		else:
-			enable_flashlight()
-	
-	if Input.is_action_just_pressed("interact"):
-		_try_interact()
+			if flashlight_power > 0.5:
+				flashlight_power -= 0.25
+				enable_flashlight()
+			else:
+				print(flashlight_power)
+				flashlight_power = -1.0
+				disable_flashlight()
 
 func _physics_process(delta: float) -> void:
 	#if Input.is_action_just_pressed(&"jump"): jumping = true
 	if mouse_captured and not player_paused: _handle_joypad_camera_rotation(delta) 
+	
+	if flashlight_active:
+		flashlight_power -= delta
+	else:
+		flashlight_power += delta
+	
+	if flashlight_power < 0:
+		if flashlight_active:
+			flashlight_power -= 1.0
+			disable_flashlight(true)
+	
+	flashlight_power = clampf(flashlight_power,-1.0,max_flashlight_power)
+	_handle_flashlight_bar(delta)
 	
 	if physics_paused: return
 	
@@ -89,7 +122,13 @@ func _physics_process(delta: float) -> void:
 	
 	var vel : Vector3 = Vector3()
 	
-	if is_on_floor() and not player_paused:
+	if dialoguing > 0:
+		dialoguing -= delta
+		dialogue_label.show()
+	else:
+		dialogue_label.hide()
+	
+	if is_on_floor() and not (player_paused or returning):
 		vel += _walk(delta)
 	vel += _gravity(delta)
 	velocity = vel
@@ -98,8 +137,13 @@ func _physics_process(delta: float) -> void:
 		if walk_timer > 0:
 			walk_timer -= delta
 		else:
-			walk_timer = 0.55
+			if not afraid:
+				walk_timer = 0.55
+			else:
+				walk_timer = 0.4
 			$Footstep.play()
+	
+	_handle_flickering(delta)
 	
 	lerp_flashlight_rotation(delta)
 	
@@ -116,15 +160,29 @@ func release_mouse() -> void:
 func enable_flashlight() -> void:
 	flashlight_active = true
 	flashlight.light_energy = 5.0
+	%FlashlightCollision.disabled = false
 	$FlashlightSound.pitch_scale = 0.5
 	$FlashlightSound.play()
 
 func disable_flashlight(play_sound : bool = true) -> void:
 	flashlight_active = false
 	flashlight.light_energy = 0.0
+	%FlashlightCollision.set_deferred("disabled",true)
 	$FlashlightSound.pitch_scale = 0.3
 	if play_sound:
 		$FlashlightSound.play()
+
+func _handle_flashlight_bar(delta : float):
+	if flashlight_power < 5.0:
+		flashlight_bar.modulate.a = move_toward(flashlight_bar.modulate.a,1.0,delta * 5.0)
+	else:
+		flashlight_bar.modulate.a = move_toward(flashlight_bar.modulate.a,0.0,delta * 5.0)
+	
+	flashlight_bar.value = (flashlight_power * 20.0)
+
+func _handle_flashlight_area():
+	if flashlight_active:
+		pass
 
 func _rotate_camera(sens_mod: float = 1.0) -> void:
 	camera.rotation.y -= look_dir.x * camera_sens * sens_mod
@@ -138,10 +196,13 @@ func _handle_joypad_camera_rotation(delta: float, sens_mod: float = 1.0) -> void
 		look_dir = Vector2.ZERO
 
 func _walk(delta: float) -> Vector3:
+	var bonus : float = 0.0
+	if afraid:
+		bonus += 1.25
 	move_dir = Input.get_vector(&"move_left", &"move_right", &"move_forward", &"move_backwards")
 	var _forward: Vector3 = camera.global_transform.basis * Vector3(move_dir.x, 0, move_dir.y)
 	var walk_dir: Vector3 = Vector3(_forward.x, 0, _forward.z).normalized()
-	walk_vel = walk_vel.move_toward(walk_dir * speed * move_dir.length(), acceleration * delta)
+	walk_vel = walk_vel.move_toward(walk_dir * (speed + bonus) * move_dir.length(), acceleration * delta)
 	return walk_vel
 
 func _gravity(delta: float) -> Vector3:
@@ -156,9 +217,31 @@ func _jump(delta: float) -> Vector3:
 	jump_vel = Vector3.ZERO if is_on_floor() or is_on_ceiling_only() else jump_vel.move_toward(Vector3.ZERO, gravity * delta)
 	return jump_vel
 
+func _handle_flickering(delta : float):
+	if not flashlight_active: return
+	
+	if not flashlight_flickering: return
+	
+	if flicker_timer > 0:
+		flicker_timer -= delta
+	else:
+		flicker_timer = randf_range(0.3,0.15)
+		flicker_flashlight()
+
+func flicker_flashlight():
+	if not flashlight_active: return
+	flashlight.light_energy = 0.0
+	flashlight.light_indirect_energy = 0.0
+	flashlight.light_volumetric_fog_energy = 0.0
+	await get_tree().create_timer(randf_range(0.01,0.08),false).timeout
+	if not flashlight_active: return
+	flashlight.light_energy = 6.0
+	flashlight.light_indirect_energy = 1.0
+	flashlight.light_volumetric_fog_energy = 1.556
+
 func lerp_flashlight_rotation(delta : float) -> void:
 	var camrot := camera.rotation
-	flashlight.rotation = flashlight.rotation.lerp(camrot,0.2)
+	flashlight.rotation = flashlight.rotation.lerp(camrot,(0.2 / 0.025) * delta)
 
 func handle_interactable_ray():
 	if interact_cast.is_colliding():
@@ -170,7 +253,11 @@ func handle_interactable_ray():
 			if not c.can_see_description:
 				%InteractLabel.hide()
 			else:
-				%InteractLabel.show()
+				if not dialoguing > 0:
+					
+					%InteractLabel.show()
+				else:
+					%InteractLabel.hide() # holy nest
 		else:
 			%InteractLabel.hide()
 			current_interactable = null
@@ -184,21 +271,49 @@ func _try_interact():
 			current_interactable.interact()
 
 func return_to_spawn():
-		returning = true
-		%FogVolume.material.density = 0.0
-		%FogVolume.show()
-		var t := create_tween()
-		t.set_trans(Tween.TRANS_EXPO)
-		t.tween_property(%FogVolume,"material:density",10.0,1.5)
-		await get_tree().create_timer(1.5,false).timeout
-		global_position = initial_position
-		camera.rotation = initial_rotation
-		await get_tree().create_timer(1.0,false).timeout
-		var t2 := create_tween()
-		t2.set_trans(Tween.TRANS_EXPO)
-		t2.tween_property(%FogVolume,"material:density",0.0,0.5)
-		await get_tree().create_timer(1.4,false).timeout
-		returning = false
+	returning = true
+	velocity *= 0.0
+	flashlight_power = 5.0
+	%FogVolume.material.density = 0.0
+	%FogVolume.show()
+	var t := create_tween()
+	t.set_trans(Tween.TRANS_EXPO)
+	t.tween_property(%FogVolume,"material:density",10.0,1.5)
+	await get_tree().create_timer(1.5,false).timeout
+	global_position = initial_position
+	camera.rotation = initial_rotation
+	await get_tree().create_timer(1.0,false).timeout
+	var t2 := create_tween()
+	t2.set_trans(Tween.TRANS_EXPO)
+	t2.tween_property(%FogVolume,"material:density",0.0,0.5)
+	await get_tree().create_timer(1.4,false).timeout
+	returning = false
+
+func pop_black_screen():
+	print("popping black screen")
+	var t := create_tween()
+	%Nightmare.hide()
+	t.set_trans(Tween.TRANS_EXPO)
+	t.tween_property(%KilledRect,"modulate:a",1.0,0.2)
+	t.tween_property(%KilledRect,"modulate:a",0.0,0.5)
+
+func return_kill():
+	returning = true
+	velocity *= 0.0
+	var t := create_tween()
+	%Nightmare.show()
+	t.tween_property(%KilledRect,"modulate:a",1.0,0.15)
+	await get_tree().create_timer(4.0,false).timeout
+	global_position = initial_position
+	camera.rotation = initial_rotation
+	Global.reset_glitched.emit()
+	%Nightmare.hide()
+	await get_tree().create_timer(0.1,false).timeout
+	var t2 := create_tween()
+	t2.set_trans(Tween.TRANS_EXPO)
+	t2.tween_property(%KilledRect,"modulate:a",0.0,1.5)
+	await get_tree().create_timer(1.4,false).timeout
+	returning = false
 
 func begin_intro():
 	$Machine.play()
@@ -238,3 +353,37 @@ func set_sound_db(db : float):
 func disable_collision(delay : float):
 	await get_tree().create_timer(delay,false).timeout
 	plane_collision.disabled = true
+
+func set_dialogue(dialogue : String,time : float = 5.0):
+	dialoguing = time
+	dialogue_label.text = dialogue
+
+func set_red_vignette_strength(value : float):
+	(%RedVignette.material as ShaderMaterial).set_shader_parameter("vignette_strength",value)
+
+var v_tween : Tween
+
+func animate_v_tween():
+	if v_tween:
+		v_tween.kill()
+	v_tween = create_tween()
+
+func show_red_vignette(time : float = 0.0):
+	animate_v_tween()
+	v_tween.set_trans(Tween.TRANS_EXPO)
+	v_tween.tween_method(set_red_vignette_strength,0.0,1.0,time)
+
+func hide_red_vignette(time : float = 0.0):
+	animate_v_tween()
+	v_tween.tween_method(set_red_vignette_strength,1.0,0.0,time)
+
+var fov_tween : Tween
+
+func set_camera_fov(fov : float = 75.0):
+	if fov_tween:
+		fov_tween.kill()
+	fov_tween = create_tween()
+	fov_tween.tween_property(camera,"fov",fov,0.2)
+
+func begin_end():
+	pass

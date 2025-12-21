@@ -11,6 +11,10 @@ var exiting : bool = false
 
 func _ready() -> void:
 	%TabContainer.current_tab = open_tab
+	if Global.is_in_finality:
+		%TabContainer.set_tab_hidden(0,true)
+		%TabContainer.set_tab_hidden(1,true)
+		%TabContainer.set_tab_hidden(3,true)
 	Global.request_coins.emit()
 	Global.player_dead.connect(emergency_leave)
 	Global.clear_map.connect(empty_leave)

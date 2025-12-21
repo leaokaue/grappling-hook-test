@@ -170,7 +170,7 @@ func match_item():
 			i_desc = "Wow! This is worthless! If only you could scrap this."
 		i.ErrorCube:
 			s.texture = cube
-			i_name = "Error Cube"
+			i_name = "False Cube"
 			i_desc = "Materialized from spite.
 			Press Shift to put it down on the world.
 			It will help you get out of here."
@@ -352,6 +352,11 @@ static func is_item_owned(item : Item.ITEMS) -> bool:
 				return false
 		i.Trash:
 			if Global.has_trash_bag or Global.trash_bag_scrapped:
+				return true
+			else:
+				return false
+		i.ErrorCube:
+			if Global.has_error_cube:
 				return true
 			else:
 				return false

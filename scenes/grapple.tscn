@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://cj04k4clblad0"]
 
-[ext_resource type="Script" path="res://scripts/grapple.gd" id="1_sowok"]
+[ext_resource type="Script" uid="uid://blp7h08why32b" path="res://scripts/grapple.gd" id="1_sowok"]
 [ext_resource type="Texture2D" uid="uid://dvpi7nso38kqm" path="res://sprites/grapple.png" id="2_bif42"]
 [ext_resource type="AudioStream" uid="uid://dq5kvqr7alx50" path="res://sounds/grapple.mp3" id="3_4i2g2"]
 [ext_resource type="AudioStream" uid="uid://clrx3m3synheu" path="res://sounds/MetalHit.mp3" id="4_dlwic"]
@@ -12,7 +12,7 @@ height = 8.0
 [node name="grapple" type="RigidBody2D"]
 z_index = 3
 collision_layer = 4
-collision_mask = 13
+collision_mask = 1549
 lock_rotation = true
 freeze_mode = 1
 continuous_cd = 2

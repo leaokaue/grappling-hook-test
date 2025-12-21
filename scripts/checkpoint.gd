@@ -4,6 +4,8 @@ class_name Checkpoint
 var active : bool = false
 
 func _ready() -> void:
+	if Global.is_in_finality:
+		(%ColorRect2.color as Color).b = 1.0
 	#self.add_to_group("Checkpoints")
 	body_entered.connect(on_body_entered)
 	body_exited.connect(on_body_exited)
@@ -26,6 +28,9 @@ func on_body_exited(body : Node2D):
 		Global.can_switch_equipments = false
 
 func set_checkpoint(_player : Worm):
+	if _player.finality_mode:
+		Global.last_finality_x = self.global_position.x
+		Global.last_finality_y = self.global_position.y
 	Global.last_checkpoint_x = self.global_position.x
 	Global.last_checkpoint_y = self.global_position.y
 
@@ -35,8 +40,12 @@ func set_active(act : bool):
 	var obelisk := %Obelisk
 	
 	var particles := func(emitting : bool):
-		%In.emitting = emitting
-		%Ring.emitting = emitting
+		if not Global.is_in_finality:
+			%In.emitting = emitting
+			%Ring.emitting = emitting
+		else:
+			%PurifiedIn.emitting = emitting
+			%PurifiedRing.emitting = emitting
 	
 	var t := create_tween()
 	
