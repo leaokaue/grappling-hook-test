@@ -11,6 +11,8 @@ var t : Tween
 
 var scrapper_ui : Control
 
+@export var toggler : bool = false
+
 func _ready() -> void:
 	self.body_entered.connect(_on_player_enter)
 	self.body_exited.connect(_on_player_exit)
@@ -41,6 +43,7 @@ func instantiate_scrapper_ui():
 	ui_active = true
 	Global.player.can_control = false
 	%Label.hide()
+	s.is_toggler = true
 	var f := func():
 		ui_active = false
 		Global.player.can_control = true

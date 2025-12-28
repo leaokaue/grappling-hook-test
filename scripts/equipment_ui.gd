@@ -13,6 +13,8 @@ signal released(Vector2)
 
 @export var label : Label
 
+@export var hide_completely : bool = false
+
 #@export var behind : TextureRect
 
 @export var bg : TextureRect
@@ -104,6 +106,11 @@ func has_item() -> bool:
 				return false
 		a.Jetpack:
 			if Global.has_jetpack:
+				return true
+			else:
+				return false
+		a.ErrorCube:
+			if Global.has_error_cube:
 				return true
 			else:
 				return false

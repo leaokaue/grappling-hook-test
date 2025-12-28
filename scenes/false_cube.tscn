@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://bp8mej2nd1k3a"]
+[gd_scene load_steps=19 format=3 uid="uid://bp8mej2nd1k3a"]
 
 [ext_resource type="Script" uid="uid://sc7lbb7li7ix" path="res://scripts/false_cube.gd" id="1_1e4l7"]
 [ext_resource type="Texture2D" uid="uid://b6r1hdb4tw6yc" path="res://sprites/false_cube_back.png" id="2_jdwkr"]
@@ -10,6 +10,12 @@
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_diqa7"]
 rough = true
 absorbent = true
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_diqa7"]
+size = Vector2(96, 96)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_psufj"]
+size = Vector2(39.705, 20)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ymqhm"]
 size = Vector2(96, 96)
@@ -76,7 +82,7 @@ scale_max = 0.099999994
 color = Color(0.20833501, 0.1083, 0.57, 0.75686276)
 alpha_curve = SubResource("CurveTexture_diqa7")
 
-[node name="FalseCube" type="RigidBody2D" node_paths=PackedStringArray("gear_sprite")]
+[node name="FalseCube" type="RigidBody2D" node_paths=PackedStringArray("gear_sprite", "inner_area", "outer_detectors")]
 collision_layer = 512
 physics_material_override = SubResource("PhysicsMaterial_diqa7")
 gravity_scale = 0.0
@@ -85,10 +91,57 @@ continuous_cd = 2
 linear_damp = 1.0
 script = ExtResource("1_1e4l7")
 gear_sprite = NodePath("Gear")
+inner_area = NodePath("Detectors/InnerDetector")
+outer_detectors = [NodePath("Detectors/OuterDetector"), NodePath("Detectors/OuterDetector2"), NodePath("Detectors/OuterDetector3"), NodePath("Detectors/OuterDetector4")]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="Detectors" type="Node2D" parent="."]
+
+[node name="InnerDetector" type="Area2D" parent="Detectors"]
+z_index = 1
+collision_layer = 0
+collision_mask = 2
+priority = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Detectors/InnerDetector"]
+shape = SubResource("RectangleShape2D_diqa7")
+
+[node name="OuterDetector" type="ShapeCast2D" parent="Detectors"]
+z_index = 1
+shape = SubResource("RectangleShape2D_psufj")
+target_position = Vector2(0, 55.215)
+max_results = 1
+
+[node name="OuterDetector2" type="ShapeCast2D" parent="Detectors"]
+z_index = 1
+rotation = 1.5707964
+shape = SubResource("RectangleShape2D_psufj")
+target_position = Vector2(0, 55.215)
+max_results = 1
+
+[node name="OuterDetector3" type="ShapeCast2D" parent="Detectors"]
+z_index = 1
+rotation = 3.1415927
+shape = SubResource("RectangleShape2D_psufj")
+target_position = Vector2(0, 55.215)
+max_results = 1
+
+[node name="OuterDetector4" type="ShapeCast2D" parent="Detectors"]
+z_index = 1
+rotation = 4.712389
+shape = SubResource("RectangleShape2D_psufj")
+target_position = Vector2(0, 55.215)
+max_results = 1
+
+[node name="CollisionShape2D" type="CollisionPolygon2D" parent="."]
+unique_name_in_owner = true
+build_mode = 1
+polygon = PackedVector2Array(48, 48, 48, -48, -48, -48, -48, 48)
+disabled = true
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="."]
 unique_name_in_owner = true
 shape = SubResource("RectangleShape2D_ymqhm")
+disabled = true
 
 [node name="Back" type="Sprite2D" parent="."]
 texture = ExtResource("2_jdwkr")

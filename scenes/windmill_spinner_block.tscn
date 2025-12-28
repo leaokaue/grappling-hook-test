@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://b6b10pnth34j6"]
 
-[ext_resource type="Script" path="res://scripts/windmill_spinner_block.gd" id="1_swrwo"]
-[ext_resource type="Script" path="res://scripts/windmill_block_detector.gd" id="2_riyay"]
+[ext_resource type="Script" uid="uid://cnr4ct8krha66" path="res://scripts/windmill_spinner_block.gd" id="1_swrwo"]
+[ext_resource type="Script" uid="uid://cjpfyfqj41aw2" path="res://scripts/windmill_block_detector.gd" id="2_riyay"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_884bx"]
 friction = 5.0

@@ -1,9 +1,10 @@
-[gd_scene load_steps=34 format=3 uid="uid://bnvneh2xfqhpp"]
+[gd_scene load_steps=36 format=3 uid="uid://bnvneh2xfqhpp"]
 
 [ext_resource type="Script" uid="uid://bt4pkr502m2v" path="res://scripts/screen_text_notifier.gd" id="1_28r26"]
 [ext_resource type="Script" uid="uid://jeprbhpns510" path="res://scripts/map_intro.gd" id="1_jwpll"]
 [ext_resource type="Script" uid="uid://b841wt4tjrche" path="res://scripts/rain.gd" id="1_kj4sp"]
 [ext_resource type="Script" uid="uid://bpbmua6sjajbu" path="res://scripts/coin_counter.gd" id="1_le5ak"]
+[ext_resource type="Script" uid="uid://b4we6shqamcvu" path="res://scripts/ui.gd" id="1_sesyt"]
 [ext_resource type="Texture2D" uid="uid://b2xs1j1q1scfq" path="res://sprites/nolan.jpg" id="2_4iwo5"]
 [ext_resource type="Script" uid="uid://cc47pwtqnogva" path="res://scripts/vignette.gd" id="2_47kre"]
 [ext_resource type="Script" uid="uid://by5ewu4mlbef5" path="res://scripts/item_ui.gd" id="2_ejolm"]
@@ -24,6 +25,7 @@
 [ext_resource type="Script" uid="uid://bhctgm6i0i6m4" path="res://scripts/timer.gd" id="19_1p538"]
 [ext_resource type="Script" uid="uid://72y351jfjj2f" path="res://scripts/winner_condition.gd" id="19_vkxe7"]
 [ext_resource type="AudioStream" uid="uid://cnilrnv668k01" path="res://sounds/Wave Button Press.mp3" id="20_catpy"]
+[ext_resource type="Texture2D" uid="uid://popgykd3s4jc" path="res://sprites/grapple_break3.png" id="24_gglip"]
 
 [sub_resource type="Shader" id="Shader_sjp6m"]
 code = "// Rain and Snow shader by Brian Smith (steampunkdemon.itch.io)
@@ -150,8 +152,11 @@ colors = PackedColorArray(1, 1, 1, 1)
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_btolr"]
 gradient = SubResource("Gradient_dxa4k")
 
-[node name="UI" type="CanvasLayer"]
+[node name="UI" type="CanvasLayer" node_paths=PackedStringArray("ui", "ui_2d")]
 layer = 15
+script = ExtResource("1_sesyt")
+ui = [NodePath("MapIntro"), NodePath("SpecialText"), NodePath("Label"), NodePath("Save")]
+ui_2d = NodePath("Node2DUI")
 
 [node name="Control" type="Control" parent="." node_paths=PackedStringArray("color", "win", "age", "completion", "time", "input")]
 visible = false
@@ -624,7 +629,6 @@ tint_over = Color(0.427451, 0.709804, 0.588235, 1)
 tint_progress = Color(0.74902, 1, 0.894118, 1)
 
 [node name="JetpackUI" type="HBoxContainer" parent="Node2DUI/Items/VBoxContainer"]
-visible = false
 layout_mode = 2
 size_flags_horizontal = 0
 
@@ -639,8 +643,10 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
-max_value = 2.1
+min_value = 1.0
+max_value = 8.0
 step = 0.0
+value = 1.0
 nine_patch_stretch = true
 stretch_margin_left = 410
 stretch_margin_top = 45
@@ -654,6 +660,7 @@ tint_over = Color(0.77238, 0.695494, 1.54018e-06, 1)
 tint_progress = Color(1, 0.517647, 0, 1)
 
 [node name="CubeUI" type="HBoxContainer" parent="Node2DUI/Items/VBoxContainer"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 0
 
@@ -783,10 +790,18 @@ volume_db = -28.0
 pitch_scale = 0.5
 
 [node name="Sprite2D" type="Sprite2D" parent="Node2DUI/GrappleCooldown"]
+clip_children = 2
 position = Vector2(44, 166)
 rotation = -0.785398
 scale = Vector2(0.186508, 0.186508)
 texture = ExtResource("6_wlgv8")
+
+[node name="GrappleBreak3" type="Sprite2D" parent="Node2DUI/GrappleCooldown/Sprite2D"]
+unique_name_in_owner = true
+position = Vector2(29.043453, 33.88403)
+rotation = 0.7853982
+scale = Vector2(1.1116947, 1.1116946)
+texture = ExtResource("24_gglip")
 
 [node name="Uibg2" type="Sprite2D" parent="Node2DUI/GrappleCooldown"]
 modulate = Color(1, 1, 1, 0.517647)

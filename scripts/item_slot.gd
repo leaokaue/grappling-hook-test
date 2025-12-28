@@ -18,6 +18,7 @@ static var label_text : String
 @export var tambaqui : SGGateItem
 @export var hover_stone : SGGateItem
 @export var jetpack : SGGateItem
+@export var cube : SGGateItem
 
 @export var checker : Panel
 
@@ -74,6 +75,7 @@ func panel_leave():
 
 func check_panel(item_node : SGGateItem, item : Global.EQUIPMENTS):
 	
+	print(item_node)
 	var e := Global.EQUIPMENTS
 	
 	for i in item_array:
@@ -109,6 +111,9 @@ func check_texture(item : Global.EQUIPMENTS):
 		e.Jetpack:
 			item_rect.texture = jetpack.texture_normal
 			jetpack.hide()
+		e.ErrorCube:
+			item_rect.texture = cube.texture_normal
+			cube.hide()
 
 func clear_item():
 	for i in item_array:

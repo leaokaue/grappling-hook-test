@@ -7,7 +7,7 @@ func _ready() -> void:
 	pass
 
 func _process(delta: float) -> void:
-	if Global.timer_visible and (not Global.is_in_finality):
+	if Global.timer_visible:
 		self.show()
 	else:
 		self.hide()

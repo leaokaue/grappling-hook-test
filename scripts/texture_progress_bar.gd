@@ -15,6 +15,11 @@ func _process(delta: float) -> void:
 	else:
 		holder.hide()
 	
+	if Global.grappling_hook_returned:
+		%GrappleBreak3.show()
+	else:
+		%GrappleBreak3.hide()
+	
 	if not is_instance_valid(p):
 		return
 	

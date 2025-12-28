@@ -106,6 +106,8 @@ func clean_areas():
 	set_visibility_rect()
 
 func set_visibility_rect():
+	if Global.is_in_finality: return
+	
 	var l := longest_area_length
 	
 	if is_instance_valid(notifier):

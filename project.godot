@@ -13,7 +13,7 @@ config_version=5
 config/name="Aleksander Wormchelt and The Quest for the Peculiar Coins"
 run/main_scene="res://scenes/title_screen.tscn"
 config/features=PackedStringArray("4.5", "Forward Plus")
-config/icon="res://sprites/PeculiarCoin.png"
+config/icon="uid://dycilntpnyauo"
 
 [autoload]
 
@@ -172,6 +172,7 @@ interact={
 2d_physics/layer_9="Poison"
 2d_physics/layer_10="Cube"
 2d_physics/layer_11="Cloud"
+2d_physics/layer_12="Enemy"
 
 [physics]
 

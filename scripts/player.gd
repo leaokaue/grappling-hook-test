@@ -63,9 +63,9 @@ const max_hover_bar : float = 4.0
 
 var is_jetpacking : bool = false
 
-var jetpack_bar : float = 2.0
+var jetpack_bar : float = 8.0
 
-const max_jetpack_bar : float = 2.0
+const max_jetpack_bar : float = 8.0
 
 var cube_bar : float = 3.0
 
@@ -117,6 +117,7 @@ var hook : GrappleHook
 
 var last_trail : LineTrail2D
 
+var firewall_bug : FirewallBug
 
 #var global_joint : PinJoint2D
 
@@ -132,9 +133,14 @@ const map := preload("res://scenes/map.tscn")
 
 var gump_timer : float = 40.0
 
+var camera : Camera2D
+
+var ui_instance : PlayerUI
+
 func _ready() -> void:
 	if finality_mode:
 		Global.is_in_finality = true
+	
 	create_ui()
 	var c := func(x : bool):
 		can_control = x
@@ -142,8 +148,15 @@ func _ready() -> void:
 	Global.toggle_worm_control.connect(c)
 	Global.player = self
 	
+	for n in get_children():
+		if n is Camera2D:
+			camera = n
+	
 	if horror_mode or finality_mode:
 		Global.has_grappling_hook = false
+	
+	if Global.grappling_hook_returned:
+		Global.has_grappling_hook = true
 	
 	if horror_mode:
 		var s := func():
@@ -154,9 +167,11 @@ func _ready() -> void:
 		is_teleporting = false
 		can_control = false
 	
-	#if debug_mode:
-		#Global.last_checkpoint_x = global_position.x
-		#Global.last_checkpoint_y = global_position.y
+	if debug_mode:
+		Global.last_checkpoint_x = global_position.x
+		Global.last_checkpoint_y = global_position.y
+		Global.last_finality_x = global_position.x
+		Global.last_finality_y = global_position.y
 	
 	print(Global.last_pos_x,Global.last_pos_y,"Positions!")
 	
@@ -329,12 +344,21 @@ func _physics_process(delta):
 	if is_hovering:
 		m_bonus += 0.40
 	
+	#if is_jetpacking:
+		#m_bonus += 0.6
+	
 	if horror_mode:
 		m_bonus += 0.05
 	
 	if direction != 0:
 		if (not is_freefalling) or (in_liquid):
+			var vel : float = 0
+			var col = ray_cast_2d.get_collider()
+			if col is RigidBody2D:
+				vel = col.linear_velocity.x
+			
 			force.x = (MOVE_SPEED * m_bonus) * direction
+			force.x += vel
 			physics_material_override.friction = 0.1
 			if abs(linear_velocity.x) > (MAX_SPEED * m_bonus):
 				linear_velocity.x = (MAX_SPEED * m_bonus) * direction
@@ -370,7 +394,7 @@ func _physics_process(delta):
 	if Input.is_action_just_pressed("jump"):
 		
 		if Global.current_equipment == Global.EQUIPMENTS.Jetpack:
-			if (not is_jetpacking) and (not _on_floor()) and (jetpack_bar > 0):
+			if (not is_jetpacking) and (not _on_floor()) and (jetpack_bar > 0.5):
 				is_jetpacking = true
 		
 		if is_grappling:
@@ -395,9 +419,20 @@ func _physics_process(delta):
 					linear_velocity.y *= 0.5
 		
 	
-	if Input.is_action_just_pressed("stop"):
+	if Input.is_action_just_released("left") or Input.is_action_just_released("right"):
 		if _on_floor():
-			linear_velocity = Vector2()
+			var vel : float = 0
+			var col = ray_cast_2d.get_collider()
+			if col is RigidBody2D:
+				vel = col.linear_velocity.x
+				linear_velocity.x = vel
+			else:
+				linear_velocity.x *= 0.5
+			
+	
+	#if Input.is_action_just_pressed("stop"):
+		#if _on_floor():
+			#linear_velocity = Vector2()
 		
 	
 	_set_animation(direction)
@@ -506,11 +541,28 @@ func apply_hoverstone(_delta : float):
 
 func apply_jetpack(_delta : float):
 	if is_jetpacking:
+		if jetpack_bar < 1.0:
+			is_jetpacking = false
+			return
 		%jetpack.emitting = true
+		var force : float = 750
+		var bonus_force : float = 650
+		#print(linear_velocity.y)
+		if linear_velocity.y > 0:
+			force += 1400
+		#var mod : float = (jetpack_bar / max_jetpack_bar)
+		var mod : float = (jetpack_bar / max_jetpack_bar)
+		mod = (5 - (1.0 - mod) * 5)
+		mod /= 5.0
+		mod = clampf(mod,0.01,1.0)
+		bonus_force *= mod
+		print(bonus_force)
+		#print(mod)
 		#linear_velocity.y = lerp(linear_velocity.y,0.0,1.5)
 		#linear_velocity.y = 0.0
 		#print(linear_velocity.y)
-		apply_central_force(1400 * Vector2.UP)
+		apply_central_force((force + bonus_force) * Vector2.UP)
+		#print(force)
 	else:
 		%jetpack.emitting = false
 
@@ -555,7 +607,7 @@ func apply_cube():
 		current_cube = null
 	
 	var c := cube_scene.instantiate() as FalseCube2D
-	c.dissapeared.connect(destroy_grapple)
+	#c.dissapeared.connect(destroy_grapple)
 	current_cube = c
 	c.dissapeared.connect(remove_previous_cube_reference)
 	c.global_position = get_global_mouse_position()
@@ -615,8 +667,9 @@ func handle_non_control(delta : float):
 		rotate_joint()
 		
 		if is_instance_valid(hook):
-			line.set_point_position(0,self.global_position)
-			line.set_point_position(1,hook.global_position)
+			line.modulate.a = hook.modulate.a
+			line.set_point_position(0,%HookPoint.global_position)
+			line.set_point_position(1,hook.line_point.global_position)
 			#print(hook.global_position)
 			line.show()
 			if hook.grappled:
@@ -683,7 +736,7 @@ func handle_equipment_cooldowns(delta : float):
 	if not is_hovering:
 		if  not is_grappling:
 			if hover_bar < max_hover_bar:
-				hover_bar += delta * 0.55
+				hover_bar += delta * 1.2
 		#elif is_grappling:
 			#if hover_bar < max_hover_bar:
 				#hover_bar += delta * 0.1 
@@ -698,11 +751,15 @@ func handle_equipment_cooldowns(delta : float):
 	emit_hover_cooldown.emit(hover_bar)
 	
 	if not is_jetpacking:
-		if _on_floor():
-			jetpack_bar = move_toward(jetpack_bar,max_jetpack_bar, delta * 10)
+		if _on_floor() and (not is_grappling) and (not is_freefalling):
+			jetpack_bar = max_jetpack_bar
 	else:
 		if jetpack_bar > 0:
-			jetpack_bar -= delta * 1.0
+			var mod : float = (jetpack_bar / max_jetpack_bar)
+			mod = (5 - (1.0 - mod) * 5)
+			#print(mod)
+			mod = clampf(mod,0.25,5.0)
+			jetpack_bar -= delta * (1.0 * mod)
 		else:
 			is_jetpacking = false
 	
@@ -728,6 +785,9 @@ func set_is_freefalling(freefalling : bool):
 		last_trail = t
 		get_tree().current_scene.add_child(t)
 	else:
+		if %RagdollCast2.is_colliding():
+			self.global_position.y += -15
+			self.rotation_degrees = 0
 		if is_instance_valid(last_trail):
 			#print("killed  line")
 			last_trail.fading_away = true
@@ -779,25 +839,29 @@ func set_fish_trail(tambaqui : bool):
 @warning_ignore("unused_parameter")
 func _integrate_forces(state):
 	if not is_freefalling:
-		rotation_degrees = lerp(rotation_degrees,0.0,0.8)
+		#rotation_degrees = lerp(rotation_degrees,0.0,0.8)
+		rotation_degrees = 0
+		#pass
 
 func _set_animation(direction):
 	if direction > 0: animated_sprite_2d.flip_h = false
 	elif direction < 0: animated_sprite_2d.flip_h = true
 
-func _on_floor():
+func _on_floor() -> bool:
 	
 	if in_liquid:
 		return false
 	
 	if is_freefalling:
-		if $RagddollCast.is_colliding():
+		if %RagdollCast.is_colliding():
 			can_cancel_jump = true
 			return true
 	else:
 		if ray_cast_2d.is_colliding():
 			can_cancel_jump = true
 			return true
+	
+	return false
 
 func instantiate_map(tab : int = 0):
 	if horror_mode: return
@@ -1060,6 +1124,7 @@ func impulse_to_grapple():
 
 func create_ui():
 	var u := ui.instantiate()
+	ui_instance = u
 	get_tree().current_scene.add_child.call_deferred(u)
 	if horror_mode:
 		u.hide()
@@ -1112,6 +1177,8 @@ func return_to_checkpoint(scream_type : int = 0,duration_multiplier : float = 1.
 	if current_cube:
 		current_cube.dissapear()
 	
+	#freeze
+	#set_deferred("freeze",true)
 	can_control = false
 	is_teleporting = true
 	Global.clear_map.emit()
@@ -1128,6 +1195,7 @@ func return_to_checkpoint(scream_type : int = 0,duration_multiplier : float = 1.
 	await Global.fade_animation_finished
 	await  get_tree().create_timer(1.4 * duration_multiplier,false).timeout
 	linear_velocity *= 0
+	#set_deferred("freeze",false)
 	set_pos_to_checkpoint()
 	self.rotation = 0
 	drown_buildup = 0.0

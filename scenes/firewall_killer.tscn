@@ -1,0 +1,31 @@
+[gd_scene load_steps=5 format=3 uid="uid://b4q6peb5mfnol"]
+
+[ext_resource type="Script" uid="uid://bp5ok6sbjmy7k" path="res://scenes/firewall_killer.gd" id="1_dfco3"]
+[ext_resource type="Texture2D" uid="uid://cqubhqcs7aqy1" path="res://sprites/zap.png" id="1_gsxfr"]
+[ext_resource type="AudioStream" uid="uid://cvnldefrdtlch" path="res://sounds/Electric Shock Bot.mp3" id="3_fb57r"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ywqth"]
+radius = 300.02667
+
+[node name="FirewallKiller" type="Area2D"]
+collision_layer = 0
+collision_mask = 2048
+monitoring = false
+script = ExtResource("1_dfco3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+shape = SubResource("CircleShape2D_ywqth")
+
+[node name="Line" type="Line2D" parent="."]
+unique_name_in_owner = true
+visible = false
+points = PackedVector2Array(0, 3, 200, -212)
+width = 178.4
+texture = ExtResource("1_gsxfr")
+texture_mode = 2
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_fb57r")
+volume_db = 6.0
+pitch_scale = 1.5

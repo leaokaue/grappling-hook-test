@@ -15,6 +15,9 @@ func _ready() -> void:
 		%TabContainer.set_tab_hidden(0,true)
 		%TabContainer.set_tab_hidden(1,true)
 		%TabContainer.set_tab_hidden(3,true)
+		if Global.terminus_can_switch_equipment:
+			%TabContainer.set_tab_hidden(1,false)
+
 	Global.request_coins.emit()
 	Global.player_dead.connect(emergency_leave)
 	Global.clear_map.connect(empty_leave)

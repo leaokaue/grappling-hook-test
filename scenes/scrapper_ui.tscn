@@ -1,4 +1,4 @@
-[gd_scene load_steps=61 format=3 uid="uid://ddhlytswfhaa7"]
+[gd_scene load_steps=67 format=3 uid="uid://ddhlytswfhaa7"]
 
 [ext_resource type="Script" uid="uid://dua3g1gv4e52r" path="res://scenes/scrapper_ui.gd" id="1_bcbwj"]
 [ext_resource type="Texture2D" uid="uid://rm6i6j71nttm" path="res://sprites/mapbg.png" id="1_l8l3l"]
@@ -30,6 +30,8 @@
 [ext_resource type="Texture2D" uid="uid://8emwjd2jy7m0" path="res://sprites/grapple_break2.png" id="25_1nf0a"]
 [ext_resource type="Texture2D" uid="uid://popgykd3s4jc" path="res://sprites/grapple_break3.png" id="26_31cgy"]
 [ext_resource type="AudioStream" uid="uid://47db6viykbbt" path="res://sounds/scrap_fail.mp3" id="27_24its"]
+[ext_resource type="AudioStream" uid="uid://dg0rdeapnkfi4" path="res://sounds/item_toggled_on.mp3" id="27_jtnq6"]
+[ext_resource type="AudioStream" uid="uid://c8w3lpl1teivm" path="res://sounds/item_toggled_off.mp3" id="28_bwy23"]
 [ext_resource type="AudioStream" uid="uid://gesri0kc4d2y" path="res://sounds/deep_metal_hit_2.mp3" id="28_la0b1"]
 [ext_resource type="AudioStream" uid="uid://b5dgq7ovaet0l" path="res://sounds/scary-sound-suspense-314626.mp3" id="29_la0b1"]
 [ext_resource type="AudioStream" uid="uid://78kjcgg8o6gw" path="res://sounds/cry-of-pain-357978.mp3" id="33_31cgy"]
@@ -802,6 +804,41 @@ scale_max = 0.03
 color_ramp = SubResource("GradientTexture1D_sobcy")
 alpha_curve = SubResource("CurveTexture_la0b1")
 
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_jtnq6"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 50.0
+direction = Vector3(0, 1, 0)
+spread = 180.0
+initial_velocity_min = 144.4
+initial_velocity_max = 223.82
+gravity = Vector3(0, 200, 0)
+scale_min = 0.1
+scale_max = 0.25
+color = Color(0.34, 0.646, 0.68, 1)
+alpha_curve = SubResource("CurveTexture_d0ymn")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_bwy23"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 50.0
+direction = Vector3(0, 1, 0)
+spread = 180.0
+initial_velocity_min = 144.4
+initial_velocity_max = 223.82
+gravity = Vector3(0, 200, 0)
+scale_min = 0.1
+scale_max = 0.25
+color = Color(0.41981313, 0.41981313, 0.4198131, 1)
+alpha_curve = SubResource("CurveTexture_d0ymn")
+
+[sub_resource type="Gradient" id="Gradient_7gawk"]
+offsets = PackedFloat32Array(1)
+colors = PackedColorArray(1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_pocph"]
+gradient = SubResource("Gradient_7gawk")
+
 [sub_resource type="SystemFont" id="SystemFont_ctnvj"]
 subpixel_positioning = 0
 
@@ -840,7 +877,7 @@ shader_parameter/shake_speed = 5.0
 shader_parameter/shake_block_size = 9.215
 shader_parameter/shake_color_rate = 0.01
 
-[node name="ScrapperUI" type="CanvasLayer" node_paths=PackedStringArray("item_rect", "scrap_items", "hook_scrap_item", "scrap_container", "ss_container", "main_control", "break_1", "break_2", "break_3", "scrap_button", "scrap_label", "super_scrap", "ss_label")]
+[node name="ScrapperUI" type="CanvasLayer" node_paths=PackedStringArray("item_rect", "scrap_items", "hook_scrap_item", "scrap_container", "ss_container", "ss_button_container", "toggle_button_container", "main_control", "break_1", "break_2", "break_3", "scrap_button", "scrap_label", "super_scrap", "ss_label", "toggle_button", "toggle_title", "toggle_description", "toggle_item_rect")]
 layer = 19
 script = ExtResource("1_bcbwj")
 item_rect = NodePath("Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/ItemRect")
@@ -848,6 +885,8 @@ scrap_items = [NodePath("Control/MarginContainer/ScrapContainer/HBoxContainer/HF
 hook_scrap_item = NodePath("Control/MarginContainer/SuperScrapContainer/HBoxContainer/HFlowContainer/GrapplingHook")
 scrap_container = NodePath("Control/MarginContainer/ScrapContainer")
 ss_container = NodePath("Control/MarginContainer/SuperScrapContainer")
+ss_button_container = NodePath("Control/MarginContainer/SuperScrapperButton")
+toggle_button_container = NodePath("Control/MarginContainer/ToggleButtonContainer")
 main_control = NodePath("Control")
 break_1 = NodePath("Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/ItemRect/Break1")
 break_2 = NodePath("Control/MarginContainer/ScrapButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/ItemRect/Break2")
@@ -858,6 +897,10 @@ sl_text = "%01d/16 Trash Points"
 super_scrap = NodePath("Control/MarginContainer/SuperScrapperButton/HBoxContainer2/CheckButton")
 ss_label = NodePath("Control/MarginContainer/SuperScrapperButton/MarginContainer/TrashPoints")
 ss_text = "%01d/8 Trash Points"
+toggle_button = NodePath("Control/MarginContainer/ToggleButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/Button")
+toggle_title = NodePath("Control/MarginContainer/ToggleButtonContainer/MarginContainer/VBoxContainer/Title")
+toggle_description = NodePath("Control/MarginContainer/ToggleButtonContainer/MarginContainer/VBoxContainer/Description")
+toggle_item_rect = NodePath("Control/MarginContainer/ToggleButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/ItemRect")
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
@@ -985,14 +1028,14 @@ theme_override_constants/margin_right = 40
 theme_override_constants/margin_bottom = 40
 
 [node name="ScrapContainer" type="VBoxContainer" parent="Control/MarginContainer"]
-visible = false
 layout_mode = 2
 mouse_filter = 2
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="Control/MarginContainer/ScrapContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Control/MarginContainer/ScrapContainer/HBoxContainer2"]
+[node name="ScrapLabel" type="Label" parent="Control/MarginContainer/ScrapContainer/HBoxContainer2"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 30
@@ -1003,7 +1046,8 @@ vertical_alignment = 1
 [node name="MarginContainer" type="MarginContainer" parent="Control/MarginContainer/ScrapContainer"]
 layout_mode = 2
 
-[node name="Label2" type="Label" parent="Control/MarginContainer/ScrapContainer/MarginContainer"]
+[node name="ScrapLabel2" type="Label" parent="Control/MarginContainer/ScrapContainer/MarginContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "Don't like a permanent \"upgrade\"? Scrap'em here and gain some Trash Points in return!"
@@ -1013,7 +1057,8 @@ vertical_alignment = 1
 [node name="MarginContainer2" type="MarginContainer" parent="Control/MarginContainer/ScrapContainer"]
 layout_mode = 2
 
-[node name="Label3" type="Label" parent="Control/MarginContainer/ScrapContainer/MarginContainer2"]
+[node name="ScrapLabel3" type="Label" parent="Control/MarginContainer/ScrapContainer/MarginContainer2"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "A.W.A.T.Q.F.T.P.C is not responsible for any softlocks that the Scrapper may cause."
@@ -1033,6 +1078,7 @@ mouse_filter = 2
 visible = true
 layout_mode = 2
 texture_normal = ExtResource("2_yvkgk")
+is_toggle_item = null
 current_item = 7
 item_name = "Warp Boots"
 
@@ -1040,6 +1086,7 @@ item_name = "Warp Boots"
 visible = true
 layout_mode = 2
 texture_normal = ExtResource("3_55gk0")
+is_toggle_item = null
 current_item = 10
 item_name = "Tambaqui"
 
@@ -1047,6 +1094,7 @@ item_name = "Tambaqui"
 visible = true
 layout_mode = 2
 texture_normal = ExtResource("4_poapj")
+is_toggle_item = null
 current_item = 5
 item_name = "Hover Stone"
 
@@ -1054,17 +1102,20 @@ item_name = "Hover Stone"
 visible = true
 layout_mode = 2
 texture_normal = ExtResource("5_7pkgv")
+is_toggle_item = null
 current_item = 8
 item_name = "Jetpack"
 
 [node name="Meds1" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
 visible = true
 layout_mode = 2
+is_toggle_item = null
 
 [node name="Meds2" parent="Control/MarginContainer/ScrapContainer/HBoxContainer/HFlowContainer" instance=ExtResource("2_y7khr")]
 visible = true
 layout_mode = 2
 texture_normal = ExtResource("7_35mu5")
+is_toggle_item = null
 current_item = 1
 item_name = "Pretty Healthy Medicine"
 
@@ -1072,6 +1123,7 @@ item_name = "Pretty Healthy Medicine"
 visible = true
 layout_mode = 2
 texture_normal = ExtResource("8_8hcey")
+is_toggle_item = null
 current_item = 2
 item_name = "Incredibly Healthy Medicine!"
 
@@ -1079,6 +1131,7 @@ item_name = "Incredibly Healthy Medicine!"
 visible = true
 layout_mode = 2
 texture_normal = ExtResource("9_qo74t")
+is_toggle_item = null
 current_item = 4
 item_name = "Coin Tracker"
 
@@ -1086,6 +1139,7 @@ item_name = "Coin Tracker"
 visible = true
 layout_mode = 2
 texture_normal = ExtResource("10_jd403")
+is_toggle_item = null
 current_item = 3
 item_name = "Coin Compass"
 
@@ -1093,6 +1147,7 @@ item_name = "Coin Compass"
 visible = true
 layout_mode = 2
 texture_normal = ExtResource("11_kcvl4")
+is_toggle_item = null
 current_item = 6
 item_name = "Guiding Light"
 
@@ -1100,6 +1155,7 @@ item_name = "Guiding Light"
 visible = true
 layout_mode = 2
 texture_normal = ExtResource("12_vssfn")
+is_toggle_item = null
 current_item = 12
 item_name = "Green Potion"
 
@@ -1107,6 +1163,7 @@ item_name = "Green Potion"
 visible = true
 layout_mode = 2
 texture_normal = ExtResource("13_3r5hx")
+is_toggle_item = null
 current_item = 9
 item_name = "Grape Juice"
 
@@ -1114,6 +1171,7 @@ item_name = "Grape Juice"
 visible = true
 layout_mode = 2
 texture_normal = ExtResource("14_3hif5")
+is_toggle_item = null
 current_item = 14
 item_name = "Titanium Glove"
 
@@ -1121,6 +1179,7 @@ item_name = "Titanium Glove"
 visible = true
 layout_mode = 2
 texture_normal = ExtResource("15_t016g")
+is_toggle_item = null
 current_item = 13
 item_name = "Motorized Pulley"
 
@@ -1128,6 +1187,7 @@ item_name = "Motorized Pulley"
 visible = true
 layout_mode = 2
 texture_normal = ExtResource("16_nwek2")
+is_toggle_item = null
 current_item = 11
 item_name = "Extra Rope"
 
@@ -1135,10 +1195,12 @@ item_name = "Extra Rope"
 visible = true
 layout_mode = 2
 texture_normal = ExtResource("17_70g6u")
+is_toggle_item = null
 current_item = 15
 item_name = "Trash Bag"
 
 [node name="SuperScrapContainer" type="VBoxContainer" parent="Control/MarginContainer"]
+visible = false
 layout_mode = 2
 mouse_filter = 2
 
@@ -1197,6 +1259,7 @@ texture_normal = ExtResource("19_w3f7q")
 ignore_texture_size = true
 stretch_mode = 5
 script = ExtResource("20_idkfq")
+is_toggle_item = null
 current_item = 7
 is_grappling_hook = true
 item_name = "Grappling... Hook?"
@@ -1281,6 +1344,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="ScrapButtonContainer" type="MarginContainer" parent="Control/MarginContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 40
@@ -1531,6 +1595,162 @@ theme_override_font_sizes/font_size = 8
 text = "Obtain 8 Points to unlock our Super Scrapper!"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="ToggleButtonContainer" type="MarginContainer" parent="Control/MarginContainer"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/MarginContainer/ToggleButtonContainer"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Control" type="Control" parent="Control/MarginContainer/ToggleButtonContainer/HBoxContainer"]
+custom_minimum_size = Vector2(400, 460)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ScrapButtonContainer" type="MarginContainer" parent="Control/MarginContainer/ToggleButtonContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 10
+
+[node name="Scrapper" type="Control" parent="Control/MarginContainer/ToggleButtonContainer/HBoxContainer/ScrapButtonContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="Control/MarginContainer/ToggleButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -284.0
+offset_right = 284.0
+offset_bottom = 42.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 30
+text = "Warp Boots"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button" type="Button" parent="Control/MarginContainer/ToggleButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 61.928284
+offset_top = -77.32001
+offset_right = 261.92828
+offset_bottom = 9.679993
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 56
+theme_override_styles/focus = SubResource("StyleBoxEmpty_qb74s")
+text = "Toggle!"
+
+[node name="ToggledOn" type="GPUParticles2D" parent="Control/MarginContainer/ToggleButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
+unique_name_in_owner = true
+z_index = 2
+position = Vector2(399.31, 241.06)
+emitting = false
+amount = 4
+texture = ExtResource("3_65v3i")
+lifetime = 0.55
+one_shot = true
+explosiveness = 0.9
+process_material = SubResource("ParticleProcessMaterial_jtnq6")
+
+[node name="ToggledOff" type="GPUParticles2D" parent="Control/MarginContainer/ToggleButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
+unique_name_in_owner = true
+z_index = 2
+position = Vector2(399.31, 241.06)
+emitting = false
+amount = 4
+texture = ExtResource("3_65v3i")
+lifetime = 0.55
+one_shot = true
+explosiveness = 0.9
+process_material = SubResource("ParticleProcessMaterial_bwy23")
+
+[node name="ItemRect" type="TextureRect" parent="Control/MarginContainer/ToggleButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
+custom_minimum_size = Vector2(250, 250)
+layout_mode = 0
+offset_left = 279.78833
+offset_top = 99.927
+offset_right = 529.7883
+offset_bottom = 349.92963
+pivot_offset = Vector2(125, 125)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("2_yvkgk")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Light" type="Sprite2D" parent="Control/MarginContainer/ToggleButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/ItemRect"]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0.06666667)
+show_behind_parent = true
+position = Vector2(122.45196, 137.093)
+scale = Vector2(3.196429, 3.196429)
+texture = SubResource("GradientTexture2D_pocph")
+
+[node name="Light2" type="Sprite2D" parent="Control/MarginContainer/ToggleButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper/ItemRect"]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0.06666667)
+show_behind_parent = true
+position = Vector2(122.451965, 137.09302)
+rotation = 0.7853982
+scale = Vector2(3.3855903, 3.3855903)
+texture = SubResource("GradientTexture2D_pocph")
+
+[node name="on" type="AudioStreamPlayer" parent="Control/MarginContainer/ToggleButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
+unique_name_in_owner = true
+stream = ExtResource("27_jtnq6")
+volume_db = -5.0
+
+[node name="off" type="AudioStreamPlayer" parent="Control/MarginContainer/ToggleButtonContainer/HBoxContainer/ScrapButtonContainer/Scrapper"]
+unique_name_in_owner = true
+stream = ExtResource("28_bwy23")
+volume_db = -10.0
+
+[node name="MarginContainer" type="MarginContainer" parent="Control/MarginContainer/ToggleButtonContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 415
+theme_override_constants/margin_top = 70
+theme_override_constants/margin_right = 250
+theme_override_constants/margin_bottom = -50
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer/ToggleButtonContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Control/MarginContainer/ToggleButtonContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(268, 0)
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_font_sizes/font_size = 24
+autowrap_mode = 3
+visible_characters_behavior = 1
+
+[node name="Description" type="Label" parent="Control/MarginContainer/ToggleButtonContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(268, 0)
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 3
+visible_characters_behavior = 1
 
 [node name="Exit" type="Button" parent="Control"]
 unique_name_in_owner = true

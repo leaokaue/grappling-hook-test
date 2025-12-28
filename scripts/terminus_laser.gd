@@ -1,7 +1,11 @@
 @tool
 extends Node2D
+class_name TerminusLaser
 
-@export var laser_range : float = 100
+@export var laser_range : float = 100 :
+	set(value):
+		laser_range = value
+		call_deferred("set_laser_visuals")
 
 enum CUBE_MODE {
 	Block, 
@@ -33,9 +37,13 @@ var i_offset : float = initial_offset
 
 @export var activated_interval : float = 10.0
 
+@export var activate_buffer : float = 0.0
+
 var a_interval : float = 0.0
 
 @export var disabled_interval : float = 5.0
+
+@export var disabled_buffer : float = 0.0
 
 var d_interval : float = 0.0
 
@@ -59,6 +67,10 @@ var c_delay : float
 
 var t : Tween
 
+var it : Tween
+
+var enabled : bool = true
+
 func _ready() -> void:
 	i_offset = initial_offset
 	laser_alpha = 0.9
@@ -77,46 +89,40 @@ func _ready() -> void:
 		line.modulate = Color.AQUA
 		impact.modulate = Color.AQUA
 	dissipate_laser(true)
-	activate_laser()
+	
+	if intervals_enabled:
+		_set_interval_tween()
+	else:
+		activate_laser()
+	
+	#if Engine.is_editor_hint():
+		#line.material = null
+	
 	raycast.target_position.y = -abs(laser_range) 
 
 func _process(delta: float) -> void:
-	if intervals_enabled:
-		_handle_intervals(delta)
+	#if intervals_enabled:
+		#_handle_intervals(delta)
+	pass
 
 func _physics_process(delta: float) -> void:
-	_detect_and_handle_cube(delta)
-	_handle_collision_segment_range()
-	_handle_laser(delta)
-
-func _handle_intervals(delta : float):
-	if i_offset > 0:
-		i_offset -= delta
-		return
-	
-	if a_interval > 0:
-		a_interval -= delta
-	else:
-		if activated:
-			dissipate_laser()
-			d_interval = disabled_interval
-	
-	if c_delay > 0:
-		print(c_delay,d_interval)
-		c_delay -= delta
-		return
-	
-	if d_interval > 0:
-		d_interval -= delta
-	else:
-		if not activated:
-			activate_laser()
-			c_delay = cycle_delay
-			a_interval = activated_interval
-
-func _handle_laser(_delta : float):
+	if Engine.is_editor_hint(): return
 	set_laser_visuals()
 	_handle_collision_segment_range()
+	_detect_and_handle_cube(delta)
+
+func _set_interval_tween():
+	var tt := create_tween()
+	tt.tween_interval(i_offset)
+	await tt.finished
+	
+	it = create_tween()
+	it.set_loops()
+	it.tween_callback(activate_laser)
+	it.tween_interval(activated_interval)
+	it.tween_callback(dissipate_laser)
+	it.tween_interval(disabled_interval)
+	it.tween_interval(cycle_delay)
 
 func set_laser_visuals():
 	var length := get_laser_length()
@@ -145,7 +151,7 @@ func set_collisions_disabled(disabled : bool):
 func dissipate_laser(instant : bool = false):
 	animate_tween()
 	
-	activated = false
+	#activated = false
 	
 	var emit := func():
 		constant_particles.emitting = false
@@ -154,7 +160,9 @@ func dissipate_laser(instant : bool = false):
 	
 	t.tween_property(impact,"modulate:a",0.0,0.6)
 	t.parallel().tween_property(line,"width",0.0,0.6).set_delay(0.2)
-	t.tween_callback(set_collisions_disabled.bind(true))
+	t.parallel().tween_property(line,"modulate:a",(line.modulate.a / 2.0),0.1).set_delay(0.45)
+	t.parallel().tween_callback(set_collisions_disabled.bind(true)).set_delay(0.45)
+	t.parallel().tween_callback(set.bind("activated",false)).set_delay(0.45)
 	t.tween_callback(emit)
 	
 	if instant:
@@ -163,14 +171,16 @@ func dissipate_laser(instant : bool = false):
 func activate_laser():
 	animate_tween()
 	
-	activated = true
+	#activated = true
 	
 	var emit := func():
 		constant_particles.emitting = true
 	
 	t.tween_property(line,"width",61.0,0.6)
 	t.parallel().tween_property(impact,"modulate:a",laser_alpha,0.4).set_delay(0.2)
-	t.tween_callback(set_collisions_disabled.bind(false))
+	t.parallel().tween_property(line,"modulate:a",laser_alpha,0.3).set_delay(0.45)
+	t.parallel().tween_callback(set_collisions_disabled.bind(false)).set_delay(0.45)
+	t.parallel().tween_callback(set.bind("activated",true)).set_delay(0.45)
 	t.tween_callback(emit)
 
 func animate_tween():
@@ -195,7 +205,9 @@ func _detect_and_handle_cube(delta : float):
 	var dir := Vector2.UP.rotated(self.rotation)
 	
 	if c is FalseCube2D:
-		c.life_time = 5.0
+		if cube_mode == CUBE_MODE.Pull:
+			c.linear_damp = 10.0
+		c.life_time = 15.0
 		#c.global_position += dir * force * delta
 		c.linear_velocity = dir * force
 		#c.apply_central_force(dir * force * delta * 10)

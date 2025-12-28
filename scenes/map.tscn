@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://d2es5ksc3ksgp"]
+[gd_scene load_steps=20 format=3 uid="uid://d2es5ksc3ksgp"]
 
 [ext_resource type="Texture2D" uid="uid://dvd0js1533ixy" path="res://sprites/uibg2.png" id="1_i8q1j"]
 [ext_resource type="Script" uid="uid://dy6o3bom1a5qs" path="res://scripts/map.gd" id="1_ifiad"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://tqrrxtnsyvkn" path="res://sprites/items/tambaqui.png" id="7_xusdj"]
 [ext_resource type="Texture2D" uid="uid://os1xgfw72sd1" path="res://sprites/items/mysticalstone.png" id="10_5wlx5"]
 [ext_resource type="Script" uid="uid://c88qnaeqfthl7" path="res://scripts/item_slot.gd" id="10_ikw3k"]
+[ext_resource type="Texture2D" uid="uid://c5gkhmbc2y4gf" path="res://sprites/items/false_cube_item.png" id="10_wslke"]
 [ext_resource type="Script" uid="uid://bogd4qmpxowqp" path="res://scripts/menu.gd" id="11_p61y7"]
 [ext_resource type="Texture2D" uid="uid://c73ucvu5ijqjw" path="res://sprites/items/jetpack.png" id="11_ya6tx"]
 
@@ -59,7 +60,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_h32r4")
 tab_alignment = 1
-current_tab = 2
+current_tab = 1
 tab_focus_mode = 1
 
 [node name="Map" type="Control" parent="Control/TabContainer"]
@@ -102,7 +103,6 @@ render_target_update_mode = 0
 [node name="BG" parent="Control/TabContainer/Map/MapSprite/BGClip/SubViewportContainer/SubViewport" instance=ExtResource("3_2hgfs")]
 
 [node name="Equipment" type="Control" parent="Control/TabContainer"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
@@ -133,10 +133,10 @@ expand_mode = 1
 
 [node name="DashBoots" type="Control" parent="Control/TabContainer/Equipment"]
 anchors_preset = 0
-offset_left = 186.0
-offset_top = 58.0
-offset_right = 326.0
-offset_bottom = 198.0
+offset_left = 201.0
+offset_top = 70.0
+offset_right = 341.0
+offset_bottom = 210.0
 mouse_filter = 2
 
 [node name="TextureButton" type="TextureButton" parent="Control/TabContainer/Equipment/DashBoots" node_paths=PackedStringArray("bg")]
@@ -387,10 +387,10 @@ expand_mode = 1
 
 [node name="HoverStone" type="Control" parent="Control/TabContainer/Equipment"]
 anchors_preset = 0
-offset_left = 791.0
-offset_top = 56.0
-offset_right = 931.0
-offset_bottom = 196.0
+offset_left = 793.0
+offset_top = 83.0
+offset_right = 933.0
+offset_bottom = 223.0
 mouse_filter = 2
 
 [node name="Label" type="Label" parent="Control/TabContainer/Equipment/HoverStone"]
@@ -472,7 +472,93 @@ mouse_filter = 2
 texture = ExtResource("1_i8q1j")
 expand_mode = 1
 
-[node name="ActiveSlot" type="Control" parent="Control/TabContainer/Equipment" node_paths=PackedStringArray("clear_button", "bg", "item_rect", "dash_boots", "tambaqui", "hover_stone", "jetpack", "checker")]
+[node name="ErrorCube" type="Control" parent="Control/TabContainer/Equipment"]
+anchors_preset = 0
+offset_left = 519.0
+offset_top = 46.0
+offset_right = 659.0
+offset_bottom = 186.0
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="Control/TabContainer/Equipment/ErrorCube"]
+z_index = 2
+layout_mode = 0
+offset_left = -62.0
+offset_top = -28.0
+offset_right = 176.0
+offset_bottom = 21.0
+text = "False Cube"
+horizontal_alignment = 1
+
+[node name="TextureButton" type="TextureButton" parent="Control/TabContainer/Equipment/ErrorCube" node_paths=PackedStringArray("label", "bg")]
+z_index = 1
+layout_mode = 0
+offset_left = -30.0
+offset_top = -34.0
+offset_right = 160.0
+offset_bottom = 156.0
+scale = Vector2(0.829831, 0.829831)
+pivot_offset = Vector2(95, 95)
+texture_normal = ExtResource("10_wslke")
+ignore_texture_size = true
+stretch_mode = 4
+script = ExtResource("5_lgy1i")
+object = 5
+label = NodePath("../Label")
+bg = NodePath("../BG")
+
+[node name="BG" type="TextureRect" parent="Control/TabContainer/Equipment/ErrorCube"]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_left = -39.0
+offset_top = 66.8715
+offset_right = 151.0
+offset_bottom = 256.872
+rotation = -0.785397
+scale = Vector2(0.825243, 0.825243)
+mouse_filter = 2
+texture = ExtResource("1_i8q1j")
+expand_mode = 1
+
+[node name="BG2" type="TextureRect" parent="Control/TabContainer/Equipment/ErrorCube/BG"]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_left = -3.5353
+offset_top = 183.141
+offset_right = 186.465
+offset_bottom = 373.141
+rotation = -1.57079
+mouse_filter = 2
+texture = ExtResource("1_i8q1j")
+expand_mode = 1
+
+[node name="BG3" type="TextureRect" parent="Control/TabContainer/Equipment/ErrorCube/BG"]
+visible = false
+modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_left = 34.0635
+offset_top = 184.607
+offset_right = 248.064
+offset_bottom = 260.607
+rotation = -2.35619
+mouse_filter = 2
+texture = ExtResource("1_i8q1j")
+expand_mode = 1
+
+[node name="BG4" type="TextureRect" parent="Control/TabContainer/Equipment/ErrorCube/BG"]
+visible = false
+modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_left = 39.049
+offset_top = 190.966
+offset_right = 253.049
+offset_bottom = 266.966
+rotation = -2.35619
+mouse_filter = 2
+texture = ExtResource("1_i8q1j")
+expand_mode = 1
+
+[node name="ActiveSlot" type="Control" parent="Control/TabContainer/Equipment" node_paths=PackedStringArray("clear_button", "bg", "item_rect", "dash_boots", "tambaqui", "hover_stone", "jetpack", "cube", "checker")]
 anchors_preset = 0
 offset_left = 466.0
 offset_top = 234.23712
@@ -486,6 +572,7 @@ dash_boots = NodePath("../DashBoots/TextureButton")
 tambaqui = NodePath("../Tambaqui/TextureButton")
 hover_stone = NodePath("../HoverStone/TextureButton")
 jetpack = NodePath("../Jetpack/TextureButton")
+cube = NodePath("../ErrorCube/TextureButton")
 checker = NodePath("../Panel")
 
 [node name="BG" type="TextureRect" parent="Control/TabContainer/Equipment/ActiveSlot"]
@@ -572,6 +659,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Menu" type="Control" parent="Control/TabContainer" node_paths=PackedStringArray("map", "speedrun", "completion", "deaths", "notcoins", "gjumps", "hjumps", "thrown", "accuracy", "luck", "gump", "ignore_gump", "jump_cancel", "time", "fullscreen")]
+visible = false
 layout_mode = 2
 script = ExtResource("11_p61y7")
 map = NodePath("../../..")

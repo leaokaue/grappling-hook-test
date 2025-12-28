@@ -1,11 +1,21 @@
 extends Area2D
 class_name Checkpoint
 
+signal toggled(on : bool)
+
 var active : bool = false
 
+@export var ignore_finality : bool = false
+
 func _ready() -> void:
+	
 	if Global.is_in_finality:
+		var s := func(b : bool):
+			%FirewallKiller.monitoring = b
+		toggled.connect(s)
 		(%ColorRect2.color as Color).b = 1.0
+	else:
+		%FirewallKiller.free()
 	#self.add_to_group("Checkpoints")
 	body_entered.connect(on_body_entered)
 	body_exited.connect(on_body_exited)
@@ -37,10 +47,12 @@ func set_checkpoint(_player : Worm):
 func set_active(act : bool):
 	active = act
 	
+	toggled.emit(act)
+	
 	var obelisk := %Obelisk
 	
 	var particles := func(emitting : bool):
-		if not Global.is_in_finality:
+		if (not Global.is_in_finality) or (ignore_finality):
 			%In.emitting = emitting
 			%Ring.emitting = emitting
 		else:

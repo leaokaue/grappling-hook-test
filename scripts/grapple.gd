@@ -1,5 +1,6 @@
 extends RigidBody2D
 class_name GrappleHook
+@warning_ignore("unused_signal")
 
 signal hit
 
@@ -19,6 +20,7 @@ var body_offset : Vector2
 
 var cube : FalseCube2D
 
+@onready var line_point := %LinePoint
 @onready var send := %Send
 @onready var hits := %Hit
 
@@ -28,6 +30,9 @@ func _ready() -> void:
 	var p := func():
 		print("entering tree")
 	tree_entered.connect(p)
+	self.modulate.a = 0.0
+	if Global.grappling_hook_returned:
+		%GrappleBreak3.show()
 	#look_at_dir()
 	self.body_shape_entered.connect(_on_body_collision)
 	#self.body_entered.connect(_on_body_collision)
@@ -35,6 +40,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if looks:
 		look_at_dir()
+	modulate.a = move_toward(modulate.a,1.0,delta * 15.0)
 	
 	#if grappled:
 		#if grappled_body is AnimatableBody2D:
@@ -72,7 +78,8 @@ func _on_body_collision(body_rid : RID,body : Node,_bsp : int,lsi : int):
 			
 			if body is FalseCube2D:
 				cube = body
-				body.dissapeared.connect(Global.player.destroy_grapple)
+				if not body.dissapeared.is_connected(Global.player.destroy_grapple):
+					body.dissapeared.connect(Global.player.destroy_grapple)
 		
 		if body.get_collision_layer_value(4):
 			player.destroy_grapple()
@@ -84,6 +91,7 @@ func _on_body_collision(body_rid : RID,body : Node,_bsp : int,lsi : int):
 	looks = false
 	frozen = true
 	Global.hooks_hit += 1
+	self.modulate.a = 1.0
 	set_deferred("freeze",true)
 	call_deferred("emit_signal","hit")
 

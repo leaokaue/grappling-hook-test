@@ -19,6 +19,10 @@ extends CanvasLayer
 
 @export var ss_container : Control
 
+@export var ss_button_container : Control
+
+@export var toggle_button_container : Control
+
 @export var main_control : Control
 
 @export var break_1 : TextureRect
@@ -33,6 +37,11 @@ extends CanvasLayer
 @export var super_scrap : CheckButton
 @export var ss_label : Label
 @export_multiline var ss_text : String
+@export_group("Toggle Nodes")
+@export var toggle_button : Button
+@export var toggle_title : Label
+@export var toggle_description : Label
+@export var toggle_item_rect : TextureRect
 
 var is_scrap_selected : bool = false
 
@@ -41,17 +50,29 @@ var is_grapple_hook_selected : bool = false
 var selected_item : int 
 var selected_node : ScrapItem
 
-@export var shake : float = 0.0
+var shake : float = 0.0
 
 var initial_position : Vector2
 
-@export var shake_strength : float = 3.0
+var shake_strength : float = 3.0
 
 var super_scrap_tries : int = 0
+
+var is_toggler : bool = false
+
+#func _init() -> void:
+	#for i in range(16):
+		#Global.unlock_item(i,true)
 
 func _ready() -> void:
 	initial_position = main_control.global_position
 	item_rect.hide()
+	#is_toggler = true
+	
+	
+	if is_toggler:
+		
+		transform_into_toggler()
 	on_super_scrap_toggle(false)
 	update_trash_labels()
 	connect_item_signals()
@@ -63,6 +84,9 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	handle_shake(delta)
+	%Light.rotation_degrees += delta * -30
+	%Light2.rotation_degrees += delta * 20
+
 
 func on_exit_pressed():
 	self.queue_free()
@@ -101,6 +125,26 @@ func on_scrap_pressed():
 	await get_tree().create_timer(0.2,false).timeout
 	update_trash_labels()
 
+func on_toggle_pressed():
+	
+	if scrapping or (not is_scrap_selected):
+		return
+	
+	var item : int = selected_item
+	#print(item)
+	if not Global.is_item_scrapped(item):
+		Global.scrap_item(item,true)
+		%ToggledOff.emitting = true
+		%off.play()
+		toggle_item_rect.modulate.v = 0.5
+	else:
+		%ToggledOn.emitting = true
+		%on.play()
+		toggle_item_rect.modulate.v = 1.0
+		Global.scrap_item(item,false)
+	
+	selected_node.update_ui()
+
 func on_grapple_pressed(_empty : int, item_node : ScrapItem):
 	if scrapping:
 		return
@@ -124,6 +168,16 @@ func on_item_pressed(item : Item.ITEMS, item_node : ScrapItem):
 	is_scrap_selected = true
 	selected_item = item
 	selected_node = item_node
+	if is_toggler:
+		toggle_title.text = item_node.item_name
+		toggle_description.text = item_node.item_description
+		
+		if Global.is_item_scrapped(item):
+			toggle_item_rect.modulate.v = 0.5
+		else:
+			toggle_item_rect.modulate.v = 1.0
+		toggle_item_rect.texture = selected_node.texture_normal
+		toggle_item_rect.show()
 	item_rect.texture = selected_node.texture_normal
 	item_rect.show()
 	animation.play("RESET")
@@ -131,6 +185,11 @@ func on_item_pressed(item : Item.ITEMS, item_node : ScrapItem):
 func clear_item_selection():
 	selected_item = -1
 	is_scrap_selected  = false
+	if is_toggler:
+		toggle_title.text = ""
+		toggle_description.text = ""
+		toggle_item_rect.texture = null
+		toggle_item_rect.hide()
 	item_rect.texture = null
 	item_rect.hide()
 	animation.play("RESET")
@@ -141,6 +200,7 @@ func connect_item_signals():
 	hook_scrap_item.item_clicked.connect(on_grapple_pressed)
 	scrap_button.pressed.connect(on_scrap_pressed)
 	super_scrap.toggled.connect(on_super_scrap_toggle)
+	toggle_button.pressed.connect(on_toggle_pressed)
 
 func update_trash_labels():
 	var text_trash_points_total : String = sl_text % Global.trash_points
@@ -243,7 +303,7 @@ func progress_hook_scrap():
 			animation.play("scrap_fail_success")
 			%CryPain.play(1.5)
 			%BreathHeavy.stop()
-			%Label3.text = "%s, IT DOESN'T END HERE" % get_user_name().to_upper()
+			%Label3.text = "WHY, %s?" % get_user_name().to_upper()
 			await get_tree().create_timer(2.4,false).timeout
 			Global.has_grappling_hook = false
 			go_into_darkness()
@@ -325,3 +385,15 @@ func open_fake_cmd(close_delay : float = 0.0):
 	t.custom_step(0.034)
 	await get_tree().create_timer(close_delay,false).timeout
 	c.hide()
+
+func transform_into_toggler():
+	
+	for i in scrap_items:
+		i.is_toggle_item = true
+		i.update_ui()
+	ss_button_container.hide()
+	%ScrapButtonContainer.hide()
+	toggle_button_container.show()
+	%ScrapLabel.text = "Item Toggler 9.0.0.1#302f"
+	%ScrapLabel2.text = "Technology has advanced enough to the point that we can present to you our new Item Toggler!" 
+	%ScrapLabel3.text = "Simply select an item, and toggle it! We thank our customers for all their support in making this possible."

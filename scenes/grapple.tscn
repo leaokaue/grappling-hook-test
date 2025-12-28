@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://cj04k4clblad0"]
+[gd_scene load_steps=7 format=3 uid="uid://cj04k4clblad0"]
 
 [ext_resource type="Script" uid="uid://blp7h08why32b" path="res://scripts/grapple.gd" id="1_sowok"]
 [ext_resource type="Texture2D" uid="uid://dvpi7nso38kqm" path="res://sprites/grapple.png" id="2_bif42"]
 [ext_resource type="AudioStream" uid="uid://dq5kvqr7alx50" path="res://sounds/grapple.mp3" id="3_4i2g2"]
+[ext_resource type="Texture2D" uid="uid://popgykd3s4jc" path="res://sprites/grapple_break3.png" id="3_ixvxx"]
 [ext_resource type="AudioStream" uid="uid://clrx3m3synheu" path="res://sounds/MetalHit.mp3" id="4_dlwic"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_v2x1d"]
@@ -29,9 +30,18 @@ shape = SubResource("CapsuleShape2D_v2x1d")
 [node name="Sprite" type="Node2D" parent="."]
 
 [node name="Grapple" type="Sprite2D" parent="Sprite"]
+clip_children = 2
 position = Vector2(-13, 0)
 scale = Vector2(0.206587, 0.206587)
 texture = ExtResource("2_bif42")
+
+[node name="GrappleBreak3" type="Sprite2D" parent="Sprite/Grapple"]
+unique_name_in_owner = true
+visible = false
+position = Vector2(29.043453, 33.88403)
+rotation = 0.7853982
+scale = Vector2(1.1116947, 1.1116946)
+texture = ExtResource("3_ixvxx")
 
 [node name="Send" type="AudioStreamPlayer2D" parent="."]
 unique_name_in_owner = true
@@ -42,3 +52,12 @@ volume_db = 10.0
 unique_name_in_owner = true
 stream = ExtResource("4_dlwic")
 volume_db = -6.0
+
+[node name="Marker2D" type="Marker2D" parent="."]
+position = Vector2(10.050293, -0.16360474)
+gizmo_extents = 2.0
+
+[node name="LinePoint" type="Marker2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(-22, 0)
+gizmo_extents = 1.0

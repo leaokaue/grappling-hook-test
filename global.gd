@@ -135,7 +135,7 @@ var waypoints_unlocked : Dictionary = {
 	 
 }
 
-var current_equipment : int = 0
+var current_equipment : int = 5
 
 var can_switch_equipments : bool = false
 
@@ -243,7 +243,11 @@ var has_guiding_light : bool = false:
 		return has_guiding_light
 
 #water dash
-var has_tambaqui : bool = false
+var has_tambaqui : bool = false:
+	get():
+		if tambaqui_scrapped:
+			return false
+		return has_guiding_light
 
 var game_active : bool = true
 
@@ -324,13 +328,21 @@ var last_finality_x : float
 
 var last_finality_y : float 
 
-var is_in_finality : bool = false
+var is_in_finality : bool = true
 
 var end_coins : int = 0
 
 var grappling_hook_scrapped : bool = false
 
-var finality_coins : int = 0
+var grappling_hook_returned : bool = true
+
+var collected_end_coins : Array[int]
+
+var grappling_hook_run_stage : int = 0
+
+var terminus_visited : bool = true
+
+var terminus_can_switch_equipment : bool = false
 
 #endregion
 
@@ -357,7 +369,7 @@ func set_fullscreen(full : bool):
 	else:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 
-func set_fade_screen(fade : bool):
+func set_fade_screen(hidden : bool):
 	var s : ColorRect = get_tree().get_first_node_in_group("BlackScreen")
 	animate_tween()
 	
@@ -367,7 +379,7 @@ func set_fade_screen(fade : bool):
 	var start_a : float = 0.0
 	var end_a : float = 1.0
 	
-	if fade:
+	if hidden:
 		start_a = 1.0
 		end_a = 0.0
 	
@@ -424,61 +436,106 @@ func scrap_item(item : Item.ITEMS, scrap : bool):
 	
 	match item:
 		i.HookThrowBoost:
-			has_steroids_1 = !scrap
+			#has_steroids_1 = !scrap
 			steroids_1_scrapped = scrap
 		i.JumpBoost:
-			has_steroids_2 = !scrap
+			#has_steroids_2 = !scrap
 			steroids_2_scrapped = scrap
 		i.SpeedBoost:
-			has_steroids_3 = !scrap
+			#has_steroids_3 = !scrap
 			steroids_3_scrapped = scrap
 		i.CoinCompass:
-			has_coin_compass = !scrap
+			#has_coin_compass = !scrap
 			coin_compass_scrapped = scrap
 		i.CoinTracker:
-			has_coin_tracker = !scrap
+			#has_coin_tracker = !scrap
 			coin_tracker_scrapped = scrap
 		i.FastTravel:
-			has_guiding_light = !scrap
+			#has_guiding_light = !scrap
 			guiding_light_scrapped = scrap
 		i.DashBoots:
-			has_dash_boots = !scrap
+			#has_dash_boots = !scrap
 			dash_boots_scrapped = scrap
+			#print(current_equipment == 1)
 			if (current_equipment == 1) and scrap:
-				current_equipment == 0
+				current_equipment = 0
 		i.JetPack:
-			has_jetpack = !scrap
+			#has_jetpack = !scrap
 			jetpack_scrapped = scrap
 			if (current_equipment == 4) and scrap:
-				current_equipment == 0
+				current_equipment = 0
 		i.HookCooldownReducer:
-			has_cool_drink = !scrap
+			#has_cool_drink = !scrap
 			cool_drink_scrapped = scrap
 		i.GrappleRopeExtension:
-			has_rope_extension = !scrap
+			#has_rope_extension = !scrap
 			rope_extension_scrapped = scrap
 		i.RetractBoost:
-			has_rope_pulley = !scrap
+			#has_rope_pulley = !scrap
 			rope_pulley_scrapped = scrap
 		i.LatchJumpBoost:
-			has_boost_latch = !scrap
+			#has_boost_latch = !scrap
 			boost_latch_scrapped = scrap
 		i.HoverStone:
-			has_hover_stone = !scrap
+			#has_hover_stone = !scrap
 			hover_stone_scrapped = scrap
 			if (current_equipment == 3) and scrap:
-				current_equipment == 0
+				current_equipment = 0
 		i.WaterDash:
-			has_tambaqui = !scrap
+			#has_tambaqui = !scrap
 			tambaqui_scrapped = scrap
 			if (current_equipment == 2) and scrap:
-				current_equipment == 0
+				current_equipment = 0
 		i.PoisonResist:
-			has_poison_resist = !scrap
+			#has_poison_resist = !scrap
 			poison_resist_scrapped = scrap
 		i.Trash:
-			has_trash_bag = !scrap
+			#has_trash_bag = !scrap
 			trash_bag_scrapped = scrap
+
+func is_item_unlocked(item : Item.ITEMS):
+	var i := [
+		(has_steroids_1 or steroids_1_scrapped),
+		(has_steroids_2 or steroids_2_scrapped),
+		(has_steroids_3 or steroids_3_scrapped),
+		(has_coin_compass or coin_compass_scrapped),
+		(has_coin_tracker or coin_tracker_scrapped),
+		(has_hover_stone or hover_stone_scrapped),
+		(has_guiding_light or guiding_light_scrapped),
+		has_dash_boots or dash_boots_scrapped,
+		has_jetpack or jetpack_scrapped,
+		has_cool_drink or cool_drink_scrapped,
+		has_tambaqui or tambaqui_scrapped,
+		has_rope_extension or rope_extension_scrapped,
+		has_poison_resist or poison_resist_scrapped,
+		has_rope_pulley or rope_pulley_scrapped,
+		has_boost_latch or boost_latch_scrapped,
+		has_trash_bag or trash_bag_scrapped
+		]
+	
+	return i[item]
+
+func is_item_scrapped(item : Item.ITEMS):
+	var i := [
+		steroids_1_scrapped,
+		steroids_2_scrapped,
+		steroids_3_scrapped,
+		coin_compass_scrapped,
+		coin_tracker_scrapped,
+		hover_stone_scrapped,
+		guiding_light_scrapped,
+		dash_boots_scrapped,
+		jetpack_scrapped,
+		cool_drink_scrapped,
+		tambaqui_scrapped,
+		rope_extension_scrapped,
+		poison_resist_scrapped,
+		rope_pulley_scrapped,
+		boost_latch_scrapped,
+		trash_bag_scrapped
+		]
+	
+	return i[item]
 
 func set_area_seen(area : int):
 	#if n'ot seen_map[Waypoint.WAYPOINTS.keys()[area]]:

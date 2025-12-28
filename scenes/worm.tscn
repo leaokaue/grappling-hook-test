@@ -1,4 +1,4 @@
-[gd_scene load_steps=52 format=3 uid="uid://bacl7irhgnrr7"]
+[gd_scene load_steps=55 format=3 uid="uid://bacl7irhgnrr7"]
 
 [ext_resource type="Script" uid="uid://tuuxtmill61j" path="res://scripts/player.gd" id="1_d3wq5"]
 [ext_resource type="Texture2D" uid="uid://bdw2ln7jh2dda" path="res://sprites/Wormchelt.png" id="2_4q2ix"]
@@ -14,6 +14,7 @@
 [ext_resource type="AudioStream" uid="uid://c7cqe1v7tc6px" path="res://sounds/acid_death.mp3" id="6_oqllm"]
 [ext_resource type="Texture2D" uid="uid://dncu2ajjocxm6" path="res://sprites/water_trail_r.png" id="6_rp1c5"]
 [ext_resource type="AudioStream" uid="uid://c6lpykemf2ubq" path="res://sounds/sizzle.mp3" id="7_y18mt"]
+[ext_resource type="Texture2D" uid="uid://ckygkaugd0jmt" path="res://sprites/rope.png" id="8_1h5b5"]
 [ext_resource type="Texture2D" uid="uid://dvpi7nso38kqm" path="res://sprites/grapple.png" id="10_05e7a"]
 [ext_resource type="AudioStream" uid="uid://bag3rolas4rt8" path="res://sounds/spike_death_horrible1.mp3" id="12_v1x21"]
 [ext_resource type="AudioStream" uid="uid://bsqt7r1q128u0" path="res://sounds/Roar_0.wav" id="17_ta3fn"]
@@ -107,21 +108,28 @@ colors = PackedColorArray(0, 0.516667, 1, 0, 0, 0.516667, 1, 0.635294)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kou4s"]
 size = Vector2(18.09, 20)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1h5b5"]
+size = Vector2(23.765, 5.9)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_iawq7"]
 size = Vector2(14, 30)
+
+[sub_resource type="Gradient" id="Gradient_1h5b5"]
+offsets = PackedFloat32Array(0.27651516)
+colors = PackedColorArray(1, 1, 1, 1)
 
 [sub_resource type="Curve" id="Curve_polqw"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.231183, 1), 0.0, 0.0, 0, 0, Vector2(0.801075, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 4
 
-[sub_resource type="CurveTexture" id="CurveTexture_06kon"]
+[sub_resource type="CurveTexture" id="CurveTexture_br6eq"]
 curve = SubResource("Curve_polqw")
 
 [sub_resource type="Curve" id="Curve_7ay00"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.629032, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 3
 
-[sub_resource type="CurveTexture" id="CurveTexture_caoxv"]
+[sub_resource type="CurveTexture" id="CurveTexture_1h5b5"]
 curve = SubResource("Curve_7ay00")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_5pwg7"]
@@ -134,9 +142,9 @@ initial_velocity_max = 283.79
 gravity = Vector3(0, 98, 0)
 scale_min = 0.1
 scale_max = 0.1
-scale_curve = SubResource("CurveTexture_caoxv")
+scale_curve = SubResource("CurveTexture_1h5b5")
 color = Color(0.55, 0.55, 0.55, 0.690196)
-alpha_curve = SubResource("CurveTexture_06kon")
+alpha_curve = SubResource("CurveTexture_br6eq")
 
 [sub_resource type="Gradient" id="Gradient_j1cwt"]
 offsets = PackedFloat32Array(0.0140845, 0.150235, 1)
@@ -361,9 +369,17 @@ active = false
 max_points = 69
 max_line_deletal = 30
 
-[node name="RagddollCast" type="ShapeCast2D" parent="."]
+[node name="RagdollCast" type="ShapeCast2D" parent="."]
+unique_name_in_owner = true
 position = Vector2(0, -2)
 shape = SubResource("RectangleShape2D_kou4s")
+target_position = Vector2(0, 15)
+collision_mask = 1537
+
+[node name="RagdollCast2" type="ShapeCast2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -2)
+shape = SubResource("RectangleShape2D_1h5b5")
 target_position = Vector2(0, 15)
 collision_mask = 1537
 
@@ -413,6 +429,12 @@ z_index = 1
 points = PackedVector2Array(0, 0, 0, 0)
 width = 3.0
 default_color = Color(0.408329, 0.408329, 0.408329, 1)
+gradient = SubResource("Gradient_1h5b5")
+texture = ExtResource("8_1h5b5")
+texture_mode = 1
+
+[node name="HookPoint" type="Marker2D" parent="."]
+unique_name_in_owner = true
 
 [node name="PoisonTransofmr" type="RemoteTransform2D" parent="."]
 position = Vector2(0.18378448, -29.446375)

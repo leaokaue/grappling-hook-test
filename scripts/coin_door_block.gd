@@ -14,7 +14,14 @@ func on_player_enter(body : Node2D):
 			check_door()
 
 func check_door():
-	if Global.coins >= coin_requirement:
+	var coins : int
+	
+	if not Global.is_in_finality:
+		coins = Global.coins
+	else:
+		coins = Global.end_coins
+	
+	if coins >= coin_requirement:
 		dissapear()
 		for a in $PlayerDetector.get_overlapping_bodies():
 			if (a is CoinDoorBlock):

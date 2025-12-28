@@ -1,0 +1,362 @@
+[gd_scene load_steps=18 format=3 uid="uid://cawsg5rmegkkc"]
+
+[ext_resource type="Script" uid="uid://cxh51k3uhpig4" path="res://scripts/firewall_bug_summoner.gd" id="1_0cbsf"]
+[ext_resource type="Texture2D" uid="uid://dnmjdk8x6ygfd" path="res://sprites/atlas/texture_atlas.png" id="1_2fh2i"]
+[ext_resource type="AudioStream" uid="uid://blft64t8r3nk1" path="res://sounds/error-170796.mp3" id="2_jtk35"]
+[ext_resource type="AudioStream" uid="uid://c0flxxe3csowe" path="res://sounds/door-slam-172171.mp3" id="4_ucg22"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jtk35"]
+atlas = ExtResource("1_2fh2i")
+region = Rect2(720, -0.052700043, 60, 56.447395)
+filter_clip = true
+
+[sub_resource type="Gradient" id="Gradient_2fh2i"]
+offsets = PackedFloat32Array(0.7826087, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_jtk35"]
+gradient = SubResource("Gradient_2fh2i")
+width = 18
+height = 18
+fill = 2
+fill_from = Vector2(0.5, 0.5)
+metadata/_snap_enabled = true
+metadata/_snap_count = 2
+
+[sub_resource type="Curve" id="Curve_lm1fr"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.5238095, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_kt0ry"]
+curve = SubResource("Curve_lm1fr")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ncefy"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 3.0
+angular_velocity_min = 79.999985
+angular_velocity_max = 99.999985
+gravity = Vector3(0, 0, 0)
+alpha_curve = SubResource("CurveTexture_kt0ry")
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_xxbl4"]
+gradient = SubResource("Gradient_2fh2i")
+width = 48
+height = 48
+fill = 2
+fill_from = Vector2(0.5, 0.5)
+metadata/_snap_enabled = true
+metadata/_snap_count = 2
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_2fh2i"]
+radius = 123.101585
+
+[sub_resource type="Gradient" id="Gradient_ywqth"]
+offsets = PackedFloat32Array(0.6473029, 0.6846473)
+colors = PackedColorArray(0.966805, 0.966805, 0.966805, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_lm1fr"]
+gradient = SubResource("Gradient_ywqth")
+width = 128
+height = 128
+fill = 2
+fill_from = Vector2(0.5, 0.5)
+metadata/_snap_enabled = true
+metadata/_snap_count = 2
+
+[sub_resource type="Curve" id="Curve_kt0ry"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1e-05, 1), 0.0, 0.0, 0, 0, Vector2(0.22222222, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_ncefy"]
+curve = SubResource("Curve_kt0ry")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xxbl4"]
+particle_flag_align_y = true
+particle_flag_disable_z = true
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 20.0
+emission_ring_radius = 20.0
+emission_ring_inner_radius = 20.0
+emission_ring_cone_angle = 90.0
+direction = Vector3(0, 1, 0)
+spread = 0.0
+radial_velocity_min = 344.82996
+radial_velocity_max = 344.82996
+gravity = Vector3(0, 0, 0)
+radial_accel_min = 40.619995
+radial_accel_max = 40.619995
+scale_min = 0.099999994
+scale_max = 0.099999994
+color = Color(0.71455765, 0.17558163, 0.753506, 0.757)
+alpha_curve = SubResource("CurveTexture_ncefy")
+
+[node name="FirewallBugSummoner" type="Node2D"]
+script = ExtResource("1_0cbsf")
+
+[node name="Sprite" type="Node2D" parent="."]
+modulate = Color(0.71, 0.71, 0.71, 0.63529414)
+z_index = -1
+position = Vector2(0, 56)
+
+[node name="Sprite2D" type="NinePatchRect" parent="Sprite"]
+texture_filter = 1
+offset_left = -20.772095
+offset_top = -56.00002
+offset_right = 43.60022
+offset_bottom = 46.735073
+scale = Vector2(0.6400391, 0.8171449)
+texture = SubResource("AtlasTexture_jtk35")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Sprite2D4" type="NinePatchRect" parent="Sprite"]
+texture_filter = 1
+offset_left = -28.142857
+offset_top = 5.807255
+offset_right = 59.261684
+offset_bottom = 32.904266
+scale = Vector2(0.6400391, 0.8171449)
+texture = SubResource("AtlasTexture_jtk35")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Sprite2D6" type="NinePatchRect" parent="Sprite"]
+texture_filter = 1
+offset_left = -28.142857
+offset_top = -2.5277405
+offset_right = 59.261684
+offset_bottom = 24.569271
+scale = Vector2(0.6400391, 0.8171449)
+texture = SubResource("AtlasTexture_jtk35")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Sprite2D7" type="NinePatchRect" parent="Sprite"]
+texture_filter = 1
+offset_left = -28.142857
+offset_top = -12.3196945
+offset_right = 59.261684
+offset_bottom = 14.777317
+scale = Vector2(0.6400391, 0.8171449)
+texture = SubResource("AtlasTexture_jtk35")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Sprite2D8" type="NinePatchRect" parent="Sprite"]
+texture_filter = 1
+offset_left = -28.142857
+offset_top = -20.99997
+offset_right = 59.261684
+offset_bottom = 6.097042
+scale = Vector2(0.6400391, 0.8171449)
+texture = SubResource("AtlasTexture_jtk35")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Sprite2D5" type="NinePatchRect" parent="Sprite"]
+texture_filter = 1
+offset_left = -16.34354
+offset_top = -50.00002
+offset_right = 34.190395
+offset_bottom = 45.392437
+scale = Vector2(0.6400391, 0.8171449)
+texture = SubResource("AtlasTexture_jtk35")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Sprite2D2" type="Sprite2D" parent="Sprite"]
+visible = false
+position = Vector2(0, 22.375008)
+scale = Vector2(0.91582674, 0.33279043)
+texture = SubResource("AtlasTexture_jtk35")
+
+[node name="Sprite2D3" type="Sprite2D" parent="Sprite"]
+visible = false
+position = Vector2(0, 15.68375)
+scale = Vector2(0.46009147, 0.8204827)
+texture = SubResource("AtlasTexture_jtk35")
+
+[node name="Sprite2D9" type="NinePatchRect" parent="Sprite"]
+texture_filter = 1
+offset_left = -31.414787
+offset_top = -60.0
+offset_right = 66.213905
+offset_bottom = -28.946281
+scale = Vector2(0.6400391, 0.8171449)
+texture = SubResource("AtlasTexture_jtk35")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Sprite2" type="Node2D" parent="."]
+modulate = Color(0.71, 0.71, 0.71, 0.63529414)
+z_index = -1
+position = Vector2(0, -112)
+rotation = 3.1415927
+
+[node name="Sprite2D" type="NinePatchRect" parent="Sprite2"]
+texture_filter = 1
+offset_left = -20.772095
+offset_top = -56.00002
+offset_right = 43.60022
+offset_bottom = 46.735073
+scale = Vector2(0.6400391, 0.8171449)
+texture = SubResource("AtlasTexture_jtk35")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Sprite2D4" type="NinePatchRect" parent="Sprite2"]
+texture_filter = 1
+offset_left = -28.142857
+offset_top = 5.807255
+offset_right = 59.261684
+offset_bottom = 32.904266
+scale = Vector2(0.6400391, 0.8171449)
+texture = SubResource("AtlasTexture_jtk35")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Sprite2D6" type="NinePatchRect" parent="Sprite2"]
+texture_filter = 1
+offset_left = -28.142857
+offset_top = -2.5277405
+offset_right = 59.261684
+offset_bottom = 24.569271
+scale = Vector2(0.6400391, 0.8171449)
+texture = SubResource("AtlasTexture_jtk35")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Sprite2D7" type="NinePatchRect" parent="Sprite2"]
+texture_filter = 1
+offset_left = -28.142857
+offset_top = -12.3196945
+offset_right = 59.261684
+offset_bottom = 14.777317
+scale = Vector2(0.6400391, 0.8171449)
+texture = SubResource("AtlasTexture_jtk35")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Sprite2D8" type="NinePatchRect" parent="Sprite2"]
+texture_filter = 1
+offset_left = -28.142857
+offset_top = -20.99997
+offset_right = 59.261684
+offset_bottom = 6.097042
+scale = Vector2(0.6400391, 0.8171449)
+texture = SubResource("AtlasTexture_jtk35")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Sprite2D5" type="NinePatchRect" parent="Sprite2"]
+texture_filter = 1
+offset_left = -16.34354
+offset_top = -50.00002
+offset_right = 34.190395
+offset_bottom = 45.392437
+scale = Vector2(0.6400391, 0.8171449)
+texture = SubResource("AtlasTexture_jtk35")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Sprite2D9" type="NinePatchRect" parent="Sprite2"]
+texture_filter = 1
+offset_left = -31.414787
+offset_top = -60.0
+offset_right = 66.213905
+offset_bottom = -28.946281
+scale = Vector2(0.6400391, 0.8171449)
+texture = SubResource("AtlasTexture_jtk35")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Sprite2D2" type="Sprite2D" parent="Sprite2"]
+visible = false
+position = Vector2(0, 22.375008)
+scale = Vector2(0.91582674, 0.33279043)
+texture = SubResource("AtlasTexture_jtk35")
+
+[node name="Sprite2D3" type="Sprite2D" parent="Sprite2"]
+visible = false
+position = Vector2(0, 15.68375)
+scale = Vector2(0.46009147, 0.8204827)
+texture = SubResource("AtlasTexture_jtk35")
+
+[node name="Squares" type="GPUParticles2D" parent="."]
+modulate = Color(0.59672034, 0.00040978522, 0.63338184, 1)
+position = Vector2(0, -28)
+amount = 4
+texture = SubResource("GradientTexture2D_jtk35")
+lifetime = 1.5
+process_material = SubResource("ParticleProcessMaterial_ncefy")
+
+[node name="Squares2" type="GPUParticles2D" parent="."]
+modulate = Color(0.59695137, 0, 0.6334544, 0.36400002)
+z_index = -3
+position = Vector2(0, -28)
+amount = 2
+texture = SubResource("GradientTexture2D_xxbl4")
+lifetime = 1.5
+process_material = SubResource("ParticleProcessMaterial_ncefy")
+
+[node name="Area2D" type="Area2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -28)
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+unique_name_in_owner = true
+shape = SubResource("CircleShape2D_2fh2i")
+debug_color = Color(0, 0.60038817, 0.70000815, 0)
+
+[node name="Summoned" type="AudioStreamPlayer2D" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("2_jtk35")
+pitch_scale = 0.7
+
+[node name="Summoned2" type="AudioStreamPlayer2D" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("4_ucg22")
+volume_db = -8.0
+
+[node name="Summoning" type="GPUParticles2D" parent="."]
+unique_name_in_owner = true
+z_index = 2
+position = Vector2(0, -27)
+emitting = false
+amount = 256
+texture = SubResource("GradientTexture2D_lm1fr")
+lifetime = 1.5
+explosiveness = 1.0
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_xxbl4")
